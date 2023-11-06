@@ -1,0 +1,14 @@
+con: 0
+for: 0
+resist_phy: 0 from "con"
+resist_ment: 0 from "vol"
+hit: 8
+heal: 0 from "con" "vol"
+
+
+TRANSFORM FINAL_LAYER
+
+- resist_phy += con
+- resist_ment += vol
+- hit += floor(con / 2)
+- natural_heal += con + vol"

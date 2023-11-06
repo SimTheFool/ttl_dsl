@@ -1,0 +1,7 @@
+mag: 0
+initiation: 0
+resist_drain: 0 meta trad
+
+TRANSFORM FINAL_LAYER_2
+
+- resist_drain += floor($trad / 2)

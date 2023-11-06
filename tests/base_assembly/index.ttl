@@ -1,0 +1,8 @@
+stats:
+  >> ./stats.ttl
+      with con = 2
+      with for = 3
+  >> ./magician.ttl
+      with mag = 4
+      with initiation = 1
+      with trad = "int"

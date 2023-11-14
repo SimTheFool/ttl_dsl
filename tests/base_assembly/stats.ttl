@@ -1,5 +1,5 @@
 con: 0
-for: 0
+vol: 0
 resist_phy: 0 from "con"
 resist_ment: 0 from "vol"
 hit: 8

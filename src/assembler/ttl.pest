@@ -1,0 +1,15 @@
+WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
+ALPHAFIRST = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+
+variable = @{ ALPHAFIRST }
+number = @{ ASCII_DIGIT+ }
+string = @{ "\"" ~ ASCII_ALPHANUMERIC* ~ "\"" }
+object = { "{" ~ (declaration)* ~ "}" }
+
+value = { variable | number | object | string }
+
+declaration = { variable ~ ":" ~ value }
+integration = { ">>" ~ ("." | "/" | ALPHAFIRST | "_")+ ~ ("with" ~ declaration)* }
+
+
+file = { SOI ~ value ~ EOI }

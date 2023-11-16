@@ -4,51 +4,92 @@ use pest_derive::Parser;
 #[grammar = "assembler/ttl.pest"]
 pub struct TTLParser;
 
+pub mod ast {
+    use super::Rule;
+    use pest::Span;
+    use pest_ast::FromPest;
+
+    fn span_into_string(span: Span) -> String {
+        span.as_str().to_string()
+    }
+    fn span_into_str(span: Span) -> &str {
+        span.as_str()
+    }
+
+    #[derive(Debug, PartialEq, FromPest)]
+    #[pest_ast(rule(Rule::variable))]
+    pub struct Variable(#[pest_ast(outer(with(span_into_string)))] pub String);
+
+    #[derive(Debug, PartialEq, FromPest)]
+    #[pest_ast(rule(Rule::string))]
+    pub struct StringLit(#[pest_ast(inner(with(span_into_string)))] pub String);
+
+    #[derive(Debug, PartialEq, FromPest)]
+    #[pest_ast(rule(Rule::number))]
+    pub struct Number(
+        #[pest_ast(outer(with(span_into_str), with(str::parse::<f64>), with(Result::unwrap)))]
+        pub  f64,
+    );
+
+    #[derive(Debug, PartialEq, FromPest)]
+    #[pest_ast(rule(Rule::object))]
+    pub struct Object(pub Vec<Declaration>);
+
+    #[derive(Debug, PartialEq, FromPest)]
+    #[pest_ast(rule(Rule::value))]
+    pub enum Value {
+        String(StringLit),
+        Number(Number),
+        Object(Object),
+    }
+
+    #[derive(Debug, PartialEq, FromPest)]
+    #[pest_ast(rule(Rule::declaration))]
+    pub struct Declaration(pub Variable, pub Value);
+
+    #[derive(Debug, FromPest)]
+    #[pest_ast(rule(Rule::EOI))]
+    struct EOI;
+
+    #[derive(Debug, FromPest)]
+    #[pest_ast(rule(Rule::file))]
+    pub struct File {
+        pub value: Value,
+        _eoi: EOI,
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use pest::{iterators::Pair, Parser};
+    use from_pest::FromPest;
+    use pest::Parser;
+
+    use crate::assembler::parser::ast::{Declaration, Variable};
 
     #[test]
     fn it_should_parse_variable() {
-        let str = "var01 f...";
-        let pairs = super::TTLParser::parse(super::Rule::variable, str).unwrap();
+        let str = "var01";
+        let mut pairs = super::TTLParser::parse(super::Rule::variable, str).unwrap();
+        let variable = Variable::from_pest(&mut pairs).unwrap();
 
-        assert!(pairs.len() == 1);
-        let pair = pairs.clone().next().unwrap();
-        let span = pair.as_span();
-        let inner = pair.into_inner();
-
-        assert_eq!(inner.len(), 0);
-        assert_eq!(span.as_str(), str);
+        assert_eq!(variable.0, "var01");
     }
 
     #[test]
     fn it_should_parse_declaration() {
         let str = "var01: 745";
-        let pairs = super::TTLParser::parse(super::Rule::declaration, str).unwrap();
+        let mut pairs = super::TTLParser::parse(super::Rule::declaration, str).unwrap();
+        let declaration = Declaration::from_pest(&mut pairs).unwrap();
 
-        assert!(pairs.len() == 1);
-        let pair = pairs.clone().next().unwrap();
-        let span = pair.as_span();
-        let inner = pair.into_inner();
+        let variable = declaration.0;
+        let value = declaration.1;
+        let value = match value {
+            super::ast::Value::Number(n) => n.0,
+            _ => panic!("Unexpected value"),
+        };
 
-        assert_eq!(inner.len(), 2);
-        assert_eq!(span.as_str(), str);
-
-        inner.for_each(|r| {
-            let rule = r.as_rule();
-            match rule {
-                super::Rule::variable => {
-                    assert_eq!(r.as_span().as_str(), "var01");
-                }
-                super::Rule::value => {
-                    assert_eq!(r.as_span().as_str(), "745");
-                }
-                _ => {
-                    assert!(false);
-                }
-            }
-        });
+        assert_eq!(variable.0, "var01");
+        assert_eq!(value, 745.0);
     }
 
     #[test]
@@ -58,24 +99,33 @@ mod tests {
             var03: "hello"
         }"#;
 
-        let pairs = super::TTLParser::parse(super::Rule::object, str).unwrap();
+        let mut pairs = super::TTLParser::parse(super::Rule::object, str).unwrap();
+        let object = super::ast::Object::from_pest(&mut pairs).unwrap();
 
-        assert!(pairs.len() == 1);
-        let pair = pairs.clone().next().unwrap();
-        let span = pair.as_span();
-        let inner = pair.into_inner();
+        let declarations = object.0;
 
-        assert_eq!(inner.len(), 2);
-        assert_eq!(span.as_str(), str);
+        assert_eq!(declarations.len(), 2);
 
-        let inner_pairs = inner.collect::<Vec<Pair<_>>>();
-        let first_declaration = inner_pairs.get(0).unwrap();
-        let second_declaration = inner_pairs.get(1).unwrap();
+        let first_declaration = declarations.get(0).unwrap();
+        let first_var = &first_declaration.0;
+        let first_value = &first_declaration.1;
+        let first_value = match first_value {
+            super::ast::Value::Number(n) => n.0,
+            _ => panic!("Unexpected value"),
+        };
 
-        assert_eq!(first_declaration.as_rule(), super::Rule::declaration);
-        assert_eq!(second_declaration.as_rule(), super::Rule::declaration);
-        assert_eq!(first_declaration.as_span().as_str(), "var02: 745");
-        assert_eq!(second_declaration.as_span().as_str(), "var03: \"hello\"");
+        let second_declaration = declarations.get(1).unwrap();
+        let second_var = &second_declaration.0;
+        let second_value = &second_declaration.1;
+        let second_value = match second_value {
+            super::ast::Value::String(s) => s.0.clone(),
+            _ => panic!("Unexpected value"),
+        };
+
+        assert_eq!(first_var.0, "var02");
+        assert_eq!(first_value, 745.0);
+        assert_eq!(second_var.0, "var03");
+        assert_eq!(second_value, "hello");
     }
 
     #[test]
@@ -87,32 +137,34 @@ mod tests {
         }
         "#;
 
-        let pairs = super::TTLParser::parse(super::Rule::file, str).unwrap();
+        let mut pairs = super::TTLParser::parse(super::Rule::file, str).unwrap();
+        let file = super::ast::File::from_pest(&mut pairs).unwrap();
+        let value = file.value;
 
-        assert!(pairs.len() == 1);
-        let pair = pairs.clone().next().unwrap();
+        let declarations = match value {
+            super::ast::Value::Object(s) => s.0,
+            _ => panic!("Unexpected value"),
+        };
 
-        let span = pair.as_span();
-        assert_eq!(span.as_str(), str);
+        let first_declaration = declarations.get(0).unwrap();
+        let first_var = &first_declaration.0;
+        let first_value = &first_declaration.1;
+        let first_value = match first_value {
+            super::ast::Value::Number(n) => n.0,
+            _ => panic!("Unexpected value"),
+        };
 
-        let value_pair = pair
-            .into_inner()
-            .find(|p| p.as_rule() == super::Rule::value)
-            .unwrap();
+        let second_declaration = declarations.get(1).unwrap();
+        let second_var = &second_declaration.0;
+        let second_value = &second_declaration.1;
+        let second_value = match second_value {
+            super::ast::Value::String(s) => s.0.clone(),
+            _ => panic!("Unexpected value"),
+        };
 
-        let object_pair = value_pair.into_inner().next_back().unwrap();
-
-        let declarations_pairs = object_pair.into_inner().collect::<Vec<Pair<_>>>();
-
-        let first_declaration = declarations_pairs.get(0).unwrap();
-        let second_declaration = declarations_pairs.get(1).unwrap();
-
-        assert_eq!(first_declaration.as_rule(), super::Rule::declaration);
-
-        assert_eq!(second_declaration.as_rule(), super::Rule::declaration);
-
-        assert_eq!(first_declaration.as_span().as_str(), "var02: 745");
-
-        assert_eq!(second_declaration.as_span().as_str(), "var03: \"hello\"");
+        assert_eq!(first_var.0, "var02");
+        assert_eq!(first_value, 745.0);
+        assert_eq!(second_var.0, "var03");
+        assert_eq!(second_value, "hello");
     }
 }

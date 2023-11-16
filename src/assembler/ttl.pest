@@ -1,9 +1,11 @@
 WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
+
 ALPHAFIRST = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
 
 variable = @{ ALPHAFIRST }
 number = @{ ASCII_DIGIT+ }
-string = @{ "\"" ~ ASCII_ALPHANUMERIC* ~ "\"" }
+string = { "\"" ~ (ALPHATEXT) ~ "\"" }
 object = { "{" ~ (declaration)* ~ "}" }
 
 value = { variable | number | object | string }

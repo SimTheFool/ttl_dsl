@@ -3,14 +3,18 @@ WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 ALPHAFIRST = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
 ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
 
-variable = @{ ALPHAFIRST }
+identifier = @{ ALPHAFIRST }
+
+reference = @{ identifier }
 number = @{ ASCII_DIGIT+ }
 string = { "\"" ~ (ALPHATEXT) ~ "\"" }
 object = { "{" ~ (declaration)* ~ "}" }
 
-value = { variable | number | object | string }
+meta = { reference | number | string }
+metas = { "[" ~ meta* ~ "]" }
+value = { (reference ~ metas?) | (number ~ metas?) | (string ~ metas?) | object }
 
-declaration = { variable ~ ":" ~ value }
+declaration = {identifier ~ ":" ~ value }
 integration = { ">>" ~ ("." | "/" | ALPHAFIRST | "_")+ ~ ("with" ~ declaration)* }
 
 

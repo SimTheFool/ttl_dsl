@@ -1,11 +1,9 @@
-pub mod parser;
+pub mod ast;
 
 use crate::{
-    assembler::parser::ast::{self, Value},
-    utils::result::{AppError, AppResult},
+    assembler::ast::{File, Value},
+    utils::result::AppResult,
 };
-use from_pest::FromPest;
-use pest::Parser;
 
 #[derive(PartialEq, Debug)]
 struct TTLResource<T> {
@@ -15,16 +13,12 @@ struct TTLResource<T> {
 }
 
 impl<T> TTLResource<T> {
-    fn new(value: T, identifier: String) -> Self {
+    fn new(value: T, identifier: String, metas: Option<Vec<String>>) -> Self {
         Self {
             identifier,
             value,
-            metas: Vec::new(),
+            metas: metas.unwrap_or_else(|| Vec::new()),
         }
-    }
-
-    fn add_meta(&mut self, meta: String) {
-        self.metas.push(meta);
     }
 }
 
@@ -36,21 +30,20 @@ enum TTLResources {
 }
 
 fn assemble_file(file_str: &str) -> AppResult<Vec<TTLResources>> {
-    let mut pairs = parser::TTLParser::parse(parser::Rule::file, file_str)
-        .map_err(|e| AppError::String(e.to_string()))?;
-
-    let file = ast::File::from_pest(&mut pairs).map_err(|e| AppError::String(e.to_string()))?;
+    let file = File::try_from(file_str)?;
     let value = file.value;
 
-    fn ast_to_value(val: ast::Value, path: Option<String>) -> Vec<TTLResources> {
+    fn ast_to_value(val: Value, path: Option<String>) -> Vec<TTLResources> {
         match val {
-            Value::String(s) => vec![TTLResources::String(TTLResource::new(
+            Value::String(s, metas) => vec![TTLResources::String(TTLResource::new(
                 s.0,
                 path.unwrap_or_else(|| "".to_string()),
+                metas.map(|m| m.into()),
             ))],
-            Value::Number(n) => vec![TTLResources::Number(TTLResource::new(
+            Value::Number(n, metas) => vec![TTLResources::Number(TTLResource::new(
                 n.0,
                 path.unwrap_or_else(|| "".to_string()),
+                metas.map(|m| m.into()),
             ))],
             Value::Object(o) => {
                 let mut res = Vec::new();
@@ -59,13 +52,12 @@ fn assemble_file(file_str: &str) -> AppResult<Vec<TTLResources>> {
                         Some(ref p) => {
                             let mut new_path = p.to_string();
                             new_path.push_str(".");
-                            new_path.push_str(&decl.0 .0);
+                            new_path.push_str(&decl.identifier.0);
                             Some(new_path)
                         }
-                        None => Some(decl.0 .0.to_string()),
+                        None => Some(decl.identifier.0.to_string()),
                     };
-
-                    res.extend(ast_to_value(decl.1, new_path));
+                    res.extend(ast_to_value(decl.value, new_path));
                 }
                 res
             }
@@ -86,7 +78,7 @@ mod tests {
     fn it_should_create_resource() {
         let values = assemble_file(
             r#"{
-                var04: 745
+                var04: 745 ["abc" "def" 123]
                 var05: "hello"
                 var06: {
                     var07: 07
@@ -97,10 +89,22 @@ mod tests {
         .unwrap();
 
         let expected_values = vec![
-            TTLResources::Number(TTLResource::new(745.0, "var04".to_string())),
-            TTLResources::String(TTLResource::new("hello".to_string(), "var05".to_string())),
-            TTLResources::Number(TTLResource::new(7.0, "var06.var07".to_string())),
-            TTLResources::Number(TTLResource::new(8.0, "var06.var08".to_string())),
+            TTLResources::Number(TTLResource::new(
+                745.0,
+                "var04".to_string(),
+                Some(vec![
+                    "abc".to_string(),
+                    "def".to_string(),
+                    "123".to_string(),
+                ]),
+            )),
+            TTLResources::String(TTLResource::new(
+                "hello".to_string(),
+                "var05".to_string(),
+                None,
+            )),
+            TTLResources::Number(TTLResource::new(7.0, "var06.var07".to_string(), None)),
+            TTLResources::Number(TTLResource::new(8.0, "var06.var08".to_string(), None)),
         ];
 
         assert_eq!(values, expected_values);

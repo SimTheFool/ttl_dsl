@@ -1,9 +1,17 @@
 con: 0
+
 vol: 0
-resist_phy: 0 from "con"
-resist_ment: 0 from "vol"
+
+["con"]
+resist_phy: 0
+
+["vol"]
+resist_ment: 0
+
 hit: 8
-heal: 0 from "con" "vol"
+
+["vol" "con"]
+heal: 0
 
 
 TRANSFORM FINAL_LAYER

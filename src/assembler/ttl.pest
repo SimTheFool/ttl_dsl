@@ -12,10 +12,10 @@ object = { "{" ~ (declaration)* ~ "}" }
 
 meta = { reference | number | string }
 metas = { "[" ~ meta* ~ "]" }
-value = { (reference ~ metas?) | (number ~ metas?) | (string ~ metas?) | object }
+value = { reference | number | string | object }
 
-declaration = {identifier ~ ":" ~ value }
-integration = { ">>" ~ ("." | "/" | ALPHAFIRST | "_")+ ~ ("with" ~ declaration)* }
+declaration = {metas? ~ identifier ~ ":" ~ value }
+integration = { "<<" ~ ("." | "/" | ALPHAFIRST | "_")+ ~ ("with" ~ declaration)* }
 
 
 file = { SOI ~ value ~ EOI }

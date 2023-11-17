@@ -1,6 +1,6 @@
 mag: 0
 initiation: 0
-resist_drain: 0 meta trad
+resist_drain: 0 [trad]
 
 TRANSFORM FINAL_LAYER_2
 

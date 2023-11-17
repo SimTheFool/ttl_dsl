@@ -43,35 +43,40 @@ pub struct Object(pub Vec<Declaration>);
 pub enum Meta {
     String(StringLit),
     Number(Number),
+    Ref(Ref),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::metas))]
 pub struct Metas(pub Vec<Meta>);
-impl Into<Vec<String>> for Metas {
-    fn into(self) -> Vec<String> {
-        let mut res = Vec::new();
+impl Into<(Option<Vec<String>>, Option<Vec<String>>)> for Metas {
+    fn into(self) -> (Option<Vec<String>>, Option<Vec<String>>) {
+        let mut meta_lit = None;
+        let mut meta_ref = None;
         for meta in self.0 {
             match meta {
-                Meta::String(s) => res.push(s.0),
-                Meta::Number(n) => res.push(n.0.to_string()),
-            }
+                Meta::String(s) => meta_lit.get_or_insert(vec![]).push(s.0),
+                Meta::Number(n) => meta_lit.get_or_insert(vec![]).push(n.0.to_string()),
+                Meta::Ref(r) => meta_ref.get_or_insert(vec![]).push(r.0.to_string()),
+            };
         }
-        res
+
+        (meta_lit, meta_ref)
     }
 }
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::value))]
 pub enum Value {
-    String(StringLit, Option<Metas>),
-    Number(Number, Option<Metas>),
+    String(StringLit),
+    Number(Number),
     Object(Object),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::declaration))]
 pub struct Declaration {
+    pub metas: Option<Metas>,
     pub identifier: Variable,
     pub value: Value,
 }
@@ -115,14 +120,15 @@ mod tests {
 
     #[test]
     fn it_should_parse_declaration() {
-        let str = r#"var01: 745 ["meta1" "01" 15]"#;
+        let str = r#"["meta1" ref01 15]var01: 745"#;
         let mut pairs = super::TTLParser::parse(super::Rule::declaration, str).unwrap();
         let declaration = Declaration::from_pest(&mut pairs).unwrap();
 
         let identifier = declaration.identifier;
         let value = declaration.value;
-        let (value, metas) = match value {
-            super::Value::Number(m, n) => (m.0, n),
+        let metas = declaration.metas;
+        let value = match value {
+            super::Value::Number(m) => m.0,
             _ => panic!("Unexpected value"),
         };
 
@@ -136,7 +142,7 @@ mod tests {
             _ => panic!("Unexpected meta"),
         }
         match metas.get(1).unwrap() {
-            super::Meta::String(s) => assert_eq!(s.0, "01"),
+            super::Meta::Ref(s) => assert_eq!(s.0, "ref01"),
             _ => panic!("Unexpected meta"),
         }
         match metas.get(2).unwrap() {
@@ -163,7 +169,7 @@ mod tests {
         let first_var = &first_declaration.identifier;
         let first_value = &first_declaration.value;
         let first_value = match first_value {
-            super::Value::Number(n, _) => n.0,
+            super::Value::Number(n) => n.0,
             _ => panic!("Unexpected value"),
         };
 
@@ -171,7 +177,7 @@ mod tests {
         let second_var = &second_declaration.identifier;
         let second_value = &second_declaration.value;
         let second_value = match second_value {
-            super::Value::String(s, _) => s.0.clone(),
+            super::Value::String(s) => s.0.clone(),
             _ => panic!("Unexpected value"),
         };
 
@@ -203,7 +209,7 @@ mod tests {
         let first_var = &first_declaration.identifier;
         let first_value = &first_declaration.value;
         let first_value = match first_value {
-            super::Value::Number(n, _) => n.0,
+            super::Value::Number(n) => n.0,
             _ => panic!("Unexpected value"),
         };
 
@@ -211,7 +217,7 @@ mod tests {
         let second_var = &second_declaration.identifier;
         let second_value = &second_declaration.value;
         let second_value = match second_value {
-            super::Value::String(s, _) => s.0.clone(),
+            super::Value::String(s) => s.0.clone(),
             _ => panic!("Unexpected value"),
         };
 

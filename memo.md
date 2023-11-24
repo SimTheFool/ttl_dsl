@@ -1,0 +1,5 @@
+- tester le contexte
+- Regérer les metas
+- Implémenter une methode sur le path du context pour pouvoir générer un nouveau path depuis un identifier
+- Implémenter une methode sur les value pour pouvoir les convertir en resources
+- Implémenter une methode sur les metas pour pouvoir les convertir en reousrce

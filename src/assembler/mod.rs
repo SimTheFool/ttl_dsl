@@ -1,124 +1,180 @@
-pub mod ast;
+mod ast;
+pub mod resources;
 
-use crate::{
-    assembler::ast::{File, Value},
-    utils::result::{AppError, AppResult},
-};
+use self::resources::{Literal, Referenced, Resource, Resources};
+use crate::{assembler::resources::ResourceContext, ports::TTLInputPort, utils::result::AppResult};
+use indexmap::IndexMap;
 
-use self::ast::{Meta, Metas};
-
-#[derive(PartialEq, Debug)]
-struct TTLResource<T> {
-    identifier: String,
-    value: T,
-    metas_literal: Option<Vec<String>>,
-    metas_ref: Option<Vec<String>>,
-}
-
-impl<T> TTLResource<T> {
-    fn new(
-        value: T,
-        identifier: String,
-        metas_literal: Option<Vec<String>>,
-        metas_ref: Option<Vec<String>>,
-    ) -> Self {
-        Self {
-            identifier,
-            value,
-            metas_literal,
-            metas_ref,
-        }
-    }
-}
-
-#[derive(PartialEq, Debug)]
-enum TTLResources {
-    String(TTLResource<String>),
-    Number(TTLResource<f64>),
-}
-
-fn assemble_file(file_str: &str) -> AppResult<Vec<TTLResources>> {
-    let file = File::try_from(file_str)?;
+fn assemble_file(
+    file_str: &str,
+    input_port: impl TTLInputPort,
+) -> AppResult<Vec<Resources<Literal>>> {
+    let file = ast::File::try_from(file_str)?;
     let value = file.value;
 
-    fn ast_to_value(val: Value, path: Option<String>, metas: Option<Metas>) -> Vec<TTLResources> {
-        let (meta_lit, meta_ref): (Option<Vec<String>>, Option<Vec<String>>) =
-            metas.map(|m| m.into()).unwrap_or_else(|| (None, None));
-
-        /* let meta_ref = match path {
-            Some(ref p) => meta_ref.and_then(|v| {
-                let new_meta = v
-                    .iter()
-                    .map(|m| {
-                        let current_path = p.clone();
-                        let mut segments: Vec<&str> = current_path.split(".").collect();
-                        if let Some(last_segment) = segments.last_mut() {
-                            *last_segment = m.as_str();
-                        }
-                        let new_meta = segments.join(".");
-                        new_meta
-                    })
-                    .collect();
-                Some(new_meta)
-            }),
-            None => meta_ref,
-        }; */
+    fn ast_to_value(
+        val: ast::Value,
+        identifier: Option<String>,
+        ctx: ResourceContext,
+    ) -> IndexMap<String, Resources<Referenced>> {
+        let mut resource_map = IndexMap::<String, Resources<Referenced>>::new();
 
         match val {
-            Value::String(s) => vec![TTLResources::String(TTLResource::new(
-                s.0,
-                path.unwrap_or_else(|| "".to_string()),
-                meta_lit,
-                meta_ref,
-            ))],
-            Value::Number(n) => vec![TTLResources::Number(TTLResource::new(
-                n.0,
-                path.unwrap_or_else(|| "".to_string()),
-                meta_lit,
-                meta_ref,
-            ))],
-            Value::Object(o) => {
-                let mut res = Vec::new();
-                for decl in o.0 {
-                    let new_path = match path {
-                        Some(ref p) => {
-                            let mut new_path = p.to_string();
-                            new_path.push_str(".");
-                            new_path.push_str(&decl.identifier.0);
-                            Some(new_path)
-                        }
-                        None => Some(decl.identifier.0.to_string()),
-                    };
-                    res.extend(ast_to_value(decl.value, new_path, decl.metas));
-                }
-                res
+            ast::Value::String(s) => {
+                let resource =
+                    Resources::String(Resource::new(s.0, identifier.clone(), ctx.clone()));
+
+                let resource_path = match (ctx.path, identifier) {
+                    (None, None) => "".to_string(),
+                    (None, Some(id)) => id,
+                    (Some(base), None) => base,
+                    (Some(base), Some(id)) => format!("{}.{}", base, id),
+                };
+
+                resource_map.insert(resource_path, resource);
             }
-        }
+            ast::Value::Number(n) => {
+                let resource =
+                    Resources::Number(Resource::new(n.0, identifier.clone(), ctx.clone()));
+
+                let resource_path = match (ctx.path, identifier) {
+                    (None, None) => "".to_string(),
+                    (None, Some(id)) => id,
+                    (Some(base), None) => base,
+                    (Some(base), Some(id)) => format!("{}.{}", base, id),
+                };
+
+                resource_map.insert(resource_path, resource);
+            }
+            ast::Value::Object(o) => {
+                for elem in o.0 {
+                    match elem {
+                        ast::ObjectElem::Declaration(v) => {
+                            let resource_path = match (&ctx.path, &v.identifier) {
+                                (None, id) => id.0.clone(),
+                                (Some(base), id) => format!("{}.{}", base, id.0.clone()),
+                            };
+
+                            let sub_resource_map = ast_to_value(
+                                v.value,
+                                Some(v.identifier.0),
+                                ResourceContext {
+                                    variables: ctx.variables.clone(),
+                                    path: Some(resource_path),
+                                },
+                            );
+
+                            resource_map.extend(sub_resource_map);
+                        }
+                        _ => {}
+                    };
+                }
+            }
+        };
+
+        resource_map
     }
 
-    let res = ast_to_value(value, None, None);
+    let resource_map = ast_to_value(
+        value,
+        None,
+        ResourceContext {
+            variables: None,
+            path: None,
+        },
+    );
+    let resource_map: IndexMap<String, Resources<Literal>> = resource_map
+        .into_iter()
+        .map(|(k, v)| {
+            let new_kv = (k.clone(), v.try_compute_references()?);
+            return AppResult::Ok(new_kv);
+        })
+        .try_fold(
+            IndexMap::<String, Resources<Literal>>::new(),
+            |mut map, kv| {
+                let (k, v) = kv?;
+                map.insert(k, v);
+                AppResult::Ok(map)
+            },
+        )?;
 
-    Ok(res)
+    Ok(resource_map.into_iter().map(|(_, v)| v).collect())
 }
 
 #[cfg(test)]
 mod tests {
     use super::assemble_file;
-    use crate::assembler::{TTLResource, TTLResources};
+    use crate::{
+        assembler::resources::{Literal, Resources},
+        infras::file_reader::TTLMockedInputAdapter,
+    };
 
     #[test]
-    fn it_should_create_resource() {
+    fn it_should_create_resources() {
+        let mocked_input = TTLMockedInputAdapter::new();
         let values = assemble_file(
             r#"{
-                ["abc" ref01 123]
-                var04: 745
                 var05: "hello"
                 var06: {
-                    [ref02]
                     var07: 07
                     var08: 08
                 }
             }"#,
+            mocked_input,
+        )
+        .unwrap();
+
+        assert_eq!(values.len(), 3);
+
+        let first_ressource = values.get(0).unwrap();
+        let second_ressource = values.get(1).unwrap();
+        let third_ressource = values.get(2).unwrap();
+
+        match first_ressource {
+            Resources::<Literal>::String(x) => {
+                assert_eq!(x.identifier, Some("var05".to_string()));
+                assert_eq!(x.value, "hello");
+            }
+            _ => panic!("Should be a string"),
+        }
+
+        match second_ressource {
+            Resources::<Literal>::Number(x) => {
+                assert_eq!(x.identifier, Some("var07".to_string()));
+                assert_eq!(x.value, 7.0);
+            }
+            _ => panic!("Should be a number"),
+        }
+
+        match third_ressource {
+            Resources::<Literal>::Number(x) => {
+                assert_eq!(x.identifier, Some("var08".to_string()));
+                assert_eq!(x.value, 8.0);
+            }
+            _ => panic!("Should be a number"),
+        }
+    }
+
+    /* #[test]
+    fn it_should_create_resources_with_integration() {
+        let mut mocked_input = TTLMockedInputAdapter::new();
+        mocked_input.mock_file(
+            "./stats",
+            r#"{
+                somevar01: var01,
+                somevar02: var02,
+                someothervar: "statistics"
+            }"#,
+        );
+
+        let values = assemble_file(
+            r#"{
+                << ./stats
+                    with var01 : 001
+                    with var02 : "002"
+                var03: 003
+            }"#,
+            mocked_input,
         )
         .unwrap();
 
@@ -129,39 +185,36 @@ mod tests {
         let third_ressource = values.get(2).unwrap();
         let fourth_ressource = values.get(3).unwrap();
 
-        assert_eq!(
-            first_ressource,
-            &TTLResources::Number(TTLResource::new(
-                745.0,
-                "var04".to_string(),
-                Some(vec!["abc".to_string(), "123".to_string()]),
-                Some(vec!["ref01".to_string()]),
-            ))
-        );
+        match first_ressource {
+            Resources::<Literal>::Number(x) => {
+                assert_eq!(x.identifier, "somevar01");
+                assert_eq!(x.value, 1.0);
+            }
+            _ => panic!("Should be a number"),
+        }
 
-        assert_eq!(
-            second_ressource,
-            &TTLResources::String(TTLResource::new(
-                "hello".to_string(),
-                "var05".to_string(),
-                None,
-                None,
-            ))
-        );
+        match second_ressource {
+            Resources::<Literal>::String(x) => {
+                assert_eq!(x.identifier, "someothervar");
+                assert_eq!(x.value, "002");
+            }
+            _ => panic!("Should be a string"),
+        }
 
-        assert_eq!(
-            third_ressource,
-            &TTLResources::Number(TTLResource::new(
-                7.0,
-                "var06.var07".to_string(),
-                None,
-                Some(vec!["ref02".to_string()]),
-            ))
-        );
+        match third_ressource {
+            Resources::<Literal>::String(x) => {
+                assert_eq!(x.identifier, "somevar02");
+                assert_eq!(x.value, "statistics");
+            }
+            _ => panic!("Should be a string"),
+        }
 
-        assert_eq!(
-            fourth_ressource,
-            &TTLResources::Number(TTLResource::new(8.0, "var06.var08".to_string(), None, None))
-        );
-    }
+        match fourth_ressource {
+            Resources::<Literal>::Number(x) => {
+                assert_eq!(x.identifier, "var03");
+                assert_eq!(x.value, 3.0);
+            }
+            _ => panic!("Should be a number"),
+        }
+    } */
 }

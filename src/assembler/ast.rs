@@ -35,15 +35,21 @@ pub struct Number(
 );
 
 #[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::object_element))]
+pub enum ObjectElem {
+    Declaration(Declaration),
+    Integration(Integration),
+}
+
+#[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::object))]
-pub struct Object(pub Vec<Declaration>);
+pub struct Object(pub Vec<ObjectElem>);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::meta))]
 pub enum Meta {
     String(StringLit),
     Number(Number),
-    Ref(Ref),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
@@ -52,12 +58,11 @@ pub struct Metas(pub Vec<Meta>);
 impl Into<(Option<Vec<String>>, Option<Vec<String>>)> for Metas {
     fn into(self) -> (Option<Vec<String>>, Option<Vec<String>>) {
         let mut meta_lit = None;
-        let mut meta_ref = None;
+        let meta_ref = None;
         for meta in self.0 {
             match meta {
                 Meta::String(s) => meta_lit.get_or_insert(vec![]).push(s.0),
                 Meta::Number(n) => meta_lit.get_or_insert(vec![]).push(n.0.to_string()),
-                Meta::Ref(r) => meta_ref.get_or_insert(vec![]).push(r.0.to_string()),
             };
         }
 
@@ -71,6 +76,17 @@ pub enum Value {
     String(StringLit),
     Number(Number),
     Object(Object),
+}
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::path))]
+pub struct Path(#[pest_ast(outer(with(span_into_string)))] pub String);
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::integration))]
+pub struct Integration {
+    pub path: Path,
+    pub declarations: Vec<Declaration>,
 }
 
 #[derive(Debug, PartialEq, FromPest)]
@@ -105,6 +121,8 @@ impl TryFrom<&str> for File {
 
 #[cfg(test)]
 mod tests {
+    use crate::assembler::ast::{Integration, Object};
+
     use super::{Declaration, Variable};
     use from_pest::FromPest;
     use pest::Parser;
@@ -120,7 +138,7 @@ mod tests {
 
     #[test]
     fn it_should_parse_declaration() {
-        let str = r#"["meta1" ref01 15]var01: 745"#;
+        let str = r#"["meta1" 15]var01: 745"#;
         let mut pairs = super::TTLParser::parse(super::Rule::declaration, str).unwrap();
         let declaration = Declaration::from_pest(&mut pairs).unwrap();
 
@@ -136,34 +154,28 @@ mod tests {
         assert_eq!(value, 745.0);
 
         let metas = metas.unwrap().0;
-        assert_eq!(metas.len(), 3);
+        assert_eq!(metas.len(), 2);
         match metas.get(0).unwrap() {
             super::Meta::String(s) => assert_eq!(s.0, "meta1"),
             _ => panic!("Unexpected meta"),
         }
         match metas.get(1).unwrap() {
-            super::Meta::Ref(s) => assert_eq!(s.0, "ref01"),
-            _ => panic!("Unexpected meta"),
-        }
-        match metas.get(2).unwrap() {
             super::Meta::Number(n) => assert_eq!(n.0, 15.0),
             _ => panic!("Unexpected meta"),
         }
     }
 
     #[test]
-    fn it_should_parse_object() {
-        let str = r#"{
-            var02: 745
-            var03: "hello"
-        }"#;
+    fn it_should_parse_integration() {
+        let str = r#"<< ./stats
+            with var01: 01
+            with var02: "002"
+        "#;
 
-        let mut pairs = super::TTLParser::parse(super::Rule::object, str).unwrap();
-        let object = super::Object::from_pest(&mut pairs).unwrap();
+        let mut pairs = super::TTLParser::parse(super::Rule::integration, str).unwrap();
+        let Integration { declarations, path } = super::Integration::from_pest(&mut pairs).unwrap();
 
-        let declarations = object.0;
-
-        assert_eq!(declarations.len(), 2);
+        assert_eq!(path.0, "./stats");
 
         let first_declaration = declarations.get(0).unwrap();
         let first_var = &first_declaration.identifier;
@@ -173,6 +185,9 @@ mod tests {
             _ => panic!("Unexpected value"),
         };
 
+        assert_eq!(first_var.0, "var01");
+        assert_eq!(first_value, 1.0);
+
         let second_declaration = declarations.get(1).unwrap();
         let second_var = &second_declaration.identifier;
         let second_value = &second_declaration.value;
@@ -181,10 +196,70 @@ mod tests {
             _ => panic!("Unexpected value"),
         };
 
-        assert_eq!(first_var.0, "var02");
-        assert_eq!(first_value, 745.0);
-        assert_eq!(second_var.0, "var03");
-        assert_eq!(second_value, "hello");
+        assert_eq!(second_var.0, "var02");
+        assert_eq!(second_value, "002");
+    }
+
+    #[test]
+    fn it_should_parse_object() {
+        let str = r#"{
+            << ./integration
+                with var01: 01
+            var02: 745
+            var03: "hello"
+        }"#;
+
+        let mut pairs = super::TTLParser::parse(super::Rule::object, str).unwrap();
+        let Object(elems) = super::Object::from_pest(&mut pairs).unwrap();
+
+        assert_eq!(elems.len(), 3);
+
+        let Integration { declarations, path } = match elems.get(0).unwrap() {
+            super::ObjectElem::Integration(i) => i,
+            _ => panic!("Should be integration"),
+        };
+
+        let second_declaration = match elems.get(1).unwrap() {
+            super::ObjectElem::Declaration(d) => d,
+            _ => panic!("Shoudl be declaration"),
+        };
+
+        let third_declaration = match elems.get(2).unwrap() {
+            super::ObjectElem::Declaration(d) => d,
+            _ => panic!("Shoudl be declaration"),
+        };
+
+        let second_var = &second_declaration.identifier;
+        let second_value = &second_declaration.value;
+        let second_value = match second_value {
+            super::Value::Number(s) => s.0.clone(),
+            _ => panic!("Unexpected value"),
+        };
+
+        let third_var = &third_declaration.identifier;
+        let third_value = &third_declaration.value;
+        let third_value = match third_value {
+            super::Value::String(s) => s.0.clone(),
+            _ => panic!("Unexpected value"),
+        };
+
+        assert_eq!(path.0, "./integration");
+        assert_eq!(declarations.len(), 1);
+
+        let first_declaration = declarations.get(0).unwrap();
+        let first_var = &first_declaration.identifier;
+        let first_value = &first_declaration.value;
+        let first_value = match first_value {
+            super::Value::Number(n) => n.0,
+            _ => panic!("Unexpected value"),
+        };
+
+        assert_eq!(first_var.0, "var01");
+        assert_eq!(first_value, 1.0);
+        assert_eq!(second_var.0, "var02");
+        assert_eq!(second_value, 745.0);
+        assert_eq!(third_var.0, "var03");
+        assert_eq!(third_value, "hello");
     }
 
     #[test]
@@ -200,12 +275,15 @@ mod tests {
         let file = super::File::from_pest(&mut pairs).unwrap();
         let value = file.value;
 
-        let declarations = match value {
+        let object_elems = match value {
             super::Value::Object(s) => s.0,
             _ => panic!("Unexpected value"),
         };
 
-        let first_declaration = declarations.get(0).unwrap();
+        let first_declaration = match object_elems.get(0).unwrap() {
+            super::ObjectElem::Declaration(d) => d,
+            _ => panic!("Shoudl be declaration"),
+        };
         let first_var = &first_declaration.identifier;
         let first_value = &first_declaration.value;
         let first_value = match first_value {
@@ -213,7 +291,10 @@ mod tests {
             _ => panic!("Unexpected value"),
         };
 
-        let second_declaration = declarations.get(1).unwrap();
+        let second_declaration = match object_elems.get(1).unwrap() {
+            super::ObjectElem::Declaration(d) => d,
+            _ => panic!("Shoudl be declaration"),
+        };
         let second_var = &second_declaration.identifier;
         let second_value = &second_declaration.value;
         let second_value = match second_value {

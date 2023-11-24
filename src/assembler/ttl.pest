@@ -8,14 +8,18 @@ identifier = @{ ALPHAFIRST }
 reference = @{ identifier }
 number = @{ ASCII_DIGIT+ }
 string = { "\"" ~ (ALPHATEXT) ~ "\"" }
-object = { "{" ~ (declaration)* ~ "}" }
 
-meta = { reference | number | string }
+object_element = { integration | declaration }
+object = { "{" ~ object_element* ~ "}" }
+
+meta = { number | string }
 metas = { "[" ~ meta* ~ "]" }
-value = { reference | number | string | object }
+value = { number | string | object }
 
 declaration = {metas? ~ identifier ~ ":" ~ value }
-integration = { "<<" ~ ("." | "/" | ALPHAFIRST | "_")+ ~ ("with" ~ declaration)* }
+
+path = @{ ("." | "/" | ALPHAFIRST | "_")+ }
+integration = { "<<" ~ path ~ ("with" ~ declaration)* }
 
 
 file = { SOI ~ value ~ EOI }

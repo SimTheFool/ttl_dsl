@@ -1,12 +1,6 @@
-use indexmap::IndexMap;
-
-use crate::{
-    ports::TTLInputPort,
-    utils::result::{AppError, AppResult},
-};
 use std::collections::HashMap;
 
-use super::ast::{self, Import};
+use crate::utils::result::{AppError, AppResult};
 
 #[derive(PartialEq, Debug, Clone, Default)]
 pub struct Raw();
@@ -125,9 +119,8 @@ impl RawResources {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use super::{Resolved, ResolvedResources, Resource};
+    use std::collections::HashMap;
 
     #[test]
     fn it_should_resolved_raw_ressources() {
@@ -185,92 +178,4 @@ mod tests {
             _ => panic!("Should be a reference"),
         }
     }
-}
-
-pub fn ast_values_to_resource_map(
-    val: ast::Value,
-    identifier: Option<String>,
-    ctx: ResourceContext,
-    input_port: &impl TTLInputPort,
-) -> AppResult<IndexMap<String, RawResources>> {
-    let mut resource_map = IndexMap::<String, RawResources>::new();
-
-    match val {
-        ast::Value::String(s) => {
-            let path = ctx.path.clone();
-            let resource = RawResources::String(Resource::new(s.0, identifier, ctx));
-            resource_map.insert(path.unwrap_or("".to_string()), resource);
-        }
-        ast::Value::Number(n) => {
-            let path = ctx.path.clone();
-            let resource = RawResources::Number(Resource::new(n.0, identifier, ctx));
-            resource_map.insert(path.unwrap_or("".to_string()), resource);
-        }
-        ast::Value::Reference(r) => {
-            let path = ctx.path.clone();
-            let resource = RawResources::Reference(Resource::new(r.0, identifier, ctx));
-            resource_map.insert(path.unwrap_or("".to_string()), resource);
-        }
-        ast::Value::Object(o) => {
-            for elem in o.0 {
-                match elem {
-                    ast::ObjectElem::Declaration(v) => {
-                        let resource_path = match (&ctx.path, &v.identifier.0) {
-                            (None, id) => id.clone(),
-                            (Some(base), id) => format!("{}.{}", base, id),
-                        };
-
-                        let context = ResourceContext {
-                            variables: ctx.variables.clone(),
-                            path: Some(resource_path),
-                        };
-
-                        let sub_resource_map = ast_values_to_resource_map(
-                            v.value,
-                            Some(v.identifier.0),
-                            context,
-                            input_port,
-                        )?;
-
-                        resource_map.extend(sub_resource_map);
-                    }
-                    ast::ObjectElem::Import(Import { declarations, path }) => {
-                        let mut variables_map = HashMap::<String, ResolvedResources>::new();
-                        for declaration in declarations {
-                            let context = ResourceContext {
-                                variables: ctx.variables.clone(),
-                                path: Some(declaration.identifier.0.clone()),
-                            };
-
-                            let sub_resource_map = ast_values_to_resource_map(
-                                declaration.value,
-                                Some(declaration.identifier.0),
-                                context,
-                                input_port,
-                            )?;
-
-                            for (k, v) in sub_resource_map {
-                                variables_map.insert(k, v.try_compute_references()?);
-                            }
-                        }
-
-                        let import_ctx = ResourceContext {
-                            variables: Some(variables_map),
-                            path: ctx.path.clone(),
-                        };
-
-                        let import = input_port.read(&path.0)?;
-                        let value = ast::File::try_from(import.as_str())?.value;
-
-                        let sub_resource_map =
-                            ast_values_to_resource_map(value, None, import_ctx, input_port)?;
-
-                        resource_map.extend(sub_resource_map);
-                    }
-                };
-            }
-        }
-    };
-
-    Ok(resource_map)
 }

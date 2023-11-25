@@ -1,27 +1,30 @@
-mod ast;
-pub mod resources;
-
-use self::resources::{ast_values_to_resource_map, ResolvedResources};
-use crate::{assembler::resources::ResourceContext, ports::TTLInputPort, utils::result::AppResult};
+use crate::{
+    ports::TTLInputPort,
+    resource::{ResolvedResources, ResourceContext, ResourceMapper},
+    utils::result::AppResult,
+};
 use indexmap::IndexMap;
+
+use crate::ast;
 
 fn assemble_file(
     file_str: &str,
     input_port: impl TTLInputPort,
 ) -> AppResult<Vec<ResolvedResources>> {
+    let resource_mapper = ResourceMapper::new(&input_port);
+
     let value = ast::File::try_from(file_str)?.value;
 
-    let resource_map = ast_values_to_resource_map(
+    let resources_map = resource_mapper.ast_values_to_resource_map(
         value,
         None,
         ResourceContext {
             variables: None,
             path: None,
         },
-        &input_port,
     )?;
 
-    let resource_map = resource_map
+    let resources_map = resources_map
         .into_iter()
         .map(|(k, v)| {
             let new_kv = (k.clone(), v.try_compute_references()?);
@@ -36,15 +39,13 @@ fn assemble_file(
             },
         )?;
 
-    Ok(resource_map.into_iter().map(|(_, v)| v).collect())
+    Ok(resources_map.into_iter().map(|(_, v)| v).collect())
 }
 
 #[cfg(test)]
 mod tests {
     use super::assemble_file;
-    use crate::{
-        assembler::resources::ResolvedResources, infras::file_reader::TTLMockedInputAdapter,
-    };
+    use crate::{ports::TTLMockedInputAdapter, resource::ResolvedResources};
 
     #[test]
     fn it_should_create_resources() {

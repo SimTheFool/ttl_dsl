@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
-use crate::{
-    ports::TTLInputPort,
-    utils::result::{AppError, AppResult},
-};
+use crate::utils::result::{AppError, AppResult};
+
+pub trait TTLInputPort {
+    fn read(&self, path: &str) -> AppResult<String>;
+}
 
 pub struct TTLMockedInputAdapter<'a> {
     mocking_store: std::collections::HashMap<&'a str, &'a str>,

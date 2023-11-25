@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::utils::result::{AppError, AppResult};
 
-pub trait TTLInputPort {
+pub trait TTLInputPort: Sync {
     fn read(&self, path: &str) -> AppResult<String>;
 }
 

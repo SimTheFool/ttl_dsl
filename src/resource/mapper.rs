@@ -1,6 +1,7 @@
 use super::resources::{RawResources, ResolvedResources, Resource, ResourceContext};
 use crate::{ast, ports::TTLInputPort, utils::result::AppResult};
 use indexmap::IndexMap;
+use rayon::prelude::*;
 use std::collections::HashMap;
 
 pub struct ResourceMapper<'a> {
@@ -21,24 +22,25 @@ impl<'a> ResourceMapper<'a> {
         let mut resource_map = IndexMap::<String, RawResources>::new();
 
         match val {
-            ast::Value::String(s) => {
+            ast::Value::String(ast::StringLit(str)) => {
                 let path = ctx.path.clone();
-                let resource = RawResources::String(Resource::new(s.0, identifier, ctx));
-                resource_map.insert(path.unwrap_or("".to_string()), resource);
+                let resource = RawResources::String(Resource::new(str, identifier, ctx));
+                resource_map.insert(path.unwrap_or_default(), resource);
             }
-            ast::Value::Number(n) => {
+            ast::Value::Number(ast::Number(nb)) => {
                 let path = ctx.path.clone();
-                let resource = RawResources::Number(Resource::new(n.0, identifier, ctx));
-                resource_map.insert(path.unwrap_or("".to_string()), resource);
+                let resource = RawResources::Number(Resource::new(nb, identifier, ctx));
+                resource_map.insert(path.unwrap_or_default(), resource);
             }
-            ast::Value::Reference(r) => {
+            ast::Value::Reference(ast::Ref(id)) => {
                 let path = ctx.path.clone();
-                let resource = RawResources::Reference(Resource::new(r.0, identifier, ctx));
-                resource_map.insert(path.unwrap_or("".to_string()), resource);
+                let resource = RawResources::Reference(Resource::new(id, identifier, ctx));
+                resource_map.insert(path.unwrap_or_default(), resource);
             }
-            ast::Value::Object(o) => {
-                for elem in o.0 {
-                    match elem {
+            ast::Value::Object(ast::Object(elems)) => {
+                let sub_resource_maps = elems
+                    .into_par_iter()
+                    .map(|elem| match elem {
                         ast::ObjectElem::Declaration(v) => {
                             let resource_path = match (&ctx.path, &v.identifier.0) {
                                 (None, id) => id.clone(),
@@ -56,7 +58,7 @@ impl<'a> ResourceMapper<'a> {
                                 context,
                             )?;
 
-                            resource_map.extend(sub_resource_map);
+                            Ok(sub_resource_map)
                         }
                         ast::ObjectElem::Import(ast::Import { declarations, path }) => {
                             let mut variables_map = HashMap::<String, ResolvedResources>::new();
@@ -88,10 +90,20 @@ impl<'a> ResourceMapper<'a> {
                             let sub_resource_map =
                                 self.ast_values_to_resource_map(value, None, import_ctx)?;
 
-                            resource_map.extend(sub_resource_map);
+                            Ok(sub_resource_map)
                         }
-                    };
-                }
+                    })
+                    .collect::<AppResult<Vec<IndexMap<String, RawResources>>>>()?;
+
+                let sub_resource_map = sub_resource_maps.into_iter().fold(
+                    IndexMap::<String, RawResources>::new(),
+                    |mut acc, sub_resource_map| {
+                        acc.extend(sub_resource_map);
+                        acc
+                    },
+                );
+
+                resource_map.extend(sub_resource_map);
             }
         };
 

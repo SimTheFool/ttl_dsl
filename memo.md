@@ -1,6 +1,4 @@
-- utiliser rayon
-
-- refacto pour borrow instead of copy
+- refacto pour borrow instead of clone
 
 - Regérer les metas
 

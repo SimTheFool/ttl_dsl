@@ -1,3 +1,3 @@
-mod assemble_ttl;
+mod assemble_from_str;
 
-pub use assemble_ttl::*;
+pub use assemble_from_str::*;

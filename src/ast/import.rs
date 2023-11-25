@@ -17,11 +17,7 @@ pub struct Import {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::{
-        import::Import,
-        parser::TTLParser,
-        values::{Declaration, Value},
-    };
+    use crate::ast::{import::Import, parser::TTLParser, values::Value};
     use from_pest::FromPest;
     use pest::Parser;
 

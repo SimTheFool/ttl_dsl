@@ -7,7 +7,7 @@ use indexmap::IndexMap;
 
 use crate::ast;
 
-fn assemble_file(
+pub fn assemble_from_str(
     file_str: &str,
     input_port: impl TTLInputPort,
 ) -> AppResult<Vec<ResolvedResources>> {
@@ -44,13 +44,13 @@ fn assemble_file(
 
 #[cfg(test)]
 mod tests {
-    use super::assemble_file;
+    use super::assemble_from_str;
     use crate::{ports::TTLMockedInputAdapter, resource::ResolvedResources};
 
     #[test]
     fn it_should_create_resources() {
         let mocked_input = TTLMockedInputAdapter::new();
-        let values = assemble_file(
+        let values = assemble_from_str(
             r#"{
                 var05: "hello"
                 var06: {
@@ -96,7 +96,7 @@ mod tests {
     #[test]
     fn it_should_create_resources_with_context() {
         let mocked_input = TTLMockedInputAdapter::new();
-        let values = assemble_file(
+        let values = assemble_from_str(
             r#"{
                 var05: "hello"
                 var06: {
@@ -145,7 +145,7 @@ mod tests {
             }"#,
         );
 
-        let values = assemble_file(
+        let values = assemble_from_str(
             r#"{
                 << ./stats
                     with var01 : 001

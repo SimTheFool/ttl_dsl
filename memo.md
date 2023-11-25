@@ -1,5 +1,11 @@
-- tester le contexte
+
+- utiliser un objet mapper au lieu d'une fonction, le mettre dans un fichier à part et tester de manière plus fine
+
+- faire un dossier ast à part et séparer les différents éléments et gérer le reexporting
+
+- achitecture facon xml exporter
+
+
 - Regérer les metas
-- Implémenter une methode sur le path du context pour pouvoir générer un nouveau path depuis un identifier
-- Implémenter une methode sur les value pour pouvoir les convertir en resources
-- Implémenter une methode sur les metas pour pouvoir les convertir en reousrce
+
+- test e2e

@@ -9,17 +9,17 @@ reference = @{ identifier }
 number = @{ ASCII_DIGIT+ }
 string = { "\"" ~ (ALPHATEXT) ~ "\"" }
 
-object_element = { integration | declaration }
+object_element = { import | declaration }
 object = { "{" ~ object_element* ~ "}" }
 
 meta = { number | string }
 metas = { "[" ~ meta* ~ "]" }
-value = { number | string | object }
+value = { number | string | object | reference }
 
 declaration = {metas? ~ identifier ~ ":" ~ value }
 
 path = @{ ("." | "/" | ALPHAFIRST | "_")+ }
-integration = { "<<" ~ path ~ ("with" ~ declaration)* }
+import = { "<<" ~ path ~ ("with" ~ declaration)* }
 
 
 file = { SOI ~ value ~ EOI }

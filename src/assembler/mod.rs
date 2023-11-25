@@ -1,96 +1,34 @@
 mod ast;
 pub mod resources;
 
-use self::resources::{Literal, Referenced, Resource, Resources};
+use self::resources::{ast_values_to_resource_map, ResolvedResources};
 use crate::{assembler::resources::ResourceContext, ports::TTLInputPort, utils::result::AppResult};
 use indexmap::IndexMap;
 
 fn assemble_file(
     file_str: &str,
     input_port: impl TTLInputPort,
-) -> AppResult<Vec<Resources<Literal>>> {
-    let file = ast::File::try_from(file_str)?;
-    let value = file.value;
+) -> AppResult<Vec<ResolvedResources>> {
+    let value = ast::File::try_from(file_str)?.value;
 
-    fn ast_to_value(
-        val: ast::Value,
-        identifier: Option<String>,
-        ctx: ResourceContext,
-    ) -> IndexMap<String, Resources<Referenced>> {
-        let mut resource_map = IndexMap::<String, Resources<Referenced>>::new();
-
-        match val {
-            ast::Value::String(s) => {
-                let resource =
-                    Resources::String(Resource::new(s.0, identifier.clone(), ctx.clone()));
-
-                let resource_path = match (ctx.path, identifier) {
-                    (None, None) => "".to_string(),
-                    (None, Some(id)) => id,
-                    (Some(base), None) => base,
-                    (Some(base), Some(id)) => format!("{}.{}", base, id),
-                };
-
-                resource_map.insert(resource_path, resource);
-            }
-            ast::Value::Number(n) => {
-                let resource =
-                    Resources::Number(Resource::new(n.0, identifier.clone(), ctx.clone()));
-
-                let resource_path = match (ctx.path, identifier) {
-                    (None, None) => "".to_string(),
-                    (None, Some(id)) => id,
-                    (Some(base), None) => base,
-                    (Some(base), Some(id)) => format!("{}.{}", base, id),
-                };
-
-                resource_map.insert(resource_path, resource);
-            }
-            ast::Value::Object(o) => {
-                for elem in o.0 {
-                    match elem {
-                        ast::ObjectElem::Declaration(v) => {
-                            let resource_path = match (&ctx.path, &v.identifier) {
-                                (None, id) => id.0.clone(),
-                                (Some(base), id) => format!("{}.{}", base, id.0.clone()),
-                            };
-
-                            let sub_resource_map = ast_to_value(
-                                v.value,
-                                Some(v.identifier.0),
-                                ResourceContext {
-                                    variables: ctx.variables.clone(),
-                                    path: Some(resource_path),
-                                },
-                            );
-
-                            resource_map.extend(sub_resource_map);
-                        }
-                        _ => {}
-                    };
-                }
-            }
-        };
-
-        resource_map
-    }
-
-    let resource_map = ast_to_value(
+    let resource_map = ast_values_to_resource_map(
         value,
         None,
         ResourceContext {
             variables: None,
             path: None,
         },
-    );
-    let resource_map: IndexMap<String, Resources<Literal>> = resource_map
+        &input_port,
+    )?;
+
+    let resource_map = resource_map
         .into_iter()
         .map(|(k, v)| {
             let new_kv = (k.clone(), v.try_compute_references()?);
             return AppResult::Ok(new_kv);
         })
         .try_fold(
-            IndexMap::<String, Resources<Literal>>::new(),
+            IndexMap::<String, ResolvedResources>::new(),
             |mut map, kv| {
                 let (k, v) = kv?;
                 map.insert(k, v);
@@ -105,8 +43,7 @@ fn assemble_file(
 mod tests {
     use super::assemble_file;
     use crate::{
-        assembler::resources::{Literal, Resources},
-        infras::file_reader::TTLMockedInputAdapter,
+        assembler::resources::ResolvedResources, infras::file_reader::TTLMockedInputAdapter,
     };
 
     #[test]
@@ -131,7 +68,7 @@ mod tests {
         let third_ressource = values.get(2).unwrap();
 
         match first_ressource {
-            Resources::<Literal>::String(x) => {
+            ResolvedResources::String(x) => {
                 assert_eq!(x.identifier, Some("var05".to_string()));
                 assert_eq!(x.value, "hello");
             }
@@ -139,7 +76,7 @@ mod tests {
         }
 
         match second_ressource {
-            Resources::<Literal>::Number(x) => {
+            ResolvedResources::Number(x) => {
                 assert_eq!(x.identifier, Some("var07".to_string()));
                 assert_eq!(x.value, 7.0);
             }
@@ -147,7 +84,7 @@ mod tests {
         }
 
         match third_ressource {
-            Resources::<Literal>::Number(x) => {
+            ResolvedResources::Number(x) => {
                 assert_eq!(x.identifier, Some("var08".to_string()));
                 assert_eq!(x.value, 8.0);
             }
@@ -155,14 +92,54 @@ mod tests {
         }
     }
 
-    /* #[test]
-    fn it_should_create_resources_with_integration() {
+    #[test]
+    fn it_should_create_resources_with_context() {
+        let mocked_input = TTLMockedInputAdapter::new();
+        let values = assemble_file(
+            r#"{
+                var05: "hello"
+                var06: {
+                    var07: 07
+                }
+            }"#,
+            mocked_input,
+        )
+        .unwrap();
+
+        assert_eq!(values.len(), 2);
+
+        let first_ressource = values.get(0).unwrap();
+        let second_ressource = values.get(1).unwrap();
+
+        match first_ressource {
+            ResolvedResources::String(x) => {
+                assert_eq!(x.identifier, Some("var05".to_string()));
+                assert_eq!(x.value, "hello");
+                assert_eq!(x.context.variables, None);
+                assert_eq!(x.context.path, Some("var05".to_string()));
+            }
+            _ => panic!("Should be a string"),
+        }
+
+        match second_ressource {
+            ResolvedResources::Number(x) => {
+                assert_eq!(x.identifier, Some("var07".to_string()));
+                assert_eq!(x.value, 7.0);
+                assert_eq!(x.context.variables, None);
+                assert_eq!(x.context.path, Some("var06.var07".to_string()));
+            }
+            _ => panic!("Should be a number"),
+        }
+    }
+
+    #[test]
+    fn it_should_create_resources_with_import() {
         let mut mocked_input = TTLMockedInputAdapter::new();
         mocked_input.mock_file(
             "./stats",
             r#"{
-                somevar01: var01,
-                somevar02: var02,
+                somevar01: var01
+                somevar02: var02
                 someothervar: "statistics"
             }"#,
         );
@@ -186,35 +163,35 @@ mod tests {
         let fourth_ressource = values.get(3).unwrap();
 
         match first_ressource {
-            Resources::<Literal>::Number(x) => {
-                assert_eq!(x.identifier, "somevar01");
+            ResolvedResources::Number(x) => {
+                assert_eq!(x.identifier, Some("somevar01".to_string()));
                 assert_eq!(x.value, 1.0);
             }
             _ => panic!("Should be a number"),
         }
 
         match second_ressource {
-            Resources::<Literal>::String(x) => {
-                assert_eq!(x.identifier, "someothervar");
+            ResolvedResources::String(x) => {
+                assert_eq!(x.identifier, Some("somevar02".to_string()));
                 assert_eq!(x.value, "002");
             }
             _ => panic!("Should be a string"),
         }
 
         match third_ressource {
-            Resources::<Literal>::String(x) => {
-                assert_eq!(x.identifier, "somevar02");
+            ResolvedResources::String(x) => {
+                assert_eq!(x.identifier, Some("someothervar".to_string()));
                 assert_eq!(x.value, "statistics");
             }
             _ => panic!("Should be a string"),
         }
 
         match fourth_ressource {
-            Resources::<Literal>::Number(x) => {
-                assert_eq!(x.identifier, "var03");
+            ResolvedResources::Number(x) => {
+                assert_eq!(x.identifier, Some("var03".to_string()));
                 assert_eq!(x.value, 3.0);
             }
             _ => panic!("Should be a number"),
         }
-    } */
+    }
 }

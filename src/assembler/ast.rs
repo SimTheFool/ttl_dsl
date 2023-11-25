@@ -38,7 +38,7 @@ pub struct Number(
 #[pest_ast(rule(Rule::object_element))]
 pub enum ObjectElem {
     Declaration(Declaration),
-    Integration(Integration),
+    Import(Import),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
@@ -76,6 +76,7 @@ pub enum Value {
     String(StringLit),
     Number(Number),
     Object(Object),
+    Reference(Ref),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
@@ -83,8 +84,8 @@ pub enum Value {
 pub struct Path(#[pest_ast(outer(with(span_into_string)))] pub String);
 
 #[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::integration))]
-pub struct Integration {
+#[pest_ast(rule(Rule::import))]
+pub struct Import {
     pub path: Path,
     pub declarations: Vec<Declaration>,
 }
@@ -121,7 +122,7 @@ impl TryFrom<&str> for File {
 
 #[cfg(test)]
 mod tests {
-    use crate::assembler::ast::{Integration, Object};
+    use crate::assembler::ast::{Import, Object};
 
     use super::{Declaration, Variable};
     use from_pest::FromPest;
@@ -166,14 +167,14 @@ mod tests {
     }
 
     #[test]
-    fn it_should_parse_integration() {
+    fn it_should_parse_import() {
         let str = r#"<< ./stats
             with var01: 01
             with var02: "002"
         "#;
 
-        let mut pairs = super::TTLParser::parse(super::Rule::integration, str).unwrap();
-        let Integration { declarations, path } = super::Integration::from_pest(&mut pairs).unwrap();
+        let mut pairs = super::TTLParser::parse(super::Rule::import, str).unwrap();
+        let Import { declarations, path } = super::Import::from_pest(&mut pairs).unwrap();
 
         assert_eq!(path.0, "./stats");
 
@@ -201,9 +202,65 @@ mod tests {
     }
 
     #[test]
+    fn it_should_parse_reference() {
+        let str = r#"var001"#;
+
+        let mut pairs = super::TTLParser::parse(super::Rule::reference, str).unwrap();
+        let reference = super::Ref::from_pest(&mut pairs).unwrap();
+
+        assert_eq!(reference.0, "var001");
+    }
+
+    #[test]
+    fn it_should_parse_declaration_with_reference() {
+        let str = r#"somevar: var001"#;
+
+        let mut pairs = super::TTLParser::parse(super::Rule::declaration, str).unwrap();
+        let declaration = super::Declaration::from_pest(&mut pairs).unwrap();
+
+        let identifier = declaration.identifier;
+        let value = declaration.value;
+
+        assert_eq!(identifier.0, "somevar");
+        let value = match value {
+            super::Value::Reference(r) => r.0.clone(),
+            _ => panic!("Unexpected value"),
+        };
+        assert_eq!(value, "var001")
+    }
+
+    #[test]
+    fn it_should_parse_reference_in_object() {
+        let str = r#"{
+            var02: reference
+            var03: aaaa
+        }"#;
+
+        let mut pairs = super::TTLParser::parse(super::Rule::object, str).unwrap();
+        let Object(elems) = super::Object::from_pest(&mut pairs).unwrap();
+
+        assert_eq!(elems.len(), 2);
+
+        let first_declaration = match elems.get(0).unwrap() {
+            super::ObjectElem::Declaration(d) => d,
+            _ => panic!("Should be declaration"),
+        };
+
+        let id = &first_declaration.identifier;
+        let value = &first_declaration.value;
+
+        assert_eq!(id.0, "var02");
+        let value = match value {
+            super::Value::Reference(r) => r.0.clone(),
+            _ => panic!("Unexpected value"),
+        };
+        assert_eq!(value, "reference")
+    }
+
+    #[test]
     fn it_should_parse_object() {
         let str = r#"{
-            << ./integration
+            << ./import
                 with var01: 01
             var02: 745
             var03: "hello"
@@ -214,9 +271,9 @@ mod tests {
 
         assert_eq!(elems.len(), 3);
 
-        let Integration { declarations, path } = match elems.get(0).unwrap() {
-            super::ObjectElem::Integration(i) => i,
-            _ => panic!("Should be integration"),
+        let Import { declarations, path } = match elems.get(0).unwrap() {
+            super::ObjectElem::Import(i) => i,
+            _ => panic!("Should be import"),
         };
 
         let second_declaration = match elems.get(1).unwrap() {
@@ -243,7 +300,7 @@ mod tests {
             _ => panic!("Unexpected value"),
         };
 
-        assert_eq!(path.0, "./integration");
+        assert_eq!(path.0, "./import");
         assert_eq!(declarations.len(), 1);
 
         let first_declaration = declarations.get(0).unwrap();

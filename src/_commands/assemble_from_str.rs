@@ -1,198 +1,160 @@
+use crate::domain::ast;
 use crate::{
+    domain::resource::{
+        state::Raw, RawResources, ResolvedResources, ResourceBuilder, ResourceContext,
+        TryResolveResource,
+    },
     ports::TTLInputPort,
-    resource::{ResolvedResources, ResourceContext, ResourceMapper},
     utils::result::AppResult,
 };
 use indexmap::IndexMap;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use std::collections::HashMap;
 
-use crate::ast;
+pub struct AssembleFromStr<'a> {
+    pub input_port: &'a dyn TTLInputPort,
+}
 
-pub fn assemble_from_str(
-    file_str: &str,
-    input_port: impl TTLInputPort,
-) -> AppResult<Vec<ResolvedResources>> {
-    let resource_mapper = ResourceMapper::new(&input_port);
+impl<'a> AssembleFromStr<'a> {
+    fn ast_values_to_resource_map(
+        &self,
+        val: ast::Value,
+        identifier: Option<String>,
+        ctx: ResourceContext,
+    ) -> AppResult<IndexMap<String, RawResources>> {
+        let mut resource_map = IndexMap::<String, RawResources>::new();
 
-    let value = ast::File::try_from(file_str)?.value;
+        match val {
+            ast::Value::String(ast::StringLit(str)) => {
+                let path = ctx.path.clone();
+                let resource = ResourceBuilder::<String, Raw>::default()
+                    .context(ctx)
+                    .identifier(identifier)
+                    .value(str)
+                    .build()?;
+                let resource = RawResources::String(resource);
+                resource_map.insert(path.unwrap_or_default(), resource);
+            }
+            ast::Value::Number(ast::Number(nb)) => {
+                let path = ctx.path.clone();
+                let resource = ResourceBuilder::<f64, Raw>::default()
+                    .context(ctx)
+                    .identifier(identifier)
+                    .value(nb)
+                    .build()?;
+                let resource = RawResources::Number(resource);
+                resource_map.insert(path.unwrap_or_default(), resource);
+            }
+            ast::Value::Reference(ast::Ref(id)) => {
+                let path = ctx.path.clone();
+                let resource = ResourceBuilder::<String, Raw>::default()
+                    .context(ctx)
+                    .identifier(identifier)
+                    .value(id.clone())
+                    .build()?;
+                let resource = RawResources::Reference(resource);
+                resource_map.insert(path.unwrap_or_default(), resource);
+            }
+            ast::Value::Object(ast::Object(elems)) => {
+                let sub_resource_maps = elems
+                    .into_par_iter()
+                    .map(|elem| match elem {
+                        ast::ObjectElem::Declaration(v) => {
+                            let resource_path = match (&ctx.path, &v.identifier.0) {
+                                (None, id) => id.clone(),
+                                (Some(base), id) => format!("{}.{}", base, id),
+                            };
 
-    let resources_map = resource_mapper.ast_values_to_resource_map(
-        value,
-        None,
-        ResourceContext {
-            variables: None,
-            path: None,
-        },
-    )?;
+                            let context = ResourceContext {
+                                variables: ctx.variables.clone(),
+                                path: Some(resource_path),
+                            };
 
-    let resources_map = resources_map
-        .into_iter()
-        .map(|(k, v)| {
-            let new_kv = (k.clone(), v.try_compute_references()?);
-            return AppResult::Ok(new_kv);
-        })
-        .try_fold(
-            IndexMap::<String, ResolvedResources>::new(),
-            |mut map, kv| {
-                let (k, v) = kv?;
-                map.insert(k, v);
-                AppResult::Ok(map)
+                            let sub_resource_map = self.ast_values_to_resource_map(
+                                v.value,
+                                Some(v.identifier.0),
+                                context,
+                            )?;
+
+                            Ok(sub_resource_map)
+                        }
+                        ast::ObjectElem::Import(ast::Import { declarations, path }) => {
+                            let mut variables_map = HashMap::<String, ResolvedResources>::new();
+                            for declaration in declarations {
+                                let context = ResourceContext {
+                                    variables: ctx.variables.clone(),
+                                    path: Some(declaration.identifier.0.clone()),
+                                };
+
+                                let sub_resource_map = self.ast_values_to_resource_map(
+                                    declaration.value,
+                                    Some(declaration.identifier.0),
+                                    context,
+                                )?;
+
+                                for (k, v) in sub_resource_map {
+                                    variables_map.insert(k, v.try_resolve()?);
+                                }
+                            }
+
+                            let import_ctx = ResourceContext {
+                                variables: Some(variables_map),
+                                path: ctx.path.clone(),
+                            };
+
+                            let import = self.input_port.read(&path.0)?;
+                            let value = ast::File::try_from(import.as_str())?.value;
+
+                            let sub_resource_map =
+                                self.ast_values_to_resource_map(value, None, import_ctx)?;
+
+                            Ok(sub_resource_map)
+                        }
+                    })
+                    .collect::<AppResult<Vec<IndexMap<String, RawResources>>>>()?;
+
+                let sub_resource_map = sub_resource_maps.into_iter().fold(
+                    IndexMap::<String, RawResources>::new(),
+                    |mut acc, sub_resource_map| {
+                        acc.extend(sub_resource_map);
+                        acc
+                    },
+                );
+
+                resource_map.extend(sub_resource_map);
+            }
+        };
+
+        Ok(resource_map)
+    }
+
+    pub fn execute(&self, file_str: &str) -> AppResult<Vec<ResolvedResources>> {
+        let value = ast::File::try_from(file_str)?.value;
+
+        let resources_map = self.ast_values_to_resource_map(
+            value,
+            None,
+            ResourceContext {
+                variables: None,
+                path: None,
             },
         )?;
 
-    Ok(resources_map.into_iter().map(|(_, v)| v).collect())
-}
+        let resources_map = resources_map
+            .into_iter()
+            .map(|(k, v)| {
+                let new_kv = (k.clone(), v.try_resolve()?);
+                return AppResult::Ok(new_kv);
+            })
+            .try_fold(
+                IndexMap::<String, ResolvedResources>::new(),
+                |mut map, kv| {
+                    let (k, v) = kv?;
+                    map.insert(k, v);
+                    AppResult::Ok(map)
+                },
+            )?;
 
-#[cfg(test)]
-mod tests {
-    use super::assemble_from_str;
-    use crate::{ports::TTLMockedInputAdapter, resource::ResolvedResources};
-
-    #[test]
-    fn it_should_create_resources() {
-        let mocked_input = TTLMockedInputAdapter::new();
-        let values = assemble_from_str(
-            r#"{
-                var05: "hello"
-                var06: {
-                    var07: 07
-                    var08: 08
-                }
-            }"#,
-            mocked_input,
-        )
-        .unwrap();
-
-        assert_eq!(values.len(), 3);
-
-        let first_ressource = values.get(0).unwrap();
-        let second_ressource = values.get(1).unwrap();
-        let third_ressource = values.get(2).unwrap();
-
-        match first_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("var05".to_string()));
-                assert_eq!(x.value, "hello");
-            }
-            _ => panic!("Should be a string"),
-        }
-
-        match second_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var07".to_string()));
-                assert_eq!(x.value, 7.0);
-            }
-            _ => panic!("Should be a number"),
-        }
-
-        match third_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var08".to_string()));
-                assert_eq!(x.value, 8.0);
-            }
-            _ => panic!("Should be a number"),
-        }
-    }
-
-    #[test]
-    fn it_should_create_resources_with_context() {
-        let mocked_input = TTLMockedInputAdapter::new();
-        let values = assemble_from_str(
-            r#"{
-                var05: "hello"
-                var06: {
-                    var07: 07
-                }
-            }"#,
-            mocked_input,
-        )
-        .unwrap();
-
-        assert_eq!(values.len(), 2);
-
-        let first_ressource = values.get(0).unwrap();
-        let second_ressource = values.get(1).unwrap();
-
-        match first_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("var05".to_string()));
-                assert_eq!(x.value, "hello");
-                assert_eq!(x.context.variables, None);
-                assert_eq!(x.context.path, Some("var05".to_string()));
-            }
-            _ => panic!("Should be a string"),
-        }
-
-        match second_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var07".to_string()));
-                assert_eq!(x.value, 7.0);
-                assert_eq!(x.context.variables, None);
-                assert_eq!(x.context.path, Some("var06.var07".to_string()));
-            }
-            _ => panic!("Should be a number"),
-        }
-    }
-
-    #[test]
-    fn it_should_create_resources_with_import() {
-        let mut mocked_input = TTLMockedInputAdapter::new();
-        mocked_input.mock_file(
-            "./stats",
-            r#"{
-                somevar01: var01
-                somevar02: var02
-                someothervar: "statistics"
-            }"#,
-        );
-
-        let values = assemble_from_str(
-            r#"{
-                << ./stats
-                    with var01 : 001
-                    with var02 : "002"
-                var03: 003
-            }"#,
-            mocked_input,
-        )
-        .unwrap();
-
-        assert_eq!(values.len(), 4);
-
-        let first_ressource = values.get(0).unwrap();
-        let second_ressource = values.get(1).unwrap();
-        let third_ressource = values.get(2).unwrap();
-        let fourth_ressource = values.get(3).unwrap();
-
-        match first_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("somevar01".to_string()));
-                assert_eq!(x.value, 1.0);
-            }
-            _ => panic!("Should be a number"),
-        }
-
-        match second_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("somevar02".to_string()));
-                assert_eq!(x.value, "002");
-            }
-            _ => panic!("Should be a string"),
-        }
-
-        match third_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("someothervar".to_string()));
-                assert_eq!(x.value, "statistics");
-            }
-            _ => panic!("Should be a string"),
-        }
-
-        match fourth_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var03".to_string()));
-                assert_eq!(x.value, 3.0);
-            }
-            _ => panic!("Should be a number"),
-        }
+        Ok(resources_map.into_iter().map(|(_, v)| v).collect())
     }
 }

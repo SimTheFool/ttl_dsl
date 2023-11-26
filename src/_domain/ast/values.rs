@@ -32,25 +32,10 @@ pub enum Meta {
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::metas))]
 pub struct Metas(pub Vec<Meta>);
-/* impl Into<(Option<Vec<String>>, Option<Vec<String>>)> for Metas {
-    fn into(self) -> (Option<Vec<String>>, Option<Vec<String>>) {
-        let mut meta_lit = None;
-        let meta_ref = None;
-        for meta in self.0 {
-            match meta {
-                Meta::String(s) => meta_lit.get_or_insert(vec![]).push(s.0),
-                Meta::Number(n) => meta_lit.get_or_insert(vec![]).push(n.0.to_string()),
-            };
-        }
-
-        (meta_lit, meta_ref)
-    }
-}
- */
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::{
+    use crate::domain::ast::{
         parser::TTLParser,
         values::{Declaration, Value},
     };

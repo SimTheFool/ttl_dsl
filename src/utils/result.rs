@@ -1,3 +1,5 @@
+use derive_builder::UninitializedFieldError;
+
 #[derive(Debug, thiserror::Error)]
 pub enum AppError {
     #[error(transparent)]
@@ -14,6 +16,12 @@ impl AppError {
         T: Into<anyhow::Error>,
     {
         AppError::Other(e.into())
+    }
+}
+
+impl From<UninitializedFieldError> for AppError {
+    fn from(ufe: UninitializedFieldError) -> AppError {
+        AppError::String(ufe.to_string())
     }
 }
 

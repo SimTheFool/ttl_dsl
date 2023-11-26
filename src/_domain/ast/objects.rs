@@ -14,7 +14,7 @@ pub struct Object(pub Vec<ObjectElem>);
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::{
+    use crate::domain::ast::{
         import::Import,
         objects::{Object, ObjectElem},
         parser::TTLParser,

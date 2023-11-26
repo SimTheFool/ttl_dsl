@@ -1,6 +1,6 @@
 use super::{parser::Rule, values::Value};
 use crate::{
-    ast::parser::TTLParser,
+    domain::ast::parser::TTLParser,
     utils::result::{AppError, AppResult},
 };
 use pest::Parser;
@@ -30,7 +30,7 @@ impl TryFrom<&str> for File {
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::{objects::ObjectElem, values::Value};
+    use crate::domain::ast::{objects::ObjectElem, values::Value};
     use from_pest::FromPest;
     use pest::Parser;
 

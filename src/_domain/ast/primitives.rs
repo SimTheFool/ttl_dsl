@@ -21,7 +21,7 @@ pub struct Number(
 
 #[cfg(test)]
 mod tests {
-    use crate::ast::parser::TTLParser;
+    use crate::domain::ast::parser::TTLParser;
     use from_pest::FromPest;
     use pest::Parser;
 

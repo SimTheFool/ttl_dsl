@@ -2,7 +2,7 @@ use pest::Span;
 use pest_derive::Parser;
 
 #[derive(Parser)]
-#[grammar = "ast/ttl.pest"]
+#[grammar = "_domain/ast/ttl.pest"]
 pub struct TTLParser;
 
 pub fn span_into_string(span: Span) -> String {

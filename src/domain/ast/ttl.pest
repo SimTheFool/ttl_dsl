@@ -12,7 +12,7 @@ string = { "\"" ~ (ALPHATEXT) ~ "\"" }
 object_element = { import | declaration }
 object = { "{" ~ object_element* ~ "}" }
 
-meta = { number | string }
+meta = { number | string | reference }
 metas = { "[" ~ meta* ~ "]" }
 value = { number | string | object | reference }
 

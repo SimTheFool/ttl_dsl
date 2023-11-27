@@ -1,4 +1,4 @@
-use crate::result::AppError;
+use crate::result::{AppError, AppResult};
 use derive_builder::Builder;
 
 use super::state::{Raw, Resolved, ResourceState};
@@ -26,19 +26,41 @@ where
     _phantom: std::marker::PhantomData<U>,
 }
 
+pub type RawStringBuilder = ResourceBuilder<String, Raw>;
+pub type RawNumberBuilder = ResourceBuilder<f64, Raw>;
+
 impl<T, U> ResourceBuilder<T, U>
 where
     T: Clone + Default,
     U: ResourceState,
 {
-    pub fn context(mut self, ctx: ResourceContext) -> Self {
+    pub fn context(&mut self, ctx: ResourceContext) -> &mut Self {
         self.context = Some(Box::new(ctx));
         self
     }
 
-    pub fn context_box(mut self, ctx: Box<ResourceContext>) -> Self {
+    pub fn context_box(&mut self, ctx: Box<ResourceContext>) -> &mut Self {
         self.context = Some(ctx);
         self
+    }
+}
+
+impl ResourceBuilder<String, Raw> {
+    pub fn build_string_resource(&mut self) -> AppResult<RawResources> {
+        let resource = self.build()?;
+        Ok(RawResources::String(resource))
+    }
+
+    pub fn build_reference_resource(&mut self) -> AppResult<RawResources> {
+        let resource = self.build()?;
+        Ok(RawResources::Reference(resource))
+    }
+}
+
+impl ResourceBuilder<f64, Raw> {
+    pub fn build_number_resource(&mut self) -> AppResult<RawResources> {
+        let resource = self.build()?;
+        Ok(RawResources::Number(resource))
     }
 }
 

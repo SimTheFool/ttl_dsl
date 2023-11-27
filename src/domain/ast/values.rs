@@ -27,6 +27,7 @@ pub struct Declaration {
 pub enum Meta {
     String(StringLit),
     Number(Number),
+    Reference(Ref),
 }
 
 #[derive(Debug, PartialEq, FromPest)]

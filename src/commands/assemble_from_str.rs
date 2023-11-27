@@ -1,9 +1,7 @@
 use crate::domain::ast;
+use crate::domain::resource::{RawNumberBuilder, RawStringBuilder};
 use crate::{
-    domain::resource::{
-        state::Raw, RawResources, ResolvedResources, ResourceBuilder, ResourceContext,
-        TryResolveResource,
-    },
+    domain::resource::{RawResources, ResolvedResources, ResourceContext, TryResolveResource},
     ports::TTLInputPort,
     utils::result::AppResult,
 };
@@ -20,39 +18,61 @@ impl<'a> AssembleFromStr<'a> {
         &self,
         val: ast::Value,
         identifier: Option<String>,
+        metas: Option<ast::Metas>,
         ctx: ResourceContext,
     ) -> AppResult<IndexMap<String, RawResources>> {
-        let mut resource_map = IndexMap::<String, RawResources>::new();
+        let metas = match metas {
+            Some(m) => Some(
+                m.0.into_iter()
+                    .map(|m| match m {
+                        ast::Meta::String(ast::StringLit(s)) => Ok(RawStringBuilder::default()
+                            .context(ctx.clone())
+                            .value(s)
+                            .build_string_resource()?),
+                        ast::Meta::Number(ast::Number(nb)) => Ok(RawNumberBuilder::default()
+                            .context(ctx.clone())
+                            .value(nb)
+                            .build_number_resource()?),
+                        ast::Meta::Reference(ast::Ref(id)) => Ok(RawStringBuilder::default()
+                            .context(ctx.clone())
+                            .value(id)
+                            .build_reference_resource()?),
+                    })
+                    .collect::<AppResult<Vec<RawResources>>>()?,
+            ),
+            None => None,
+        };
 
+        let mut resource_map = IndexMap::<String, RawResources>::new();
         match val {
             ast::Value::String(ast::StringLit(str)) => {
                 let path = ctx.path.clone();
-                let resource = ResourceBuilder::<String, Raw>::default()
+                let resource = RawStringBuilder::default()
                     .context(ctx)
                     .identifier(identifier)
                     .value(str)
-                    .build()?;
-                let resource = RawResources::String(resource);
+                    .metas(metas)
+                    .build_string_resource()?;
                 resource_map.insert(path.unwrap_or_default(), resource);
             }
             ast::Value::Number(ast::Number(nb)) => {
                 let path = ctx.path.clone();
-                let resource = ResourceBuilder::<f64, Raw>::default()
+                let resource = RawNumberBuilder::default()
                     .context(ctx)
                     .identifier(identifier)
                     .value(nb)
-                    .build()?;
-                let resource = RawResources::Number(resource);
+                    .metas(metas)
+                    .build_number_resource()?;
                 resource_map.insert(path.unwrap_or_default(), resource);
             }
             ast::Value::Reference(ast::Ref(id)) => {
                 let path = ctx.path.clone();
-                let resource = ResourceBuilder::<String, Raw>::default()
+                let resource = RawStringBuilder::default()
                     .context(ctx)
                     .identifier(identifier)
-                    .value(id.clone())
-                    .build()?;
-                let resource = RawResources::Reference(resource);
+                    .value(id)
+                    .metas(metas)
+                    .build_reference_resource()?;
                 resource_map.insert(path.unwrap_or_default(), resource);
             }
             ast::Value::Object(ast::Object(elems)) => {
@@ -73,6 +93,7 @@ impl<'a> AssembleFromStr<'a> {
                             let sub_resource_map = self.ast_values_to_resource_map(
                                 v.value,
                                 Some(v.identifier.0),
+                                v.metas,
                                 context,
                             )?;
 
@@ -89,6 +110,7 @@ impl<'a> AssembleFromStr<'a> {
                                 let sub_resource_map = self.ast_values_to_resource_map(
                                     declaration.value,
                                     Some(declaration.identifier.0),
+                                    None,
                                     context,
                                 )?;
 
@@ -106,7 +128,7 @@ impl<'a> AssembleFromStr<'a> {
                             let value = ast::File::try_from(import.as_str())?.value;
 
                             let sub_resource_map =
-                                self.ast_values_to_resource_map(value, None, import_ctx)?;
+                                self.ast_values_to_resource_map(value, None, None, import_ctx)?;
 
                             Ok(sub_resource_map)
                         }
@@ -133,6 +155,7 @@ impl<'a> AssembleFromStr<'a> {
 
         let resources_map = self.ast_values_to_resource_map(
             value,
+            None,
             None,
             ResourceContext {
                 variables: None,

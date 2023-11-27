@@ -107,6 +107,7 @@ mod tests {
             r#"{
                 somevar01: var01
                 somevar02: var02
+                [var01 var02]
                 someothervar: "statistics"
             }"#,
         );
@@ -152,6 +153,23 @@ mod tests {
             ResolvedResources::String(x) => {
                 assert_eq!(x.identifier, Some("someothervar".to_string()));
                 assert_eq!(x.value, "statistics");
+                let metas = x.metas.as_ref().unwrap();
+
+                match metas.get(0).unwrap() {
+                    ResolvedResources::Number(x) => {
+                        assert_eq!(x.identifier, None);
+                        assert_eq!(x.value, 1.0);
+                    }
+                    _ => panic!("Should be a number"),
+                }
+
+                match metas.get(1).unwrap() {
+                    ResolvedResources::String(x) => {
+                        assert_eq!(x.identifier, None);
+                        assert_eq!(x.value, "002");
+                    }
+                    _ => panic!("Should be a string"),
+                }
             }
             _ => panic!("Should be a string"),
         }

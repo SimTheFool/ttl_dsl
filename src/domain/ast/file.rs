@@ -1,4 +1,4 @@
-use super::{parser::Rule, values::Value};
+use super::{parser::Rule, values::Value, Transform};
 use crate::{
     domain::ast::parser::TTLParser,
     utils::result::{AppError, AppResult},
@@ -14,6 +14,7 @@ struct EOI;
 #[pest_ast(rule(Rule::file))]
 pub struct File {
     pub value: Value,
+    pub transforms: Option<Vec<Transform>>,
     _eoi: EOI,
 }
 impl TryFrom<&str> for File {
@@ -37,15 +38,32 @@ mod tests {
     #[test]
     fn it_should_parse_file() {
         let str = r#"
-        {
-            var02: 745
-            var03: "hello"
-        }
+            {
+                var02: 745
+                var03: "hello"
+            }
+
+            @TRANSFORM FIRST_LAYER
+            > x *= 2
+            > x += 2
         "#;
 
         let mut pairs = super::TTLParser::parse(super::Rule::file, str).unwrap();
         let file = super::File::from_pest(&mut pairs).unwrap();
         let value = file.value;
+        let transforms = file.transforms.unwrap();
+
+        assert_eq!(transforms.len(), 1);
+        let transform = transforms.get(0).unwrap();
+
+        match &transform.rules {
+            Some(rules) => {
+                assert_eq!(rules.len(), 2);
+                assert_eq!(rules.get(0).unwrap().0, "x *= 2");
+                assert_eq!(rules.get(1).unwrap().0, "x += 2");
+            }
+            None => panic!("Should have rules"),
+        }
 
         let object_elems = match value {
             Value::Object(s) => s.0,

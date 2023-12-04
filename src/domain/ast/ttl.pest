@@ -1,8 +1,7 @@
 WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 
-ALPHAFIRST = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
-
 identifier = @{ ALPHAFIRST }
 
 reference = @{ identifier }
@@ -18,8 +17,11 @@ value = { number | string | object | reference }
 
 declaration = {metas? ~ identifier ~ ":" ~ value }
 
-path = @{ ("." | "/" | ALPHAFIRST | "_")+ }
+path = @{ ("." | "/" | ALPHAFIRST)+ }
 import = { "<<" ~ path ~ ("with" ~ declaration)* }
 
+transform_layer = { identifier }
+transform_rule = @{ (!NEWLINE ~ ANY)* }
+transform = ${ "@TRANSFORM" ~ WHITESPACE ~ transform_layer ~ (NEWLINE ~ WHITESPACE* ~ ">" ~ " "* ~ transform_rule)* }
 
-file = { SOI ~ value ~ EOI }
+file = { SOI ~ value ~ transform* ~ EOI }

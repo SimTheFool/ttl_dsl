@@ -1,8 +1,8 @@
-use crate::domain::ast;
+use crate::domain::ast::{self};
 use crate::domain::resource::{RawNumberBuilder, RawStringBuilder};
+use crate::domain::transformation::{self, apply_transforms};
 use crate::{
     domain::resource::{RawResources, ResolvedResources, ResourceContext, TryResolveResource},
-    ports::TTLInputPort,
     utils::result::AppResult,
 };
 use indexmap::IndexMap;
@@ -10,7 +10,8 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::collections::HashMap;
 
 pub struct AssembleFromStr<'a> {
-    pub input_port: &'a dyn TTLInputPort,
+    pub input_port: &'a dyn crate::ports::ResolverPort,
+    pub config_port: &'a dyn crate::ports::ConfigProviderPort,
 }
 
 impl<'a> AssembleFromStr<'a> {
@@ -20,7 +21,10 @@ impl<'a> AssembleFromStr<'a> {
         identifier: Option<String>,
         metas: Option<ast::Metas>,
         ctx: ResourceContext,
-    ) -> AppResult<IndexMap<String, RawResources>> {
+    ) -> AppResult<(
+        IndexMap<String, RawResources>,
+        Option<Vec<transformation::Transform>>,
+    )> {
         let metas = match metas {
             Some(m) => Some(
                 m.0.into_iter()
@@ -44,6 +48,8 @@ impl<'a> AssembleFromStr<'a> {
         };
 
         let mut resource_map = IndexMap::<String, RawResources>::new();
+        let mut transforms = Vec::<transformation::Transform>::new();
+
         match val {
             ast::Value::String(ast::StringLit(str)) => {
                 let path = ctx.path.clone();
@@ -76,7 +82,7 @@ impl<'a> AssembleFromStr<'a> {
                 resource_map.insert(path.unwrap_or_default(), resource);
             }
             ast::Value::Object(ast::Object(elems)) => {
-                let sub_resource_maps = elems
+                let object_resources_and_transforms = elems
                     .into_par_iter()
                     .map(|elem| match elem {
                         ast::ObjectElem::Declaration(v) => {
@@ -90,14 +96,12 @@ impl<'a> AssembleFromStr<'a> {
                                 path: Some(resource_path),
                             };
 
-                            let sub_resource_map = self.ast_values_to_resource_map(
+                            self.ast_values_to_resource_map(
                                 v.value,
                                 Some(v.identifier.0),
                                 v.metas,
                                 context,
-                            )?;
-
-                            Ok(sub_resource_map)
+                            )
                         }
                         ast::ObjectElem::Import(ast::Import { declarations, path }) => {
                             let mut variables_map = HashMap::<String, ResolvedResources>::new();
@@ -107,7 +111,7 @@ impl<'a> AssembleFromStr<'a> {
                                     path: Some(declaration.identifier.0.clone()),
                                 };
 
-                                let sub_resource_map = self.ast_values_to_resource_map(
+                                let (sub_resource_map, _) = self.ast_values_to_resource_map(
                                     declaration.value,
                                     Some(declaration.identifier.0),
                                     None,
@@ -125,35 +129,74 @@ impl<'a> AssembleFromStr<'a> {
                             };
 
                             let import = self.input_port.read(&path.0)?;
-                            let value = ast::File::try_from(import.as_str())?.value;
+                            let file = ast::File::try_from(import.as_str())?;
 
-                            let sub_resource_map =
-                                self.ast_values_to_resource_map(value, None, None, import_ctx)?;
+                            let file_transforms = match file.transforms {
+                                None => None,
+                                Some(t) => {
+                                    let transforms = t
+                                        .into_iter()
+                                        .flat_map(|t| {
+                                            transformation::Transform::from_ast(
+                                                t,
+                                                import_ctx.clone(),
+                                            )
+                                            .unwrap_or_default()
+                                        })
+                                        .collect::<Vec<transformation::Transform>>();
+                                    Some(transforms)
+                                }
+                            };
 
-                            Ok(sub_resource_map)
+                            let (sub_maps, sub_transforms) = self
+                                .ast_values_to_resource_map(file.value, None, None, import_ctx)?;
+
+                            let transforms = match (file_transforms, sub_transforms) {
+                                (None, None) => None,
+                                (Some(t), None) => Some(t),
+                                (None, Some(t)) => Some(t),
+                                (Some(t1), Some(t2)) => {
+                                    let mut t1 = t1;
+                                    t1.extend(t2);
+                                    Some(t1)
+                                }
+                            };
+
+                            Ok((sub_maps, transforms))
                         }
                     })
-                    .collect::<AppResult<Vec<IndexMap<String, RawResources>>>>()?;
+                    .collect::<AppResult<
+                        Vec<(
+                            IndexMap<String, RawResources>,
+                            Option<Vec<transformation::Transform>>,
+                        )>,
+                    >>()?;
 
-                let sub_resource_map = sub_resource_maps.into_iter().fold(
-                    IndexMap::<String, RawResources>::new(),
-                    |mut acc, sub_resource_map| {
-                        acc.extend(sub_resource_map);
-                        acc
-                    },
-                );
-
-                resource_map.extend(sub_resource_map);
+                for (resources, transformations) in object_resources_and_transforms {
+                    resource_map.extend(resources);
+                    transforms.extend(transformations.unwrap_or_default());
+                }
             }
         };
 
-        Ok(resource_map)
+        Ok((resource_map, Some(transforms)))
     }
 
     pub fn execute(&self, file_str: &str) -> AppResult<Vec<ResolvedResources>> {
-        let value = ast::File::try_from(file_str)?.value;
+        let ast::File {
+            value, transforms, ..
+        } = ast::File::try_from(file_str)?;
 
-        let resources_map = self.ast_values_to_resource_map(
+        let transforms = transforms.map(|t| {
+            t.into_iter()
+                .flat_map(|t| {
+                    transformation::Transform::from_ast(t, ResourceContext::default())
+                        .unwrap_or_default()
+                })
+                .collect::<Vec<transformation::Transform>>()
+        });
+
+        let (resources_map, inner_transforms) = self.ast_values_to_resource_map(
             value,
             None,
             None,
@@ -162,6 +205,16 @@ impl<'a> AssembleFromStr<'a> {
                 path: None,
             },
         )?;
+
+        let transforms = match (transforms, inner_transforms) {
+            (Some(t), Some(it)) => {
+                let mut t = t;
+                t.extend(it);
+                Some(t)
+            }
+            (x, None) => x,
+            (None, x) => x,
+        };
 
         let resources_map = resources_map
             .into_iter()
@@ -177,6 +230,13 @@ impl<'a> AssembleFromStr<'a> {
                     AppResult::Ok(map)
                 },
             )?;
+
+        let layers = self.config_port.get_transform_layers()?;
+
+        let resources_map = match transforms {
+            None => Ok(resources_map),
+            Some(t) => apply_transforms(resources_map, t, layers),
+        }?;
 
         Ok(resources_map.into_iter().map(|(_, v)| v).collect())
     }

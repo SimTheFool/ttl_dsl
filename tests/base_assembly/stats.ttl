@@ -14,9 +14,8 @@ hit: 8
 heal: 0
 
 
-TRANSFORM FINAL_LAYER
-
-- resist_phy += con
-- resist_ment += vol
-- hit += floor(con / 2)
-- natural_heal += con + vol"
+@TRANSFORM FINAL_LAYER
+> $.resist_phy += $ctx.con
+> $.resist_ment += $ctx.vol
+> $.hit += floor($ctx.con / 2)
+> $.heal += $ctx.con + $ctx.vol

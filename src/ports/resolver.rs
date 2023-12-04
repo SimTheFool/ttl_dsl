@@ -2,17 +2,17 @@ use std::collections::HashMap;
 
 use crate::utils::result::{AppError, AppResult};
 
-pub trait TTLInputPort: Sync {
+pub trait ResolverPort: Sync {
     fn read(&self, path: &str) -> AppResult<String>;
 }
 
-pub struct TTLMockedInputAdapter<'a> {
+pub struct MockedResolverAdapter<'a> {
     mocking_store: std::collections::HashMap<&'a str, &'a str>,
 }
 
-impl<'a> TTLMockedInputAdapter<'a> {
+impl<'a> MockedResolverAdapter<'a> {
     pub fn new() -> Self {
-        TTLMockedInputAdapter {
+        MockedResolverAdapter {
             mocking_store: HashMap::new(),
         }
     }
@@ -22,7 +22,7 @@ impl<'a> TTLMockedInputAdapter<'a> {
     }
 }
 
-impl<'a> TTLInputPort for TTLMockedInputAdapter<'a> {
+impl<'a> ResolverPort for MockedResolverAdapter<'a> {
     fn read(&self, path: &str) -> AppResult<String> {
         let file = self
             .mocking_store

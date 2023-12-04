@@ -26,8 +26,35 @@ where
     _phantom: std::marker::PhantomData<U>,
 }
 
+impl<T, U> Resource<T, U>
+where
+    T: Clone + Default,
+    U: ResourceState,
+{
+    pub fn from_with_value<V>(&self, value: V) -> Resource<V, U>
+    where
+        V: Clone + Default,
+    {
+        Resource::<V, U> {
+            context: self.context.clone(),
+            identifier: self.identifier.clone(),
+            value,
+            metas: self.metas.clone(),
+            _phantom: std::marker::PhantomData,
+        }
+    }
+
+    pub fn default_with_value(value: T) -> Self {
+        let mut resource = Resource::<T, U>::default();
+        resource.value = value;
+        resource
+    }
+}
+
 pub type RawStringBuilder = ResourceBuilder<String, Raw>;
 pub type RawNumberBuilder = ResourceBuilder<f64, Raw>;
+pub type ResolvedStringBuilder = ResourceBuilder<String, Raw>;
+pub type ResolvedNumberBuilder = ResourceBuilder<f64, Raw>;
 
 impl<T, U> ResourceBuilder<T, U>
 where
@@ -75,4 +102,13 @@ pub enum RawResources {
 pub enum ResolvedResources {
     String(Resource<String, Resolved>),
     Number(Resource<f64, Resolved>),
+}
+
+impl ResolvedResources {
+    pub fn to_string(&self) -> String {
+        match self {
+            ResolvedResources::String(resource) => resource.value.clone(),
+            ResolvedResources::Number(resource) => resource.value.to_string(),
+        }
+    }
 }

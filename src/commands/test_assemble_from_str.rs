@@ -3,15 +3,18 @@ mod tests {
     use assemble_from_str::AssembleFromStr;
 
     use crate::{
-        commands::assemble_from_str, domain::resource::ResolvedResources,
-        ports::TTLMockedInputAdapter,
+        commands::assemble_from_str,
+        domain::resource::ResolvedResources,
+        ports::{MockedConfigProviderAdapter, MockedResolverAdapter},
     };
 
     #[test]
     fn it_should_create_resources() {
-        let mocked_input = TTLMockedInputAdapter::new();
+        let mocked_resolver = MockedResolverAdapter::new();
+        let mocked_config = MockedConfigProviderAdapter::new();
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_input,
+            input_port: &mocked_resolver,
+            config_port: &mocked_config,
         };
         let values = assemble_from_str
             .execute(
@@ -58,10 +61,13 @@ mod tests {
 
     #[test]
     fn it_should_create_resources_with_context() {
-        let mocked_input = TTLMockedInputAdapter::new();
+        let mocked_resolver = MockedResolverAdapter::new();
+        let mocked_config = MockedConfigProviderAdapter::new();
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_input,
+            input_port: &mocked_resolver,
+            config_port: &mocked_config,
         };
+
         let values = assemble_from_str
             .execute(
                 r#"{
@@ -101,8 +107,10 @@ mod tests {
 
     #[test]
     fn it_should_create_resources_with_import() {
-        let mut mocked_input = TTLMockedInputAdapter::new();
-        mocked_input.mock_file(
+        let mut mocked_resolver = MockedResolverAdapter::new();
+        let mocked_config = MockedConfigProviderAdapter::new();
+
+        mocked_resolver.mock_file(
             "./stats",
             r#"{
                 somevar01: var01
@@ -111,8 +119,10 @@ mod tests {
                 someothervar: "statistics"
             }"#,
         );
+
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_input,
+            input_port: &mocked_resolver,
+            config_port: &mocked_config,
         };
 
         let values = assemble_from_str
@@ -178,6 +188,49 @@ mod tests {
             ResolvedResources::Number(x) => {
                 assert_eq!(x.identifier, Some("var03".to_string()));
                 assert_eq!(x.value, 3.0);
+            }
+            _ => panic!("Should be a number"),
+        }
+    }
+
+    #[test]
+    fn it_should_create_resources_with_transforms() {
+        let mocked_resolver = MockedResolverAdapter::new();
+        let mut mocked_config = MockedConfigProviderAdapter::new();
+        mocked_config.add_layer("FIRST_LAYER");
+        mocked_config.add_layer("SECOND_LAYER");
+        let assemble_from_str = AssembleFromStr {
+            input_port: &mocked_resolver,
+            config_port: &mocked_config,
+        };
+
+        let values = assemble_from_str
+            .execute(
+                r#"
+            {
+                x: 5
+            }
+
+            @TRANSFORM SECOND_LAYER
+            > x += 3
+            > x *= 3
+
+            @TRANSFORM FIRST_LAYER
+            > x *= 2
+            > x += 2
+
+            "#,
+            )
+            .unwrap();
+
+        assert_eq!(values.len(), 1);
+
+        let first_ressource = values.get(0).unwrap();
+
+        match first_ressource {
+            ResolvedResources::Number(x) => {
+                assert_eq!(x.identifier, Some("x".to_string()));
+                assert_eq!(x.value, 45.0);
             }
             _ => panic!("Should be a number"),
         }

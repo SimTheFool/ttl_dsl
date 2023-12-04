@@ -5,7 +5,8 @@ use utils::*;
 
 const INDEX: &str = r#"
     {
-        stats: {
+        stats:
+        {
             << ./stats
                 with con : 5
                 with vol : 3

@@ -10,8 +10,8 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::collections::HashMap;
 
 pub struct AssembleFromStr<'a> {
-    pub input_port: &'a dyn crate::ports::ResolverPort,
-    pub config_port: &'a dyn crate::ports::ConfigProviderPort,
+    pub resolver: &'a dyn crate::ports::ResolverPort,
+    pub config: &'a dyn crate::ports::ConfigProviderPort,
 }
 
 impl<'a> AssembleFromStr<'a> {
@@ -105,10 +105,30 @@ impl<'a> AssembleFromStr<'a> {
                         }
                         ast::ObjectElem::Import(ast::Import { declarations, path }) => {
                             let mut variables_map = HashMap::<String, ResolvedResources>::new();
+                            match &ctx.path {
+                                None => {}
+                                Some(path) => {
+                                    variables_map.insert(
+                                        "".to_string(),
+                                        RawStringBuilder::default()
+                                            .context(ctx.clone())
+                                            .value(path.clone())
+                                            .build_string_resource()?
+                                            .try_resolve()?,
+                                    );
+                                }
+                            };
+
                             for declaration in declarations {
+                                let resource_path =
+                                    match (&ctx.path, &declaration.identifier.0.clone()) {
+                                        (None, id) => id.clone(),
+                                        (Some(base), id) => format!("{}.{}", base, id),
+                                    };
+
                                 let context = ResourceContext {
                                     variables: ctx.variables.clone(),
-                                    path: Some(declaration.identifier.0.clone()),
+                                    path: Some(resource_path),
                                 };
 
                                 let (sub_resource_map, _) = self.ast_values_to_resource_map(
@@ -118,8 +138,8 @@ impl<'a> AssembleFromStr<'a> {
                                     context,
                                 )?;
 
-                                for (k, v) in sub_resource_map {
-                                    variables_map.insert(k, v.try_resolve()?);
+                                for (_, v) in sub_resource_map {
+                                    variables_map.insert(v.get_id(), v.try_resolve()?);
                                 }
                             }
 
@@ -128,7 +148,7 @@ impl<'a> AssembleFromStr<'a> {
                                 path: ctx.path.clone(),
                             };
 
-                            let import = self.input_port.read(&path.0)?;
+                            let import = self.resolver.read(&path.0)?;
                             let file = ast::File::try_from(import.as_str())?;
 
                             let file_transforms = match file.transforms {
@@ -231,7 +251,7 @@ impl<'a> AssembleFromStr<'a> {
                 },
             )?;
 
-        let layers = self.config_port.get_transform_layers()?;
+        let layers = self.config.get_transform_layers()?;
 
         let resources_map = match transforms {
             None => Ok(resources_map),

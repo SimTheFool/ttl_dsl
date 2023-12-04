@@ -13,8 +13,8 @@ mod tests {
         let mocked_resolver = MockedResolverAdapter::new();
         let mocked_config = MockedConfigProviderAdapter::new();
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_resolver,
-            config_port: &mocked_config,
+            resolver: &mocked_resolver,
+            config: &mocked_config,
         };
         let values = assemble_from_str
             .execute(
@@ -64,8 +64,8 @@ mod tests {
         let mocked_resolver = MockedResolverAdapter::new();
         let mocked_config = MockedConfigProviderAdapter::new();
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_resolver,
-            config_port: &mocked_config,
+            resolver: &mocked_resolver,
+            config: &mocked_config,
         };
 
         let values = assemble_from_str
@@ -121,8 +121,8 @@ mod tests {
         );
 
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_resolver,
-            config_port: &mocked_config,
+            resolver: &mocked_resolver,
+            config: &mocked_config,
         };
 
         let values = assemble_from_str
@@ -200,8 +200,8 @@ mod tests {
         mocked_config.add_layer("FIRST_LAYER");
         mocked_config.add_layer("SECOND_LAYER");
         let assemble_from_str = AssembleFromStr {
-            input_port: &mocked_resolver,
-            config_port: &mocked_config,
+            resolver: &mocked_resolver,
+            config: &mocked_config,
         };
 
         let values = assemble_from_str

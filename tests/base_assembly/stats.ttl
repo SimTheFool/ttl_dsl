@@ -1,21 +1,17 @@
-con: 0
-
-vol: 0
-
-["con"]
-resist_phy: 0
-
-["vol"]
-resist_ment: 0
-
-hit: 8
-
-["vol" "con"]
-heal: 0
-
+{
+    con: 0
+    vol: 0
+    ["con"]
+    resist_phy: 0
+    ["vol"]
+    resist_ment: 0
+    hit: 8
+    ["vol" "con"]
+    heal: 0
+}
 
 @TRANSFORM FINAL_LAYER
-> $.resist_phy += $ctx.con
-> $.resist_ment += $ctx.vol
-> $.hit += floor($ctx.con / 2)
-> $.heal += $ctx.con + $ctx.vol
+> $.resist_phy += $.con
+> $.resist_ment += $.vol
+> $.hit += floor($.con / 2)
+> $.heal += $.con + $.vol

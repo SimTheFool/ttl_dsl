@@ -51,9 +51,9 @@ impl Transform {
             (Some(_), None) => Err(AppError::Str("No variables for rules"))?,
             (Some(v), Some(vars)) => {
                 for var_name in v {
-                    let var_value = vars
-                        .get(&var_name)
-                        .ok_or_else(|| AppError::Str("Variable not found"))?;
+                    let var_value = vars.get(&var_name).ok_or_else(|| {
+                        AppError::String(format!("Variable not found: {}", var_name))
+                    })?;
 
                     rule = rule.replace(&format!("${}", var_name), &var_value.to_string());
                 }

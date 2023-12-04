@@ -112,3 +112,13 @@ impl ResolvedResources {
         }
     }
 }
+
+impl RawResources {
+    pub fn get_id(&self) -> String {
+        match self {
+            RawResources::String(resource) => resource.identifier.clone().unwrap_or_default(),
+            RawResources::Number(resource) => resource.identifier.clone().unwrap_or_default(),
+            RawResources::Reference(resource) => resource.identifier.clone().unwrap_or_default(),
+        }
+    }
+}

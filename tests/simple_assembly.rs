@@ -131,6 +131,15 @@ fn it_shoud_assemble_from_different_files() {
         ResolvedResources::Number(nb) => {
             assert_eq!(nb.value, 1.0);
             assert_eq!(nb.identifier, Some("resist_drain".to_string()));
+            let metas = nb.metas.clone().unwrap();
+            assert_eq!(metas.len(), 1);
+            let first_meta = metas.get(0).unwrap();
+            match first_meta {
+                ResolvedResources::String(str) => {
+                    assert_eq!(str.value, "vol".to_string());
+                }
+                _ => panic!("Expected a string"),
+            }
         }
         _ => panic!("Expected a number"),
     }

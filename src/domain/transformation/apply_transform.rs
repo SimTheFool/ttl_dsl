@@ -1,20 +1,20 @@
 use crate::{
-    domain::resource::ResolvedResources,
+    domain::resolution::{ResolvedResource, ResolvedTransformation},
     result::{AppError, AppResult},
 };
 use indexmap::IndexMap;
 
-use super::{transformable_list::TransformableList, Transform};
+use super::transformable_list::TransformableList;
 
 pub fn apply_transforms(
-    resources: IndexMap<String, ResolvedResources>,
-    transforms: Vec<Transform>,
+    resources: IndexMap<String, ResolvedResource>,
+    transforms: Vec<ResolvedTransformation>,
     layers: Vec<&str>,
-) -> AppResult<IndexMap<String, ResolvedResources>> {
+) -> AppResult<IndexMap<String, ResolvedResource>> {
     let mut transforms_by_ordered_layer = Vec::new();
 
     for layer in layers {
-        let layer_transforms: Vec<&Transform> = transforms
+        let layer_transforms: Vec<&ResolvedTransformation> = transforms
             .iter()
             .filter(|t| t.layer.as_deref() == Some(&layer))
             .collect();
@@ -27,8 +27,8 @@ pub fn apply_transforms(
     let mut transformable_list: TransformableList = resources.into();
 
     for (_, transforms) in transforms_by_ordered_layer {
-        transforms.iter().try_for_each(|transform| {
-            let rule = transform.get_resolved_rule()?;
+        transforms.into_iter().try_for_each(|transform| {
+            let rule = &transform.rule;
             evalexpr::eval_with_context_mut(&rule, &mut transformable_list).map_err(|e| {
                 AppError::String(format!("Error while evaluating rule {} : {}", rule, e))
             })?;
@@ -41,54 +41,47 @@ pub fn apply_transforms(
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
-
-    use indexmap::IndexMap;
-
-    use crate::domain::resource::{
-        RawNumberBuilder, RawStringBuilder, ResolvedResources, ResourceContext, TryResolveResource,
+    use crate::domain::resolution::{
+        RawTransformation, ResolutionContext, Resolvable, ResolvedResourceBuilder,
+        ResolvedResourceValue,
     };
 
     use super::*;
+    use indexmap::IndexMap;
+    use std::collections::HashMap;
 
     #[test]
     fn it_should_transform_ressources() {
-        let mut variables = HashMap::<String, ResolvedResources>::new();
+        let mut variables = HashMap::<String, ResolvedResource>::new();
 
         variables.insert(
             "".to_string(),
-            RawStringBuilder::default()
+            ResolvedResourceBuilder::default()
                 .identifier(Some("".to_string()))
-                .value("root".to_string())
-                .build_string_resource()
-                .unwrap()
-                .try_resolve()
+                .build_as_string("root")
                 .unwrap(),
         );
 
         variables.insert(
             "factor".to_string(),
-            RawNumberBuilder::default()
+            ResolvedResourceBuilder::default()
                 .identifier(Some("factor".to_string()))
-                .value(2.0)
-                .build_number_resource()
-                .unwrap()
-                .try_resolve()
+                .build_as_number(2.0)
                 .unwrap(),
         );
 
-        let context = ResourceContext {
+        let context = ResolutionContext {
             variables: Some(variables),
             ..Default::default()
         };
 
-        let transform_x_1 = Transform {
+        let transform_x_1 = RawTransformation {
             context: Box::new(context.clone()),
             rule: "$.x += 5".to_string(),
             layer: Some("FIRST_LAYER".to_string()),
         };
 
-        let transform_x_2 = Transform {
+        let transform_x_2 = RawTransformation {
             context: Box::new(context.clone()),
             rule: "$.x *= $factor".to_string(),
             layer: Some("SECOND_LAYER".to_string()),
@@ -98,24 +91,22 @@ mod test {
 
         let transforms = vec![transform_x_1, transform_x_2];
 
-        let mut resources = IndexMap::<String, ResolvedResources>::new();
+        let mut resources = IndexMap::<String, ResolvedResource>::new();
         resources.insert(
             "root.x".to_string(),
-            RawNumberBuilder::default()
+            ResolvedResourceBuilder::default()
                 .identifier(Some("x".to_string()))
-                .value(7.0)
-                .build_number_resource()
-                .unwrap()
-                .try_resolve()
+                .build_as_number(7.0)
                 .unwrap(),
         );
 
-        let transformed_resources = apply_transforms(resources, transforms, layers).unwrap();
+        let transformed_resources =
+            apply_transforms(resources, transforms.try_resolve().unwrap(), layers).unwrap();
 
         assert_eq!(transformed_resources.len(), 1);
         let x = transformed_resources.get("root.x").unwrap();
-        match x {
-            ResolvedResources::Number(resource) => assert_eq!(resource.value, 24.0),
+        match x.value {
+            ResolvedResourceValue::Number(n) => assert_eq!(n, 24.0),
             _ => panic!("Unexpected resource type"),
         }
     }

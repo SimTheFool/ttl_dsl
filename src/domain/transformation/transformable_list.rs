@@ -1,4 +1,7 @@
-use crate::domain::resource::{state::Resolved, ResolvedResources, Resource};
+use crate::{
+    domain::resolution::{ResolvedResource, ResolvedResourceBuilder, ResolvedResourceValue},
+    result::AppResult,
+};
 use evalexpr::{
     Context, ContextWithMutableVariables, EmptyContextWithBuiltinFunctions, EvalexprResult, Value,
 };
@@ -6,63 +9,58 @@ use indexmap::IndexMap;
 
 pub struct TransformableList {
     value: IndexMap<String, Value>,
-    origin: IndexMap<String, ResolvedResources>,
+    origin: IndexMap<String, ResolvedResource>,
 }
 
 impl TransformableList {
-    fn set(&mut self, key: String, value: Value) {
+    fn set(&mut self, key: String, value: Value) -> AppResult<()> {
         let old_resource = self.origin.get(&key);
         let new_resource = match (old_resource, &value) {
-            (None, Value::String(s)) => ResolvedResources::String(
-                Resource::<String, Resolved>::default_with_value(s.to_string()),
-            ),
+            (None, Value::String(s)) => ResolvedResourceBuilder::default().build_as_string(&s)?,
             (None, Value::Float(l)) => {
-                ResolvedResources::Number(Resource::<f64, Resolved>::default_with_value(l.clone()))
+                ResolvedResourceBuilder::default().build_as_number(l.clone())?
             }
-            (Some(ResolvedResources::String(rs)), Value::String(s)) => {
-                ResolvedResources::String(rs.from_with_value(s.to_string()))
-            }
-            (Some(ResolvedResources::Number(rs)), Value::Float(l)) => {
-                ResolvedResources::Number(rs.from_with_value(l.clone()))
-            }
-            (Some(ResolvedResources::Number(rs)), Value::String(s)) => {
-                ResolvedResources::String(rs.from_with_value(s.to_string()))
-            }
-            (Some(ResolvedResources::String(rs)), Value::Float(l)) => {
-                ResolvedResources::Number(rs.from_with_value(l.clone()))
-            }
-            _ => panic!("Invalid type"),
+            (Some(rs), Value::String(s)) => ResolvedResource {
+                value: ResolvedResourceValue::String(s.clone()),
+                ..rs.clone()
+            },
+            (Some(rs), Value::Float(n)) => ResolvedResource {
+                value: ResolvedResourceValue::Number(n.clone()),
+                ..rs.clone()
+            },
+            (_, x) => panic!("Unhandled evaluated type {:#?}", x),
         };
 
         self.value.insert(key.clone(), value);
         self.origin.insert(key, new_resource);
+        Ok(())
     }
 }
 
-impl From<IndexMap<String, ResolvedResources>> for TransformableList {
-    fn from(value: IndexMap<String, ResolvedResources>) -> Self {
+impl From<IndexMap<String, ResolvedResource>> for TransformableList {
+    fn from(resource_map: IndexMap<String, ResolvedResource>) -> Self {
         let mut index_map = IndexMap::<String, Value>::new();
 
-        for (key, value) in &value {
-            match value {
-                ResolvedResources::String(s) => {
-                    index_map.insert(key.to_string(), Value::String(s.value.clone()));
+        for (key, resource) in &resource_map {
+            match &resource.value {
+                ResolvedResourceValue::String(s) => {
+                    index_map.insert(key.to_string(), Value::String(s.clone()));
                 }
-                ResolvedResources::Number(l) => {
-                    index_map.insert(key.to_string(), Value::Float(l.value.clone()));
+                ResolvedResourceValue::Number(l) => {
+                    index_map.insert(key.to_string(), Value::Float(l.clone()));
                 }
             }
         }
 
         TransformableList {
             value: index_map,
-            origin: value,
+            origin: resource_map,
         }
     }
 }
 
-impl Into<IndexMap<String, ResolvedResources>> for TransformableList {
-    fn into(self) -> IndexMap<String, ResolvedResources> {
+impl Into<IndexMap<String, ResolvedResource>> for TransformableList {
+    fn into(self) -> IndexMap<String, ResolvedResource> {
         self.origin
     }
 }
@@ -92,7 +90,8 @@ impl Context for TransformableList {
 
 impl ContextWithMutableVariables for TransformableList {
     fn set_value(&mut self, _identifier: String, _value: Value) -> EvalexprResult<()> {
-        self.set(_identifier, _value);
+        self.set(_identifier, _value)
+            .map_err(|e| evalexpr::EvalexprError::CustomMessage(e.to_string()))?;
         Ok(())
     }
 }

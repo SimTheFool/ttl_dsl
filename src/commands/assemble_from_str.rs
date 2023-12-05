@@ -1,10 +1,9 @@
 use crate::domain::ast::{self};
-use crate::domain::resource::{RawNumberBuilder, RawStringBuilder};
-use crate::domain::transformation::{self, apply_transforms};
-use crate::{
-    domain::resource::{RawResources, ResolvedResources, ResourceContext, TryResolveResource},
-    utils::result::AppResult,
-};
+use crate::domain::resolution::Resolvable;
+use crate::domain::resolution::{RawResource, ResolutionContext, ResolvedResource};
+use crate::domain::resolution::{RawResourceBuilder, RawTransformation};
+use crate::domain::transformation::apply_transforms;
+use crate::utils::result::AppResult;
 use indexmap::IndexMap;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::collections::HashMap;
@@ -20,66 +19,57 @@ impl<'a> AssembleFromStr<'a> {
         val: ast::Value,
         identifier: Option<String>,
         metas: Option<ast::Metas>,
-        ctx: ResourceContext,
+        ctx: ResolutionContext,
     ) -> AppResult<(
-        IndexMap<String, RawResources>,
-        Option<Vec<transformation::Transform>>,
+        IndexMap<String, RawResource>,
+        Option<Vec<RawTransformation>>,
     )> {
         let metas = match metas {
-            Some(m) => Some(
-                m.0.into_iter()
-                    .map(|m| match m {
-                        ast::Meta::String(ast::StringLit(s)) => Ok(RawStringBuilder::default()
-                            .context(ctx.clone())
-                            .value(s)
-                            .build_string_resource()?),
-                        ast::Meta::Number(ast::Number(nb)) => Ok(RawNumberBuilder::default()
-                            .context(ctx.clone())
-                            .value(nb)
-                            .build_number_resource()?),
-                        ast::Meta::Reference(ast::Ref(id)) => Ok(RawStringBuilder::default()
-                            .context(ctx.clone())
-                            .value(id)
-                            .build_reference_resource()?),
-                    })
-                    .collect::<AppResult<Vec<RawResources>>>()?,
-            ),
-            None => None,
+            Some(m) => m
+                .0
+                .into_iter()
+                .map(|m| {
+                    let meta_build = RawResourceBuilder::default().context(ctx.clone());
+
+                    match m {
+                        ast::Meta::String(ast::StringLit(s)) => Ok(meta_build.build_as_string(&s)?),
+                        ast::Meta::Number(ast::Number(nb)) => Ok(meta_build.build_as_number(nb)?),
+                        ast::Meta::Reference(ast::Ref(id)) => {
+                            Ok(meta_build.build_as_reference(&id)?)
+                        }
+                    }
+                })
+                .collect::<AppResult<Vec<RawResource>>>()?,
+            None => vec![],
         };
 
-        let mut resource_map = IndexMap::<String, RawResources>::new();
-        let mut transforms = Vec::<transformation::Transform>::new();
+        let mut resource_map = IndexMap::<String, RawResource>::new();
+        let mut transforms = Vec::<RawTransformation>::new();
+
+        let resource_path = ctx.path.clone();
+        let resource_build = RawResourceBuilder::default()
+            .context(ctx.clone())
+            .metas(metas)
+            .identifier(identifier);
 
         match val {
             ast::Value::String(ast::StringLit(str)) => {
-                let path = ctx.path.clone();
-                let resource = RawStringBuilder::default()
-                    .context(ctx)
-                    .identifier(identifier)
-                    .value(str)
-                    .metas(metas)
-                    .build_string_resource()?;
-                resource_map.insert(path.unwrap_or_default(), resource);
+                resource_map.insert(
+                    resource_path.unwrap_or_default(),
+                    resource_build.build_as_string(&str)?,
+                );
             }
             ast::Value::Number(ast::Number(nb)) => {
-                let path = ctx.path.clone();
-                let resource = RawNumberBuilder::default()
-                    .context(ctx)
-                    .identifier(identifier)
-                    .value(nb)
-                    .metas(metas)
-                    .build_number_resource()?;
-                resource_map.insert(path.unwrap_or_default(), resource);
+                resource_map.insert(
+                    resource_path.unwrap_or_default(),
+                    resource_build.build_as_number(nb)?,
+                );
             }
             ast::Value::Reference(ast::Ref(id)) => {
-                let path = ctx.path.clone();
-                let resource = RawStringBuilder::default()
-                    .context(ctx)
-                    .identifier(identifier)
-                    .value(id)
-                    .metas(metas)
-                    .build_reference_resource()?;
-                resource_map.insert(path.unwrap_or_default(), resource);
+                resource_map.insert(
+                    resource_path.unwrap_or_default(),
+                    resource_build.build_as_reference(&id)?,
+                );
             }
             ast::Value::Object(ast::Object(elems)) => {
                 let object_resources_and_transforms = elems
@@ -91,7 +81,7 @@ impl<'a> AssembleFromStr<'a> {
                                 (Some(base), id) => format!("{}.{}", base, id),
                             };
 
-                            let context = ResourceContext {
+                            let context = ResolutionContext {
                                 variables: ctx.variables.clone(),
                                 path: Some(resource_path),
                             };
@@ -104,16 +94,15 @@ impl<'a> AssembleFromStr<'a> {
                             )
                         }
                         ast::ObjectElem::Import(ast::Import { declarations, path }) => {
-                            let mut variables_map = HashMap::<String, ResolvedResources>::new();
+                            let mut variables_map = HashMap::<String, ResolvedResource>::new();
                             match &ctx.path {
                                 None => {}
                                 Some(path) => {
                                     variables_map.insert(
                                         "".to_string(),
-                                        RawStringBuilder::default()
+                                        RawResourceBuilder::default()
                                             .context(ctx.clone())
-                                            .value(path.clone())
-                                            .build_string_resource()?
+                                            .build_as_string(&path)?
                                             .try_resolve()?,
                                     );
                                 }
@@ -126,7 +115,7 @@ impl<'a> AssembleFromStr<'a> {
                                         (Some(base), id) => format!("{}.{}", base, id),
                                     };
 
-                                let context = ResourceContext {
+                                let context = ResolutionContext {
                                     variables: ctx.variables.clone(),
                                     path: Some(resource_path),
                                 };
@@ -139,11 +128,14 @@ impl<'a> AssembleFromStr<'a> {
                                 )?;
 
                                 for (_, v) in sub_resource_map {
-                                    variables_map.insert(v.get_id(), v.try_resolve()?);
+                                    variables_map.insert(
+                                        v.identifier.clone().unwrap_or_default(),
+                                        v.try_resolve()?,
+                                    );
                                 }
                             }
 
-                            let import_ctx = ResourceContext {
+                            let import_ctx = ResolutionContext {
                                 variables: Some(variables_map),
                                 path: ctx.path.clone(),
                             };
@@ -157,13 +149,10 @@ impl<'a> AssembleFromStr<'a> {
                                     let transforms = t
                                         .into_iter()
                                         .flat_map(|t| {
-                                            transformation::Transform::from_ast(
-                                                t,
-                                                import_ctx.clone(),
-                                            )
-                                            .unwrap_or_default()
+                                            RawTransformation::from_ast(t, import_ctx.clone())
+                                                .unwrap_or_default()
                                         })
-                                        .collect::<Vec<transformation::Transform>>();
+                                        .collect::<Vec<RawTransformation>>();
                                     Some(transforms)
                                 }
                             };
@@ -187,8 +176,8 @@ impl<'a> AssembleFromStr<'a> {
                     })
                     .collect::<AppResult<
                         Vec<(
-                            IndexMap<String, RawResources>,
-                            Option<Vec<transformation::Transform>>,
+                            IndexMap<String, RawResource>,
+                            Option<Vec<RawTransformation>>,
                         )>,
                     >>()?;
 
@@ -202,7 +191,7 @@ impl<'a> AssembleFromStr<'a> {
         Ok((resource_map, Some(transforms)))
     }
 
-    pub fn execute(&self, file_str: &str) -> AppResult<Vec<ResolvedResources>> {
+    pub fn execute(&self, file_str: &str) -> AppResult<Vec<ResolvedResource>> {
         let ast::File {
             value, transforms, ..
         } = ast::File::try_from(file_str)?;
@@ -210,17 +199,16 @@ impl<'a> AssembleFromStr<'a> {
         let transforms = transforms.map(|t| {
             t.into_iter()
                 .flat_map(|t| {
-                    transformation::Transform::from_ast(t, ResourceContext::default())
-                        .unwrap_or_default()
+                    RawTransformation::from_ast(t, ResolutionContext::default()).unwrap_or_default()
                 })
-                .collect::<Vec<transformation::Transform>>()
+                .collect::<Vec<RawTransformation>>()
         });
 
         let (resources_map, inner_transforms) = self.ast_values_to_resource_map(
             value,
             None,
             None,
-            ResourceContext {
+            ResolutionContext {
                 variables: None,
                 path: None,
             },
@@ -243,7 +231,7 @@ impl<'a> AssembleFromStr<'a> {
                 return AppResult::Ok(new_kv);
             })
             .try_fold(
-                IndexMap::<String, ResolvedResources>::new(),
+                IndexMap::<String, ResolvedResource>::new(),
                 |mut map, kv| {
                     let (k, v) = kv?;
                     map.insert(k, v);
@@ -255,7 +243,7 @@ impl<'a> AssembleFromStr<'a> {
 
         let resources_map = match transforms {
             None => Ok(resources_map),
-            Some(t) => apply_transforms(resources_map, t, layers),
+            Some(t) => apply_transforms(resources_map, t.try_resolve()?, layers),
         }?;
 
         Ok(resources_map.into_iter().map(|(_, v)| v).collect())

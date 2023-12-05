@@ -1,3 +1,3 @@
 pub mod ast;
-pub mod resource;
+pub mod resolution;
 pub mod transformation;

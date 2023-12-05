@@ -4,7 +4,7 @@ mod tests {
 
     use crate::{
         commands::assemble_from_str,
-        domain::resource::ResolvedResources,
+        domain::resolution::ResolvedResourceValue,
         ports::{MockedConfigProviderAdapter, MockedResolverAdapter},
     };
 
@@ -34,26 +34,26 @@ mod tests {
         let second_ressource = values.get(1).unwrap();
         let third_ressource = values.get(2).unwrap();
 
-        match first_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("var05".to_string()));
-                assert_eq!(x.value, "hello");
+        assert_eq!(first_ressource.identifier, Some("var05".to_string()));
+        match &first_ressource.value {
+            ResolvedResourceValue::String(x) => {
+                assert_eq!(x, "hello");
             }
             _ => panic!("Should be a string"),
         }
 
-        match second_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var07".to_string()));
-                assert_eq!(x.value, 7.0);
+        assert_eq!(second_ressource.identifier, Some("var07".to_string()));
+        match &second_ressource.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, &7.0);
             }
             _ => panic!("Should be a number"),
         }
 
-        match third_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var08".to_string()));
-                assert_eq!(x.value, 8.0);
+        assert_eq!(third_ressource.identifier, Some("var08".to_string()));
+        match &third_ressource.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, &8.0);
             }
             _ => panic!("Should be a number"),
         }
@@ -84,22 +84,18 @@ mod tests {
         let first_ressource = values.get(0).unwrap();
         let second_ressource = values.get(1).unwrap();
 
-        match first_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("var05".to_string()));
-                assert_eq!(x.value, "hello");
-                assert_eq!(x.context.variables, None);
-                assert_eq!(x.context.path, Some("var05".to_string()));
+        assert_eq!(first_ressource.identifier, Some("var05".to_string()));
+        match &first_ressource.value {
+            ResolvedResourceValue::String(x) => {
+                assert_eq!(x, "hello");
             }
             _ => panic!("Should be a string"),
         }
 
-        match second_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var07".to_string()));
-                assert_eq!(x.value, 7.0);
-                assert_eq!(x.context.variables, None);
-                assert_eq!(x.context.path, Some("var06.var07".to_string()));
+        assert_eq!(second_ressource.identifier, Some("var07".to_string()));
+        match &second_ressource.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, &7.0);
             }
             _ => panic!("Should be a number"),
         }
@@ -143,51 +139,55 @@ mod tests {
         let third_ressource = values.get(2).unwrap();
         let fourth_ressource = values.get(3).unwrap();
 
-        match first_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("somevar01".to_string()));
-                assert_eq!(x.value, 1.0);
+        assert_eq!(first_ressource.identifier, Some("somevar01".to_string()));
+        match &first_ressource.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, &1.0);
             }
             _ => panic!("Should be a number"),
         }
 
-        match second_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("somevar02".to_string()));
-                assert_eq!(x.value, "002");
+        assert_eq!(second_ressource.identifier, Some("somevar02".to_string()));
+        match &second_ressource.value {
+            ResolvedResourceValue::String(x) => {
+                assert_eq!(x, "002");
             }
             _ => panic!("Should be a string"),
         }
 
-        match third_ressource {
-            ResolvedResources::String(x) => {
-                assert_eq!(x.identifier, Some("someothervar".to_string()));
-                assert_eq!(x.value, "statistics");
-                let metas = x.metas.as_ref().unwrap();
-
-                match metas.get(0).unwrap() {
-                    ResolvedResources::Number(x) => {
-                        assert_eq!(x.identifier, None);
-                        assert_eq!(x.value, 1.0);
-                    }
-                    _ => panic!("Should be a number"),
-                }
-
-                match metas.get(1).unwrap() {
-                    ResolvedResources::String(x) => {
-                        assert_eq!(x.identifier, None);
-                        assert_eq!(x.value, "002");
-                    }
-                    _ => panic!("Should be a string"),
-                }
+        assert_eq!(third_ressource.identifier, Some("someothervar".to_string()));
+        match &third_ressource.value {
+            ResolvedResourceValue::String(x) => {
+                assert_eq!(x, "statistics");
             }
             _ => panic!("Should be a string"),
         }
 
-        match fourth_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("var03".to_string()));
-                assert_eq!(x.value, 3.0);
+        let third_resources_metas = &third_ressource.metas;
+        assert_eq!(third_resources_metas.len(), 2);
+
+        let first_meta = third_resources_metas.get(0).unwrap();
+        assert_eq!(first_meta.identifier, None);
+        match first_meta.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, 1.0);
+            }
+            _ => panic!("Should be a number"),
+        }
+
+        let second_meta = third_resources_metas.get(1).unwrap();
+        assert_eq!(second_meta.identifier, None);
+        match &second_meta.value {
+            ResolvedResourceValue::String(x) => {
+                assert_eq!(x, "002");
+            }
+            _ => panic!("Should be a string"),
+        }
+
+        assert_eq!(fourth_ressource.identifier, Some("var03".to_string()));
+        match fourth_ressource.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, 3.0);
             }
             _ => panic!("Should be a number"),
         }
@@ -226,11 +226,10 @@ mod tests {
         assert_eq!(values.len(), 1);
 
         let first_ressource = values.get(0).unwrap();
-
-        match first_ressource {
-            ResolvedResources::Number(x) => {
-                assert_eq!(x.identifier, Some("x".to_string()));
-                assert_eq!(x.value, 45.0);
+        assert_eq!(first_ressource.identifier, Some("x".to_string()));
+        match first_ressource.value {
+            ResolvedResourceValue::Number(x) => {
+                assert_eq!(x, 45.0);
             }
             _ => panic!("Should be a number"),
         }

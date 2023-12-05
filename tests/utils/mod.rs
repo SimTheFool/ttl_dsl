@@ -2,7 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use custom_dsl::{
     commands::AssembleFromStr,
-    domain::resource::ResolvedResources,
+    domain::resolution::ResolvedResource,
     ports::{ConfigProviderPort, MockedConfigProviderAdapter, MockedResolverAdapter, ResolverPort},
     result::AppResult,
 };
@@ -31,7 +31,7 @@ impl MockedApp {
 }
 
 impl MockedApp {
-    pub fn assemble_from_str(&self, file_str: &str) -> AppResult<Vec<ResolvedResources>> {
+    pub fn assemble_from_str(&self, file_str: &str) -> AppResult<Vec<ResolvedResource>> {
         let assemble_from_str = AssembleFromStr {
             resolver: &*self.resolver.borrow(),
             config: &*self.config.borrow(),

@@ -100,7 +100,10 @@ impl AstVisitor<'_> {
         val: ast::Import,
         build: RawResourceBuilder,
     ) -> AppResult<VisitorAggregate> {
-        let ast::Import { declarations, path } = val;
+        let ast::Import {
+            declarations,
+            import_path: path,
+        } = val;
 
         let mut variables_map = HashMap::<String, ResolvedResource>::new();
         for ast::Declaration {

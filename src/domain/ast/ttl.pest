@@ -17,8 +17,8 @@ value = { number | string | object | reference }
 
 declaration = {metas? ~ identifier ~ ":" ~ value }
 
-path = @{ ("." | "/" | ALPHAFIRST)+ }
-import = { "<<" ~ path ~ ("with" ~ declaration)* }
+import_path = @{ ("." | "/" | ALPHAFIRST)+ }
+import = { "<<" ~ import_path ~ ("with" ~ declaration)* }
 
 transform_layer = { identifier }
 transform_rule = @{ (!NEWLINE ~ ANY)* }

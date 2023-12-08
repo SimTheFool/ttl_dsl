@@ -62,11 +62,6 @@ mod test {
                 .unwrap(),
         );
 
-        /* let context = ResolutionContext {
-            variables: Some(ctx_variables),
-            path: Some("root".to_string()),
-        }; */
-
         let transform_x_1 = RawTransformation {
             rule: "$.x += 5".to_string(),
             layer: Some("FIRST_LAYER".to_string()),

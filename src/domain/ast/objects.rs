@@ -65,7 +65,10 @@ mod tests {
 
         assert_eq!(elems.len(), 3);
 
-        let Import { declarations, path } = match elems.get(0).unwrap() {
+        let Import {
+            declarations,
+            import_path: path,
+        } = match elems.get(0).unwrap() {
             ObjectElem::Import(i) => i,
             _ => panic!("Should be import"),
         };

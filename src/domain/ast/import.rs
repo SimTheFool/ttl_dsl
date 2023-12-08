@@ -5,13 +5,13 @@ use super::{
 use pest_ast::FromPest;
 
 #[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::path))]
-pub struct Path(#[pest_ast(outer(with(span_into_string)))] pub String);
+#[pest_ast(rule(Rule::import_path))]
+pub struct ImportPath(#[pest_ast(outer(with(span_into_string)))] pub String);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import))]
 pub struct Import {
-    pub path: Path,
+    pub import_path: ImportPath,
     pub declarations: Vec<Declaration>,
 }
 
@@ -29,7 +29,10 @@ mod tests {
         "#;
 
         let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
-        let Import { declarations, path } = super::Import::from_pest(&mut pairs).unwrap();
+        let Import {
+            declarations,
+            import_path: path,
+        } = super::Import::from_pest(&mut pairs).unwrap();
 
         assert_eq!(path.0, "./stats");
 

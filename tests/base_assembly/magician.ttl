@@ -1,9 +1,0 @@
-{
-    mag: 0
-    initiation: 0
-    [trad]
-    resist_drain: 0
-}
-
-@TRANSFORM FINAL_LAYER_2
-> $.resist_drain += floor($.$trad / 2)

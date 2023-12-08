@@ -5,13 +5,6 @@ use super::{
     ResolvedResourceValue, ResolvedTransformation,
 };
 use crate::result::{AppError, AppResult};
-use std::collections::HashMap;
-
-#[derive(PartialEq, Debug, Clone, Default)]
-pub struct ResolutionContext {
-    pub variables: Option<HashMap<String, ResolvedResource>>,
-    pub path: Option<String>,
-}
 
 pub trait Resolvable {
     type ResolutionType;
@@ -34,17 +27,18 @@ impl Resolvable for RawResource {
             RawResourceValue::String(s) => build.build_as_string(&s)?,
             RawResourceValue::Number(n) => build.build_as_number(n)?,
             RawResourceValue::Reference(var_name) => {
-                let ctx = &self.context;
+                let variables = self.ctx_variables;
+                let resource_path = self.ctx_path.unwrap_or_default();
 
-                let variable_ctx = match &ctx.variables {
+                let variables = match variables {
                     Some(x) => x,
                     None => Err(AppError::String(format!(
                         "No variables for {}",
-                        ctx.path.clone().unwrap_or("".to_string())
+                        resource_path
                     )))?,
                 };
 
-                let var_value = variable_ctx
+                let var_value = variables
                     .get(&var_name)
                     .ok_or(AppError::String(format!("No variables {var_name} found")))?
                     .value
@@ -65,7 +59,12 @@ impl Resolvable for RawTransformation {
     type ResolutionType = ResolvedTransformation;
     fn try_resolve(self) -> AppResult<Self::ResolutionType> {
         let mut rule = self.rule.clone();
-        let variables = &self.context.variables;
+        let resource_path = self.ctx_path.unwrap_or_default();
+        let mut variables = self.ctx_variables.unwrap_or_default();
+        variables.insert(
+            "".to_string(),
+            ResolvedResourceBuilder::default().build_as_string(&resource_path)?,
+        );
 
         let var_id_regex = Regex::new(r"\$([\w]*)").expect("Invalid regular expression");
         let mut var_names: Vec<_> = var_id_regex
@@ -81,8 +80,7 @@ impl Resolvable for RawTransformation {
 
         let rule = match (var_names, variables) {
             (None, _) => rule,
-            (Some(_), None) => Err(AppError::Str("No variables for rules"))?,
-            (Some(v), Some(vars)) => {
+            (Some(v), vars) => {
                 for var_name in v {
                     let var_value = vars.get(&var_name).ok_or_else(|| {
                         AppError::String(format!("Variable not found: {}", var_name))

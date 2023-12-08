@@ -1,4 +1,4 @@
-- Faire un visitor dans un module à part ou dans la résolution
+- renommer le path de l'import en identifier ou import_id ou import_path
 - Mettre des from ast dans un fichier à part pour alléger le visitor (exemple Transform from ast)
 - déplcer la résolution des transformations dans la commande
 

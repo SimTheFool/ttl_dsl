@@ -1,10 +1,12 @@
-use super::ResolutionContext;
+use super::ResolvedResource;
 use crate::domain::ast;
+use std::collections::HashMap;
 
 pub struct RawTransformation {
-    pub context: Box<ResolutionContext>,
     pub rule: String,
     pub layer: Option<String>,
+    pub ctx_variables: Option<HashMap<String, ResolvedResource>>,
+    pub ctx_path: Option<String>,
 }
 
 pub struct ResolvedTransformation {
@@ -13,7 +15,11 @@ pub struct ResolvedTransformation {
 }
 
 impl RawTransformation {
-    pub fn from_ast(ast: ast::Transform, ctx: ResolutionContext) -> Option<Vec<Self>> {
+    pub fn from_ast(
+        ast: ast::Transform,
+        ctx_variables: Option<HashMap<String, ResolvedResource>>,
+        ctx_path: Option<String>,
+    ) -> Option<Vec<Self>> {
         let rules = ast.rules;
 
         match rules {
@@ -21,9 +27,10 @@ impl RawTransformation {
                 rules
                     .into_iter()
                     .map(|r| Self {
-                        context: Box::new(ctx.clone()),
                         rule: r.0,
                         layer: Some(ast.layer.0.clone()),
+                        ctx_variables: ctx_variables.clone(),
+                        ctx_path: ctx_path.clone(),
                     })
                     .collect(),
             ),

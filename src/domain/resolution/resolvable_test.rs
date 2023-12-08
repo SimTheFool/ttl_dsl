@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use crate::domain::resolution::Resolvable;
+    use crate::domain::resolution::resolvable::Resolvable;
+    use crate::domain::resolution::ResolvedResourceValue;
     use crate::domain::resolution::{
         RawResourceBuilder, ResolvedResource, ResolvedResourceBuilder,
     };
-    use crate::domain::resolution::{ResolutionContext, ResolvedResourceValue};
     use std::collections::HashMap;
 
     #[test]
@@ -24,13 +24,8 @@ mod tests {
                 .unwrap(),
         );
 
-        let ctx = Box::new(ResolutionContext {
-            variables: Some(variables),
-            path: None,
-        });
-
         let raw_string_ref = RawResourceBuilder::default()
-            .context_box(ctx.clone())
+            .ctx_variables(Some(variables.clone()))
             .identifier(Some("var01".to_string()))
             .build_as_reference("stringvar")
             .unwrap();
@@ -43,7 +38,7 @@ mod tests {
         );
 
         let raw_number_ref = RawResourceBuilder::default()
-            .context_box(ctx.clone())
+            .ctx_variables(Some(variables))
             .identifier(Some("var02".to_string()))
             .build_as_reference("numbervar")
             .unwrap();
@@ -67,23 +62,18 @@ mod tests {
                 .unwrap(),
         );
 
-        let ctx = Box::new(ResolutionContext {
-            variables: Some(variables),
-            path: None,
-        });
-
         let raw_meta_ref = RawResourceBuilder::default()
-            .context_box(ctx.clone())
+            .ctx_variables(Some(variables.clone()))
             .build_as_reference("numbervar")
             .unwrap();
 
         let raw_meta_number = RawResourceBuilder::default()
-            .context_box(ctx.clone())
+            .ctx_variables(Some(variables.clone()))
             .build_as_number(123.0)
             .unwrap();
 
         let raw_string_with_metas = RawResourceBuilder::default()
-            .context_box(ctx.clone())
+            .ctx_variables(Some(variables))
             .identifier(Some("var01".to_string()))
             .metas(vec![raw_meta_ref, raw_meta_number])
             .build_as_string("hello")

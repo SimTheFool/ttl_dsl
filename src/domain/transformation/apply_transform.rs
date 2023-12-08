@@ -42,8 +42,7 @@ pub fn apply_transforms(
 #[cfg(test)]
 mod test {
     use crate::domain::resolution::{
-        RawTransformation, ResolutionContext, Resolvable, ResolvedResourceBuilder,
-        ResolvedResourceValue,
+        RawTransformation, Resolvable, ResolvedResourceBuilder, ResolvedResourceValue,
     };
 
     use super::*;
@@ -52,17 +51,10 @@ mod test {
 
     #[test]
     fn it_should_transform_ressources() {
-        let mut variables = HashMap::<String, ResolvedResource>::new();
+        let mut ctx_variables = HashMap::<String, ResolvedResource>::new();
+        let ctx_path = Some("root".to_string());
 
-        variables.insert(
-            "".to_string(),
-            ResolvedResourceBuilder::default()
-                .identifier(Some("".to_string()))
-                .build_as_string("root")
-                .unwrap(),
-        );
-
-        variables.insert(
+        ctx_variables.insert(
             "factor".to_string(),
             ResolvedResourceBuilder::default()
                 .identifier(Some("factor".to_string()))
@@ -70,21 +62,23 @@ mod test {
                 .unwrap(),
         );
 
-        let context = ResolutionContext {
-            variables: Some(variables),
-            ..Default::default()
-        };
+        /* let context = ResolutionContext {
+            variables: Some(ctx_variables),
+            path: Some("root".to_string()),
+        }; */
 
         let transform_x_1 = RawTransformation {
-            context: Box::new(context.clone()),
             rule: "$.x += 5".to_string(),
             layer: Some("FIRST_LAYER".to_string()),
+            ctx_path: ctx_path.clone(),
+            ctx_variables: Some(ctx_variables.clone()),
         };
 
         let transform_x_2 = RawTransformation {
-            context: Box::new(context.clone()),
             rule: "$.x *= $factor".to_string(),
             layer: Some("SECOND_LAYER".to_string()),
+            ctx_path: ctx_path.clone(),
+            ctx_variables: Some(ctx_variables.clone()),
         };
 
         let layers = vec!["FIRST_LAYER", "SECOND_LAYER"];

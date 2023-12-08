@@ -3,13 +3,13 @@ use std::{cell::RefCell, rc::Rc};
 use custom_dsl::{
     commands::AssembleFromStr,
     domain::resolution::ResolvedResource,
-    ports::{ConfigProviderPort, MockedConfigProviderAdapter, MockedResolverAdapter, ResolverPort},
+    ports::{MockedConfigProviderAdapter, MockedResolverAdapter},
     result::AppResult,
 };
 
 pub struct MockedApp {
-    resolver: Rc<RefCell<dyn ResolverPort>>,
-    config: Rc<RefCell<dyn ConfigProviderPort>>,
+    resolver: Rc<RefCell<MockedResolverAdapter<'static>>>,
+    config: Rc<RefCell<MockedConfigProviderAdapter>>,
 }
 
 impl MockedApp {

@@ -9,7 +9,7 @@ mod tests {
     };
 
     #[test]
-    fn it_should_create_resources() {
+    fn it_should_create_resources_only() {
         let mocked_resolver = MockedResolverAdapter::new();
         let mocked_config = MockedConfigProviderAdapter::new();
         let assemble_from_str = AssembleFromStr {

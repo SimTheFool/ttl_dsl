@@ -1,4 +1,5 @@
-use super::ResolutionContext;
+use std::collections::HashMap;
+
 use crate::result::{AppError, AppResult};
 use derive_builder::Builder;
 
@@ -12,6 +13,7 @@ pub enum RawResourceValue {
 #[derive(PartialEq, Debug, Clone, Builder)]
 #[builder(build_fn(error = "AppError"))]
 #[builder(pattern = "owned")]
+#[builder(derive(Clone))]
 pub struct RawResource {
     #[builder(setter(custom))]
     pub value: RawResourceValue,
@@ -20,22 +22,26 @@ pub struct RawResource {
     pub identifier: Option<String>,
 
     #[builder(default)]
-    #[builder(setter(custom))]
-    pub context: Box<ResolutionContext>,
+    pub metas: Vec<RawResource>,
 
     #[builder(default)]
-    pub metas: Vec<RawResource>,
+    #[builder(setter(into))]
+    pub ctx_variables: Option<HashMap<String, ResolvedResource>>,
+
+    #[builder(default, private)]
+    #[builder(setter(into))]
+    pub ctx_path: Option<String>,
 }
 
 impl RawResourceBuilder {
-    pub fn context(mut self, ctx: ResolutionContext) -> Self {
-        self.context = Some(Box::new(ctx));
-        self
-    }
+    pub fn try_append_ctx_path(self, path: &str) -> AppResult<Self> {
+        let resource_path = match (&self.ctx_path.clone().flatten(), path) {
+            (None, id) => id.clone().to_string(),
+            (Some(base), id) => format!("{}.{}", base, id),
+        };
 
-    pub fn context_box(mut self, ctx: Box<ResolutionContext>) -> Self {
-        self.context = Some(ctx);
-        self
+        let build = self.ctx_path(resource_path);
+        Ok(build)
     }
 
     pub fn build_as_string(mut self, value: &str) -> AppResult<RawResource> {

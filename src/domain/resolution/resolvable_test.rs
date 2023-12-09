@@ -31,7 +31,7 @@ mod tests {
             .unwrap();
 
         let resolved_string_ref = raw_string_ref.try_resolve().unwrap();
-        assert_eq!(resolved_string_ref.identifier, Some("var01".to_string()));
+        assert_eq!(resolved_string_ref.identifier, None);
         assert_eq!(
             resolved_string_ref.value,
             ResolvedResourceValue::String("hello".to_string())
@@ -39,12 +39,12 @@ mod tests {
 
         let raw_number_ref = RawResourceBuilder::default()
             .ctx_variables(Some(variables))
-            .identifier(Some("var02".to_string()))
+            .identifier(None)
             .build_as_reference("numbervar")
             .unwrap();
 
         let resolved_number_ref = raw_number_ref.try_resolve().unwrap();
-        assert_eq!(resolved_number_ref.identifier, Some("var02".to_string()));
+        assert_eq!(resolved_number_ref.identifier, None);
         assert_eq!(
             resolved_number_ref.value,
             ResolvedResourceValue::Number(42.0)
@@ -81,7 +81,7 @@ mod tests {
 
         let resolved_resource = raw_string_with_metas.try_resolve().unwrap();
 
-        assert_eq!(resolved_resource.identifier, Some("var01".to_string()));
+        assert_eq!(resolved_resource.identifier, None);
         assert_eq!(
             resolved_resource.value,
             ResolvedResourceValue::String("hello".to_string())

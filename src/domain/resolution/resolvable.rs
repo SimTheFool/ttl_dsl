@@ -21,7 +21,7 @@ impl Resolvable for RawResource {
                     .map(|x| x.try_resolve())
                     .collect::<AppResult<Vec<ResolvedResource>>>()?,
             )
-            .identifier(self.identifier);
+            .identifier(self.ctx_path.clone());
 
         let resolved_resource = match self.value {
             RawResourceValue::String(s) => build.build_as_string(&s)?,

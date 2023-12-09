@@ -42,7 +42,7 @@ mod tests {
             _ => panic!("Should be a string"),
         }
 
-        assert_eq!(second_ressource.identifier, Some("var07".to_string()));
+        assert_eq!(second_ressource.identifier, Some("var06.var07".to_string()));
         match &second_ressource.value {
             ResolvedResourceValue::Number(x) => {
                 assert_eq!(x, &7.0);
@@ -50,7 +50,7 @@ mod tests {
             _ => panic!("Should be a number"),
         }
 
-        assert_eq!(third_ressource.identifier, Some("var08".to_string()));
+        assert_eq!(third_ressource.identifier, Some("var06.var08".to_string()));
         match &third_ressource.value {
             ResolvedResourceValue::Number(x) => {
                 assert_eq!(x, &8.0);
@@ -92,7 +92,7 @@ mod tests {
             _ => panic!("Should be a string"),
         }
 
-        assert_eq!(second_ressource.identifier, Some("var07".to_string()));
+        assert_eq!(second_ressource.identifier, Some("var06.var07".to_string()));
         match &second_ressource.value {
             ResolvedResourceValue::Number(x) => {
                 assert_eq!(x, &7.0);

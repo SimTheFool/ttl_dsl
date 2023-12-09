@@ -1,3 +1,5 @@
+#![allow(dead_code, unused_variables)]
+
 use std::{cell::RefCell, rc::Rc};
 
 use custom_dsl::{
@@ -41,6 +43,7 @@ impl MockedApp {
     }
 }
 
+#[macro_export]
 macro_rules! unwrap_or_print_error {
     ($result:expr) => {
         match $result {
@@ -50,6 +53,50 @@ macro_rules! unwrap_or_print_error {
                 let xxx = format!("{:?}", err);
                 panic!("{}", xxx);
             }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! assert_resource {
+    ($name:ident : $ident:expr, $type:ident $value:expr) => {
+        assert_eq!($name.identifier, Some($ident.to_string()));
+
+        match &$name.value {
+            ResolvedResourceValue::$type(x) => {
+                assert_eq!(x, &$value);
+            }
+            _ => panic!(concat!("Should be a ", stringify!($type))),
+        }
+    };
+    ($name:ident : $type:ident $value:expr) => {
+        match &$name.value {
+            ResolvedResourceValue::$type(x) => {
+                assert_eq!(x, &$value);
+            }
+            _ => panic!(concat!("Should be a ", stringify!($type))),
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! assert_resource_at {
+    ($name:ident : $identifier:expr => $type:ident $value:expr) => {
+        let value = &$name
+            .iter()
+            .find(|r| r.identifier == Some($identifier.to_string()))
+            .unwrap()
+            .value;
+
+        match value {
+            ResolvedResourceValue::$type(n) => {
+                assert_eq!(n, &$value, "Error for id: {}", stringify!($identifier))
+            }
+            _ => panic!(concat!(
+                stringify!($identifier),
+                " should be a ",
+                stringify!($type)
+            )),
         }
     };
 }

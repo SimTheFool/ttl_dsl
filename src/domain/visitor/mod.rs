@@ -1,14 +1,14 @@
 use super::{
     ast,
-    resolution::{RawResource, RawResourceBuilder, RawTransformation, ResolvedResource},
+    resolution::{
+        RawResource, RawResourceBuilder, RawTransformation, ResourceList, TransformList,
+        VariablesMap,
+    },
 };
 use crate::domain::resolution::Resolvable;
 use crate::result::AppResult;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
-use std::collections::HashMap;
-
-type VisitorAggregate = (Vec<RawResource>, Vec<RawTransformation>);
 
 pub struct AstVisitor<'a> {
     pub resolver: &'a dyn crate::ports::ResolverPort,
@@ -19,7 +19,7 @@ impl<'a> AstVisitor<'a> {
     }
 }
 impl AstVisitor<'_> {
-    pub fn visit(&self, val: ast::Value) -> AppResult<VisitorAggregate> {
+    pub fn visit(&self, val: ast::Value) -> AppResult<(ResourceList, TransformList)> {
         let build = RawResourceBuilder::default();
         self.visit_value(val, build)
     }
@@ -28,7 +28,7 @@ impl AstVisitor<'_> {
         &self,
         val: ast::Value,
         build: RawResourceBuilder,
-    ) -> AppResult<VisitorAggregate> {
+    ) -> AppResult<(ResourceList, TransformList)> {
         let visit_result = match val {
             ast::Value::String(s) => self.visit_string(s, build)?,
             ast::Value::Number(nb) => self.visit_number(nb, build)?,
@@ -40,9 +40,9 @@ impl AstVisitor<'_> {
                         ast::ObjectElem::Declaration(v) => self.visit_declaration(v, build.clone()),
                         ast::ObjectElem::Import(i) => self.visit_import(i, build.clone()),
                     })
-                    .collect::<AppResult<Vec<VisitorAggregate>>>()?;
+                    .collect::<AppResult<Vec<_>>>()?;
 
-                let result: VisitorAggregate =
+                let result: (ResourceList, TransformList) =
                     result.into_iter().fold((vec![], vec![]), |acc, elem| {
                         let (mut acc_resources, mut acc_transforms) = acc;
                         let (elem_resources, elem_transforms) = elem;
@@ -62,7 +62,7 @@ impl AstVisitor<'_> {
         &self,
         val: ast::Declaration,
         build: RawResourceBuilder,
-    ) -> AppResult<VisitorAggregate> {
+    ) -> AppResult<(ResourceList, TransformList)> {
         let ast::Declaration {
             identifier,
             value,
@@ -99,60 +99,79 @@ impl AstVisitor<'_> {
         &self,
         val: ast::Import,
         build: RawResourceBuilder,
-    ) -> AppResult<VisitorAggregate> {
+    ) -> AppResult<(ResourceList, TransformList)> {
         let ast::Import {
-            declarations,
-            import_path: path,
+            import_elements,
+            import_path,
         } = val;
-
-        let mut variables_map = HashMap::<String, ResolvedResource>::new();
-        for ast::Declaration {
-            identifier, value, ..
-        } in declarations
-        {
-            let updated_build = build.clone();
-            let (sub_resource_map, _) = self.visit_value(value, updated_build)?;
-
-            for resource in sub_resource_map {
-                variables_map.insert(identifier.0.clone(), resource.try_resolve()?);
-            }
-        }
-
         let RawResource { ctx_path, .. } = build.clone().build_as_string("UNUSED")?;
 
-        let import = self.resolver.read(&path.0)?;
-        let file = ast::File::try_from(import.as_str())?;
+        let (mut variables_acc, mut resource_acc, mut trans_acc) = (
+            VariablesMap::new(),
+            ResourceList::new(),
+            TransformList::new(),
+        );
 
-        let file_transforms = match file.transforms {
-            None => vec![],
-            Some(t) => {
-                let transforms = t
-                    .into_iter()
-                    .flat_map(|t| {
-                        RawTransformation::from_ast(
-                            t,
-                            Some(variables_map.clone()),
-                            ctx_path.clone(),
-                        )
-                        .unwrap_or_default()
-                    })
-                    .collect::<Vec<RawTransformation>>();
-                transforms
-            }
+        let add_variable =
+            |map: &mut VariablesMap, variable: ast::ImportVariable| -> AppResult<()> {
+                let ast::ImportVariable { identifier, value } = variable;
+                let (sub_resource_map, _) = self.visit_value(value, build.clone())?;
+                for resource in sub_resource_map {
+                    map.insert(identifier.0.clone(), resource.try_resolve()?);
+                }
+                Ok(())
+            };
+
+        let add_resource_and_transform = |r_list: &mut ResourceList,
+                                          t_list: &mut TransformList,
+                                          import: ast::Import|
+         -> AppResult<()> {
+            let (sub_resources, sub_transforms) = self.visit_import(import, build.clone())?;
+            r_list.extend(sub_resources);
+            t_list.extend(sub_transforms);
+            Ok(())
         };
 
-        let build = build.ctx_variables(variables_map);
-        let (sub_maps, mut sub_transforms) = self.visit_value(file.value, build)?;
-        sub_transforms.extend(file_transforms);
+        import_elements.into_iter().try_for_each(|elem| {
+            match elem {
+                ast::ImportElement::Variable(var) => add_variable(&mut variables_acc, var)?,
+                ast::ImportElement::Import(i) => {
+                    add_resource_and_transform(&mut resource_acc, &mut trans_acc, i)?
+                }
+            }
+            AppResult::Ok(())
+        })?;
 
-        Ok((sub_maps, sub_transforms))
+        let import = self.resolver.read(&import_path.0)?;
+        let ast::File {
+            transforms: file_transforms,
+            value: file_value,
+            ..
+        } = ast::File::try_from(import.as_str())?;
+        let build = build.ctx_variables(variables_acc.clone());
+
+        if let Some(t) = file_transforms {
+            let transforms = t
+                .into_iter()
+                .flat_map(|t| {
+                    RawTransformation::from_ast(t, Some(variables_acc.clone()), ctx_path.clone())
+                        .unwrap_or_default()
+                })
+                .collect::<Vec<RawTransformation>>();
+            trans_acc.extend(transforms);
+        }
+        let (sub_resources, sub_transforms) = self.visit_value(file_value, build)?;
+
+        trans_acc.splice(0..0, sub_transforms);
+        resource_acc.splice(0..0, sub_resources);
+        Ok((resource_acc, trans_acc))
     }
 
     fn visit_string(
         &self,
         val: ast::StringLit,
         build: RawResourceBuilder,
-    ) -> AppResult<VisitorAggregate> {
+    ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_string(&val.0)?], vec![]))
     }
 
@@ -160,7 +179,7 @@ impl AstVisitor<'_> {
         &self,
         val: ast::Number,
         build: RawResourceBuilder,
-    ) -> AppResult<VisitorAggregate> {
+    ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_number(val.0)?], vec![]))
     }
 
@@ -168,7 +187,7 @@ impl AstVisitor<'_> {
         &self,
         val: ast::Ref,
         build: RawResourceBuilder,
-    ) -> AppResult<VisitorAggregate> {
+    ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_reference(&val.0)?], vec![]))
     }
 }

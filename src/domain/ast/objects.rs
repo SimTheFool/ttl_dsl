@@ -14,12 +14,14 @@ pub struct Object(pub Vec<ObjectElem>);
 
 #[cfg(test)]
 mod tests {
+    use crate::as_variant;
     use crate::domain::ast::{
         import::Import,
         objects::{Object, ObjectElem},
         parser::TTLParser,
         values::Value,
     };
+    use crate::domain::ast::{Declaration, ImportElement, ImportVariable};
     use from_pest::FromPest;
     use pest::Parser;
 
@@ -55,7 +57,7 @@ mod tests {
     fn it_should_parse_object() {
         let str = r#"{
             << ./import
-                with var01: 01
+                with var01: 01 >
             var02: 745
             var03: "hello"
         }"#;
@@ -65,54 +67,35 @@ mod tests {
 
         assert_eq!(elems.len(), 3);
 
+        let second_element = elems.get(1).unwrap();
+        let Declaration {
+            identifier, value, ..
+        } = as_variant!(second_element, ObjectElem::Declaration);
+        assert_eq!(identifier.0, "var02");
+        let value = as_variant!(value, Value::Number);
+        assert_eq!(value.0, 745.0);
+
+        let third_element = elems.get(2).unwrap();
+        let Declaration {
+            identifier, value, ..
+        } = as_variant!(third_element, ObjectElem::Declaration);
+        assert_eq!(identifier.0, "var03");
+        let value = as_variant!(value, Value::String);
+        assert_eq!(value.0, "hello");
+
         let Import {
-            declarations,
+            import_elements,
             import_path: path,
-        } = match elems.get(0).unwrap() {
-            ObjectElem::Import(i) => i,
-            _ => panic!("Should be import"),
-        };
-
-        let second_declaration = match elems.get(1).unwrap() {
-            ObjectElem::Declaration(d) => d,
-            _ => panic!("Shoudl be declaration"),
-        };
-
-        let third_declaration = match elems.get(2).unwrap() {
-            ObjectElem::Declaration(d) => d,
-            _ => panic!("Shoudl be declaration"),
-        };
-
-        let second_var = &second_declaration.identifier;
-        let second_value = &second_declaration.value;
-        let second_value = match second_value {
-            Value::Number(s) => s.0.clone(),
-            _ => panic!("Unexpected value"),
-        };
-
-        let third_var = &third_declaration.identifier;
-        let third_value = &third_declaration.value;
-        let third_value = match third_value {
-            Value::String(s) => s.0.clone(),
-            _ => panic!("Unexpected value"),
-        };
+        } = as_variant!(elems.get(0).unwrap(), ObjectElem::Import);
 
         assert_eq!(path.0, "./import");
-        assert_eq!(declarations.len(), 1);
+        assert_eq!(import_elements.len(), 1);
 
-        let first_declaration = declarations.get(0).unwrap();
-        let first_var = &first_declaration.identifier;
-        let first_value = &first_declaration.value;
-        let first_value = match first_value {
-            Value::Number(n) => n.0,
-            _ => panic!("Unexpected value"),
-        };
-
-        assert_eq!(first_var.0, "var01");
-        assert_eq!(first_value, 1.0);
-        assert_eq!(second_var.0, "var02");
-        assert_eq!(second_value, 745.0);
-        assert_eq!(third_var.0, "var03");
-        assert_eq!(third_value, "hello");
+        let first_elements = import_elements.get(0).unwrap();
+        let ImportVariable { identifier, value } =
+            as_variant!(first_elements, ImportElement::Variable);
+        assert_eq!(identifier.0, "var01");
+        let value = as_variant!(value, Value::Number);
+        assert_eq!(value.0, 1.0);
     }
 }

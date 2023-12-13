@@ -9,11 +9,11 @@ const INDEX: &str = r#"
         {
             << ./stats
                 with con : 5
-                with vol : 3
+                with vol : 3 >
             << ./magician
                 with mag : 4
                 with initiation : 1
-                with trad : "vol"
+                with trad : "vol" >
         }
     }
     "#;

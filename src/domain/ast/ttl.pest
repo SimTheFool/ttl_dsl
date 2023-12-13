@@ -13,12 +13,15 @@ object = { "{" ~ object_element* ~ "}" }
 
 meta = { number | string | reference }
 metas = { "[" ~ meta* ~ "]" }
-value = { number | string | object | reference }
-
 declaration = {metas? ~ identifier ~ ":" ~ value }
 
+value = { number | string | object | reference }
+
+
 import_path = @{ ("." | "/" | ALPHAFIRST)+ }
-import = { "<<" ~ import_path ~ ("with" ~ declaration)* }
+import_variable = {identifier ~ ":" ~ value }
+import_elem = { "with" ~ (import_variable | import) }
+import = {"<<" ~ import_path ~ import_elem* ~ ">" }
 
 transform_layer = { identifier }
 transform_rule = @{ (!NEWLINE ~ ANY)* }

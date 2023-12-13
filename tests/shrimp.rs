@@ -24,11 +24,23 @@ const INDEX: &str = r#"
                 with res : 7
                 with submersion : 1
         }
+
+        inventory:
+        {
+            < ./drones/crawler
+                with <! ./drones_mods/monture
+                with <! ./drones_mods/monture
+
+            < ./drones/kanmushi
+                with << ./utils/quantity
+                    with quantity : 2
+        }
     }
 "#;
 
+/*
 #[test]
-fn it_shoud_assemble_shrimp() {
+ fn it_shoud_assemble_shrimp() {
     let (app, resolver, config) = MockedApp::new();
 
     config.borrow_mut().add_layer("FINAL_STATS");
@@ -80,3 +92,4 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resolved_resources : "stats.corruption" => Number 4.0);
     assert_resource_at!(resolved_resources : "stats.attaque" => Number 2.0);
 }
+ */

@@ -19,10 +19,10 @@ const INDEX: &str = r#"
                 with log : 6
                 with int : 4
                 with cha : 2
-                with ess : 6
+                with ess : 6 >
             << ./stats_techno
                 with res : 7
-                with submersion : 1
+                with submersion : 1 >
         }
 
         inventory:
@@ -32,25 +32,40 @@ const INDEX: &str = r#"
                 with <! ./drones_mods/monture >
             >
 
-            <@ ./drones/kanmushi
-                with << ./utils/quantity
-                    with quantity : 2 >
-            >
+            
         }
     }
 "#;
 
 /*
+<@ ./drones/kanmushi
+                with << ./utils/quantity
+                    with quantity : 2 >
+            >
+ */
+
 #[test]
- fn it_shoud_assemble_shrimp() {
+fn it_shoud_assemble_shrimp() {
     let (app, resolver, config) = MockedApp::new();
 
+    todo!();
     config.borrow_mut().add_layer("FINAL_STATS");
     config.borrow_mut().add_layer("FINAL_STATS_END");
+
     resolver.borrow_mut().mock_file("./stats_base", STATS_BASE);
     resolver
         .borrow_mut()
         .mock_file("./stats_techno", STATS_TECHNO);
+    resolver
+        .borrow_mut()
+        .mock_file("./drones/rules", DRONE_RULES);
+    resolver
+        .borrow_mut()
+        .mock_file("./drones/crawler", DRONE_CRAWLER);
+    resolver
+        .borrow_mut()
+        .mock_file("./drones_mods/monture", DRONE_MOD_MONTURE);
+    resolver.borrow_mut().mock_file("./utils/buy", UTILS_BUY);
 
     let resolved_resources = app.assemble_from_str(INDEX);
     let resolved_resources = unwrap_or_print_error!(resolved_resources);
@@ -94,4 +109,3 @@ const INDEX: &str = r#"
     assert_resource_at!(resolved_resources : "stats.corruption" => Number 4.0);
     assert_resource_at!(resolved_resources : "stats.attaque" => Number 2.0);
 }
- */

@@ -5,8 +5,8 @@ use super::{
 use pest_ast::FromPest;
 
 #[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::import_path))]
-pub struct ImportPath(#[pest_ast(outer(with(span_into_string)))] pub String);
+#[pest_ast(rule(Rule::import_id))]
+pub struct ImportId(#[pest_ast(outer(with(span_into_string)))] pub String);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_variable))]
@@ -16,25 +16,45 @@ pub struct ImportVariable {
 }
 
 #[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::import_elem))]
-pub enum ImportElement {
+#[pest_ast(rule(Rule::import_config))]
+pub enum ImportConfig {
     Variable(ImportVariable),
     Import(Import),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::import_anon_mark))]
+pub struct ImportAnonMark();
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::import_named_mark))]
+pub struct ImportNamedMark();
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::import_uniq_mark))]
+pub struct ImportUniqMark();
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::import_mark))]
+pub enum ImportMark {
+    Anon(ImportAnonMark),
+    Named(ImportNamedMark),
+    Uniq(ImportUniqMark),
+}
+
+#[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import))]
 pub struct Import {
-    pub import_path: ImportPath,
-    pub import_elements: Vec<ImportElement>,
+    pub import_mark: ImportMark,
+    pub import_id: ImportId,
+    pub import_config: Vec<ImportConfig>,
 }
 
 #[cfg(test)]
 mod tests {
     use crate::as_variant;
-    use crate::domain::ast::{
-        import::Import, parser::TTLParser, values::Value, ImportElement, ImportVariable,
-    };
+    use crate::domain::ast::Import;
+    use crate::domain::ast::{parser::TTLParser, values::Value, ImportConfig, ImportVariable};
     use from_pest::FromPest;
     use pest::Parser;
 
@@ -49,22 +69,23 @@ mod tests {
 
         let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
         let Import {
-            import_elements,
-            import_path: path,
+            import_config,
+            import_id,
+            ..
         } = super::Import::from_pest(&mut pairs).unwrap();
 
-        assert_eq!(path.0, "./stats");
+        assert_eq!(import_id.0, "./stats");
 
-        let first_element = import_elements.get(0).unwrap();
+        let first_element = import_config.get(0).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(first_element, ImportElement::Variable);
+            as_variant!(first_element, ImportConfig::Variable);
         assert_eq!(identifier.0, "var01");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 1.0);
 
-        let second_element = import_elements.get(1).unwrap();
+        let second_element = import_config.get(1).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(second_element, ImportElement::Variable);
+            as_variant!(second_element, ImportConfig::Variable);
         assert_eq!(identifier.0, "var02");
         let value = as_variant!(value, Value::String);
         assert_eq!(value.0, "002");
@@ -84,48 +105,91 @@ mod tests {
 
         let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
         let Import {
-            import_elements,
-            import_path,
+            import_config,
+            import_id,
+            ..
         } = super::Import::from_pest(&mut pairs).unwrap();
 
-        assert_eq!(import_path.0, "./root");
+        assert_eq!(import_id.0, "./root");
 
         /* Testing top level declarations */
-        let first_element = import_elements.get(0).unwrap();
+        let first_element = import_config.get(0).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(first_element, ImportElement::Variable);
+            as_variant!(first_element, ImportConfig::Variable);
 
         assert_eq!(identifier.0, "aaa");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 1.0);
 
-        let third_element = import_elements.get(2).unwrap();
+        let third_element = import_config.get(2).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(third_element, ImportElement::Variable);
+            as_variant!(third_element, ImportConfig::Variable);
         assert_eq!(identifier.0, "bbb");
         let value = as_variant!(value, Value::String);
         assert_eq!(value.0, "002");
 
         /* Testing nested import */
-        let import_element = import_elements.get(1).unwrap();
+        let import = import_config.get(1).unwrap();
         let Import {
-            import_elements,
-            import_path,
-        } = as_variant!(import_element, ImportElement::Import);
-        assert_eq!(import_path.0, "./nested");
+            import_config,
+            import_id,
+            ..
+        } = as_variant!(import, ImportConfig::Import);
 
-        let first_element = import_elements.get(0).unwrap();
+        assert_eq!(import_id.0, "./nested");
+
+        let first_config = import_config.get(0).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(first_element, ImportElement::Variable);
+            as_variant!(first_config, ImportConfig::Variable);
         assert_eq!(identifier.0, "zzz");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 2.0);
 
-        let second_element = import_elements.get(1).unwrap();
+        let second_config = import_config.get(1).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(second_element, ImportElement::Variable);
+            as_variant!(second_config, ImportConfig::Variable);
         assert_eq!(identifier.0, "yyy");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 3.0);
+    }
+
+    #[test]
+    fn it_should_parse_named_import() {
+        let str = r#"
+        <@ ./root with aaa: 01 >
+        "#
+        .trim();
+
+        let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
+        let Import {
+            import_config,
+            import_id,
+            import_mark,
+        } = super::Import::from_pest(&mut pairs).unwrap();
+
+        assert_eq!(import_id.0, "./root");
+        let _import_mark = as_variant!(import_mark, super::ImportMark::Named);
+
+        let first_element = import_config.get(0).unwrap();
+        let ImportVariable { identifier, value } =
+            as_variant!(first_element, ImportConfig::Variable);
+
+        assert_eq!(identifier.0, "aaa");
+        let value = as_variant!(value, Value::Number);
+        assert_eq!(value.0, 1.0);
+    }
+
+    #[test]
+    fn it_should_parse_uniq_import() {
+        let str = r#"
+        <! ./root >
+        "#
+        .trim();
+
+        let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
+        println!("{:#?}", pairs);
+        let Import { import_mark, .. } = super::Import::from_pest(&mut pairs).unwrap();
+
+        let _import_mark = as_variant!(import_mark, super::ImportMark::Uniq);
     }
 }

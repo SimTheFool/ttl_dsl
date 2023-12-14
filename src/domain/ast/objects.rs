@@ -21,7 +21,7 @@ mod tests {
         parser::TTLParser,
         values::Value,
     };
-    use crate::domain::ast::{Declaration, ImportElement, ImportVariable};
+    use crate::domain::ast::{Declaration, ImportConfig, ImportVariable};
     use from_pest::FromPest;
     use pest::Parser;
 
@@ -84,16 +84,17 @@ mod tests {
         assert_eq!(value.0, "hello");
 
         let Import {
-            import_elements,
-            import_path: path,
+            import_config,
+            import_id,
+            ..
         } = as_variant!(elems.get(0).unwrap(), ObjectElem::Import);
 
-        assert_eq!(path.0, "./import");
-        assert_eq!(import_elements.len(), 1);
+        assert_eq!(import_id.0, "./import");
+        assert_eq!(import_config.len(), 1);
 
-        let first_elements = import_elements.get(0).unwrap();
+        let first_elements = import_config.get(0).unwrap();
         let ImportVariable { identifier, value } =
-            as_variant!(first_elements, ImportElement::Variable);
+            as_variant!(first_elements, ImportConfig::Variable);
         assert_eq!(identifier.0, "var01");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 1.0);

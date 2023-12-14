@@ -5,10 +5,11 @@ use super::{
         VariablesMap,
     },
 };
-use crate::domain::resolution::Resolvable;
 use crate::result::AppResult;
+use crate::{domain::resolution::Resolvable, result::AppError};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
+use uuid::Uuid;
 
 pub struct AstVisitor<'a> {
     pub resolver: &'a dyn crate::ports::ResolverPort,
@@ -101,9 +102,11 @@ impl AstVisitor<'_> {
         build: RawResourceBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         let ast::Import {
-            import_elements,
-            import_path,
+            import_config,
+            import_id,
+            import_mark,
         } = val;
+
         let RawResource { ctx_path, .. } = build.clone().build_as_string("UNUSED")?;
 
         let (mut variables_acc, mut resource_acc, mut trans_acc) = (
@@ -132,22 +135,38 @@ impl AstVisitor<'_> {
             Ok(())
         };
 
-        import_elements.into_iter().try_for_each(|elem| {
+        import_config.into_iter().try_for_each(|elem| {
             match elem {
-                ast::ImportElement::Variable(var) => add_variable(&mut variables_acc, var)?,
-                ast::ImportElement::Import(i) => {
+                ast::ImportConfig::Variable(var) => add_variable(&mut variables_acc, var)?,
+                ast::ImportConfig::Import(i) => {
                     add_resource_and_transform(&mut resource_acc, &mut trans_acc, i)?
                 }
             }
             AppResult::Ok(())
         })?;
 
-        let import = self.resolver.read(&import_path.0)?;
         let ast::File {
             transforms: file_transforms,
             value: file_value,
+            name,
             ..
-        } = ast::File::try_from(import.as_str())?;
+        } = ast::File::try_from(self.resolver.read(&import_id.0)?.as_str())?;
+
+        let build = match (import_mark, name) {
+            (ast::ImportMark::Anon(_), _) => build,
+            (ast::ImportMark::Named(_), Some(name)) => build.try_append_ctx_path(&name.0)?,
+            (ast::ImportMark::Named(_), None) => Err(AppError::String(format!(
+                "Imported file {} should have a name",
+                import_id.0
+            )))?,
+            (ast::ImportMark::Uniq(_), None) => {
+                build.try_append_ctx_path(&Uuid::new_v4().to_string())?
+            }
+            (ast::ImportMark::Uniq(_), Some(name)) => {
+                let id = format!("{}_{}", name.0, Uuid::new_v4().to_string());
+                build.try_append_ctx_path(&id)?
+            }
+        };
         let build = build.ctx_variables(variables_acc.clone());
 
         if let Some(t) = file_transforms {

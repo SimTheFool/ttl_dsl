@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
     use assemble_from_str::AssembleFromStr;
+    use regex::Regex;
 
     use crate::{
         as_variant,
@@ -232,5 +233,96 @@ mod tests {
         assert_eq!(third_ressource.identifier, Some("mag".to_string()));
         let value = as_variant!(&third_ressource.value, ResolvedResourceValue::Number);
         assert_eq!(value, &3.0);
+    }
+
+    #[test]
+    fn it_should_assemble_named_imports() {
+        let mut mocked_resolver = MockedResolverAdapter::new();
+        let mocked_config = MockedConfigProviderAdapter::new();
+
+        let stats_input = r#"
+        @NAME stats
+        {
+            con: 1
+            vol: 2
+        }"#
+        .trim();
+        let root_input = r#"{
+            <@ ./stats >
+        }"#
+        .trim();
+
+        mocked_resolver.mock_file("./stats", stats_input);
+
+        let assemble_from_str = AssembleFromStr {
+            resolver: &mocked_resolver,
+            config: &mocked_config,
+        };
+
+        let values = assemble_from_str.execute(root_input).unwrap();
+
+        assert_eq!(values.len(), 2);
+
+        let first_ressource = values.get(0).unwrap();
+        assert_eq!(first_ressource.identifier, Some("stats.con".to_string()));
+        let value = as_variant!(&first_ressource.value, ResolvedResourceValue::Number);
+        assert_eq!(value, &1.0);
+
+        let second_ressource = values.get(1).unwrap();
+        assert_eq!(second_ressource.identifier, Some("stats.vol".to_string()));
+        let value = as_variant!(&second_ressource.value, ResolvedResourceValue::Number);
+        assert_eq!(value, &2.0);
+    }
+
+    #[test]
+    fn it_should_assemble_uniq_imports() {
+        let mut mocked_resolver = MockedResolverAdapter::new();
+        let mocked_config = MockedConfigProviderAdapter::new();
+
+        let stats_input = r#"
+        @NAME stats
+        {
+            con: 1
+        }"#
+        .trim();
+        let root_input = r#"{
+            <! ./stats >
+            <! ./stats >
+        }"#
+        .trim();
+
+        mocked_resolver.mock_file("./stats", stats_input);
+
+        let assemble_from_str = AssembleFromStr {
+            resolver: &mocked_resolver,
+            config: &mocked_config,
+        };
+
+        let values = assemble_from_str.execute(root_input).unwrap();
+
+        assert_eq!(values.len(), 2);
+        let key_regex = Regex::new(r"^stats_([a-zA-Z0-9-]+)\.con$").unwrap();
+
+        let first_ressource = values.get(0).unwrap();
+        let match_group_first = key_regex
+            .captures(first_ressource.identifier.as_ref().unwrap())
+            .unwrap()
+            .get(1)
+            .unwrap()
+            .as_str();
+        let value = as_variant!(&first_ressource.value, ResolvedResourceValue::Number);
+        assert_eq!(value, &1.0);
+
+        let second_ressource = values.get(1).unwrap();
+        let match_group_second = key_regex
+            .captures(second_ressource.identifier.as_ref().unwrap())
+            .unwrap()
+            .get(1)
+            .unwrap()
+            .as_str();
+        let value = as_variant!(&second_ressource.value, ResolvedResourceValue::Number);
+        assert_eq!(value, &1.0);
+
+        assert_ne!(match_group_first, match_group_second);
     }
 }

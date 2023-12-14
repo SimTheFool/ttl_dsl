@@ -27,13 +27,15 @@ const INDEX: &str = r#"
 
         inventory:
         {
-            < ./drones/crawler
-                with <! ./drones_mods/monture
-                with <! ./drones_mods/monture
+            <@ ./drones/crawler
+                with <! ./drones_mods/monture >
+                with <! ./drones_mods/monture >
+            >
 
-            < ./drones/kanmushi
+            <@ ./drones/kanmushi
                 with << ./utils/quantity
-                    with quantity : 2
+                    with quantity : 2 >
+            >
         }
     }
 "#;

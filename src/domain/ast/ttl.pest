@@ -2,8 +2,8 @@ WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 
 ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
-identifier = @{ ALPHAFIRST }
 
+identifier = @{ ALPHAFIRST }
 reference = @{ identifier }
 number = @{ ASCII_DIGIT+ }
 string = { "\"" ~ (ALPHATEXT) ~ "\"" }
@@ -17,14 +17,20 @@ declaration = {metas? ~ identifier ~ ":" ~ value }
 
 value = { number | string | object | reference }
 
-
-import_path = @{ ("." | "/" | ALPHAFIRST)+ }
+import_id = @{ ("." | "/" | ALPHAFIRST)+ }
 import_variable = {identifier ~ ":" ~ value }
-import_elem = { "with" ~ (import_variable | import) }
-import = {"<<" ~ import_path ~ import_elem* ~ ">" }
+import_config = { "with" ~ (import_variable | import) }
+
+import_anon_mark = {"<<"}
+import_named_mark = {"<@"}
+import_uniq_mark = {"<!"}
+import_mark = { (import_anon_mark | import_named_mark | import_uniq_mark) }
+import = { import_mark ~ import_id ~ import_config* ~ ">" }
 
 transform_layer = { identifier }
 transform_rule = @{ (!NEWLINE ~ ANY)* }
 transform = ${ "@TRANSFORM" ~ WHITESPACE ~ transform_layer ~ (NEWLINE ~ WHITESPACE* ~ ">" ~ " "* ~ transform_rule)* }
 
-file = { SOI ~ value ~ transform* ~ EOI }
+name = { "@NAME" ~ identifier }
+
+file = { SOI ~ name? ~ value ~ transform* ~ EOI }

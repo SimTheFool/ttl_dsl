@@ -5,7 +5,7 @@ pub mod test_utils {
 
     #[macro_export]
     macro_rules! as_variant {
-        ($expr:expr, $( $enum:path ),+ $(,)?) => {
+        ($expr:expr, $( $enum:path ),+) => {
             match $expr {
                 $(
                     $enum(inner) => inner,

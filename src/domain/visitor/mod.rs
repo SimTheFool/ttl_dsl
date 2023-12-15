@@ -79,8 +79,8 @@ impl AstVisitor<'_> {
                     match m {
                         ast::Meta::String(ast::StringLit(s)) => Ok(meta_build.build_as_string(&s)?),
                         ast::Meta::Number(ast::Number(nb)) => Ok(meta_build.build_as_number(nb)?),
-                        ast::Meta::Reference(ast::Ref(id)) => {
-                            Ok(meta_build.build_as_reference(&id)?)
+                        ast::Meta::Reference(reference) => {
+                            Ok(meta_build.build_as_reference(reference.get_var_name())?)
                         }
                     }
                 })
@@ -207,6 +207,6 @@ impl AstVisitor<'_> {
         val: ast::Ref,
         build: RawResourceBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
-        Ok((vec![build.build_as_reference(&val.0)?], vec![]))
+        Ok((vec![build.build_as_reference(&val.get_var_name())?], vec![]))
     }
 }

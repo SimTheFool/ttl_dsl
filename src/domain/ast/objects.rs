@@ -26,34 +26,6 @@ mod tests {
     use pest::Parser;
 
     #[test]
-    fn it_should_parse_reference_in_object() {
-        let str = r#"{
-            var02: reference
-            var03: aaaa
-        }"#;
-
-        let mut pairs = TTLParser::parse(super::Rule::object, str).unwrap();
-        let Object(elems) = Object::from_pest(&mut pairs).unwrap();
-
-        assert_eq!(elems.len(), 2);
-
-        let first_declaration = match elems.get(0).unwrap() {
-            ObjectElem::Declaration(d) => d,
-            _ => panic!("Should be declaration"),
-        };
-
-        let id = &first_declaration.identifier;
-        let value = &first_declaration.value;
-
-        assert_eq!(id.0, "var02");
-        let value = match value {
-            Value::Reference(r) => r.0.clone(),
-            _ => panic!("Unexpected value"),
-        };
-        assert_eq!(value, "reference")
-    }
-
-    #[test]
     fn it_should_parse_object() {
         let str = r#"{
             << ./import

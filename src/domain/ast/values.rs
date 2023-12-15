@@ -36,9 +36,12 @@ pub struct Metas(pub Vec<Meta>);
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::ast::{
-        parser::TTLParser,
-        values::{Declaration, Value},
+    use crate::{
+        as_variant,
+        domain::ast::{
+            parser::TTLParser,
+            values::{Declaration, Value},
+        },
     };
     use from_pest::FromPest;
     use pest::Parser;
@@ -62,29 +65,26 @@ mod tests {
 
         let metas = metas.unwrap().0;
         assert_eq!(metas.len(), 2);
-        match metas.get(0).unwrap() {
-            super::Meta::String(s) => assert_eq!(s.0, "meta1"),
-            _ => panic!("Unexpected meta"),
-        }
-        match metas.get(1).unwrap() {
-            super::Meta::Number(n) => assert_eq!(n.0, 15.0),
-            _ => panic!("Unexpected meta"),
-        }
+        let meta_0 = as_variant!(metas.get(0).unwrap(), super::Meta::String);
+        assert_eq!(meta_0.0, "meta1");
+
+        let meta_1 = as_variant!(metas.get(1).unwrap(), super::Meta::Number);
+        assert_eq!(meta_1.0, 15.0);
     }
 
     #[test]
     fn it_should_parse_reference() {
-        let str = r#"var001"#;
+        let str = r#"$var001"#;
 
         let mut pairs = TTLParser::parse(super::Rule::reference, str).unwrap();
         let reference = super::Ref::from_pest(&mut pairs).unwrap();
 
-        assert_eq!(reference.0, "var001");
+        assert_eq!(reference.get_var_name(), "var001");
     }
 
     #[test]
     fn it_should_parse_declaration_with_reference() {
-        let str = r#"somevar: var001"#;
+        let str = r#"somevar: $var001"#;
 
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();
         let declaration = Declaration::from_pest(&mut pairs).unwrap();
@@ -93,10 +93,7 @@ mod tests {
         let value = declaration.value;
 
         assert_eq!(identifier.0, "somevar");
-        let value = match value {
-            Value::Reference(r) => r.0.clone(),
-            _ => panic!("Unexpected value"),
-        };
-        assert_eq!(value, "var001")
+        let value = as_variant!(value, Value::Reference);
+        assert_eq!(value.get_var_name(), "var001")
     }
 }

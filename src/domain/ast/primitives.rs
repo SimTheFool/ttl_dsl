@@ -8,6 +8,13 @@ pub struct Variable(#[pest_ast(outer(with(span_into_string)))] pub String);
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::reference))]
 pub struct Ref(#[pest_ast(outer(with(span_into_string)))] pub String);
+impl Ref {
+    pub fn get_var_name<'a>(&'a self) -> &'a str {
+        self.0
+            .strip_prefix("$")
+            .expect("Variable does not start with $")
+    }
+}
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::string))]

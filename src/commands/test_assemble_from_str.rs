@@ -91,9 +91,9 @@ mod tests {
         mocked_resolver.mock_file(
             "./stats",
             r#"{
-                somevar01: var01
-                somevar02: var02
-                [var01 var02]
+                somevar01: $var01
+                somevar02: $var02
+                [$var01 $var02]
                 someothervar: "statistics"
             }"#,
         );

@@ -4,7 +4,7 @@ ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
 
 identifier = @{ ALPHAFIRST }
-reference = @{ identifier }
+reference = @{ "$" ~ identifier }
 number = @{ ASCII_DIGIT+ }
 string = { "\"" ~ (ALPHATEXT) ~ "\"" }
 

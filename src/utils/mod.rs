@@ -14,4 +14,18 @@ pub mod test_utils {
             }
         };
     }
+
+    #[macro_export]
+    macro_rules! unwrap_or_print_error {
+        ($result:expr) => {
+            match $result {
+                Ok(value) => value,
+                Err(err) => {
+                    eprintln!("Error: {}", err);
+                    let xxx = format!("{:?}", err);
+                    panic!("{}", xxx);
+                }
+            }
+        };
+    }
 }

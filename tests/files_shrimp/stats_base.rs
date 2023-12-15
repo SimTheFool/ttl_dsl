@@ -1,23 +1,23 @@
 pub const STATS_BASE: &str = r#"
 {
-    con: con
+    con: $con
     con_mod: 0
-    agi: agi
+    agi: $agi
     agi_mod: 0
-    rea: rea
+    rea: $rea
     rea_mod: 0
-    for: for
+    for: $for
     for_mod: 0
-    vol: vol
+    vol: $vol
     vol_mod: 0
-    log: log
+    log: $log
     log_mod: 0
-    int: int
+    int: $int
     int_mod: 0
-    cha: cha
+    cha: $cha
     cha_mod: 0
 
-    ess: ess
+    ess: $ess
     edge: 4
 
     ["con"]

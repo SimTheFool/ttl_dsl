@@ -21,7 +21,7 @@ mod tests {
         let values = assemble_from_str
             .execute(
                 r#"{
-                var05: "hello"
+                var05: hello, I'm some text !!
                 var06: {
                     var07: 07
                     var08: 08
@@ -38,7 +38,7 @@ mod tests {
 
         assert_eq!(first_ressource.identifier, Some("var05".to_string()));
         let value = as_variant!(&first_ressource.value, ResolvedResourceValue::String);
-        assert_eq!(value, "hello");
+        assert_eq!(value, "hello, I'm some text !!");
 
         assert_eq!(second_ressource.identifier, Some("var06.var07".to_string()));
         let value = as_variant!(&second_ressource.value, ResolvedResourceValue::Number);

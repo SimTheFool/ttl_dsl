@@ -3,11 +3,11 @@ use pest_ast::FromPest;
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::identifier))]
-pub struct Variable(#[pest_ast(outer(with(span_into_string)))] pub String);
+pub struct Variable(#[pest_ast(outer(with(span_into_string)))] pub std::string::String);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::reference))]
-pub struct Ref(#[pest_ast(outer(with(span_into_string)))] pub String);
+pub struct Ref(#[pest_ast(outer(with(span_into_string)))] pub std::string::String);
 impl Ref {
     pub fn get_var_name<'a>(&'a self) -> &'a str {
         self.0
@@ -18,7 +18,11 @@ impl Ref {
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::string))]
-pub struct StringLit(#[pest_ast(inner(with(span_into_string)))] pub String);
+pub struct String(#[pest_ast(inner(with(span_into_string)))] pub std::string::String);
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::text))]
+pub struct Text(#[pest_ast(inner(with(span_into_string)))] pub std::string::String);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::number))]
@@ -28,16 +32,23 @@ pub struct Number(
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::ast::parser::TTLParser;
+    use crate::{domain::ast::parser::TTLParser, print_unwrap, str_to_ast};
     use from_pest::FromPest;
     use pest::Parser;
 
     #[test]
     fn it_should_parse_identifier() {
         let str = "var01";
-        let mut pairs = TTLParser::parse(super::Rule::identifier, str).unwrap();
-        let variable = super::Variable::from_pest(&mut pairs).unwrap();
+        let variable = str_to_ast!(str, super::Rule::identifier, super::Variable);
 
         assert_eq!(variable.0, "var01");
+    }
+
+    #[test]
+    fn it_should_parse_text() {
+        let str = r#"Moyen arthropode mécanique"#;
+
+        let variable = str_to_ast!(str, super::Rule::text, super::Text);
+        assert_eq!(variable.0, "Moyen arthropode mécanique");
     }
 }

@@ -1,7 +1,7 @@
 pub const STATS_TECHNO: &str = r#"
 {
-    res: res
-    submersion: submersion
+    res: $res
+    submersion: $submersion
     ["vol"]
     resist_drain: 0
 

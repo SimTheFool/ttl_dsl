@@ -16,7 +16,7 @@ pub mod test_utils {
     }
 
     #[macro_export]
-    macro_rules! unwrap_or_print_error {
+    macro_rules! print_unwrap {
         ($result:expr) => {
             match $result {
                 Ok(value) => value,
@@ -27,5 +27,14 @@ pub mod test_utils {
                 }
             }
         };
+    }
+
+    #[macro_export]
+    macro_rules! str_to_ast {
+        ($str:expr, $parser:path, $ast_type:path) => {{
+            use $ast_type as f;
+            let mut pairs = print_unwrap!(TTLParser::parse($parser, $str));
+            print_unwrap!(f::from_pest(&mut pairs))
+        }};
     }
 }

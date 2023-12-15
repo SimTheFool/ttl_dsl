@@ -34,6 +34,7 @@ impl AstVisitor<'_> {
             ast::Value::String(s) => self.visit_string(s, build)?,
             ast::Value::Number(nb) => self.visit_number(nb, build)?,
             ast::Value::Reference(reference) => self.visit_reference(reference, build)?,
+            ast::Value::Text(text) => self.visit_text(text, build)?,
             ast::Value::Object(ast::Object(elems)) => {
                 let result = elems
                     .into_par_iter()
@@ -77,7 +78,7 @@ impl AstVisitor<'_> {
                 .map(|m| {
                     let meta_build = build.clone();
                     match m {
-                        ast::Meta::String(ast::StringLit(s)) => Ok(meta_build.build_as_string(&s)?),
+                        ast::Meta::String(ast::String(s)) => Ok(meta_build.build_as_string(&s)?),
                         ast::Meta::Number(ast::Number(nb)) => Ok(meta_build.build_as_number(nb)?),
                         ast::Meta::Reference(reference) => {
                             Ok(meta_build.build_as_reference(reference.get_var_name())?)
@@ -188,7 +189,15 @@ impl AstVisitor<'_> {
 
     fn visit_string(
         &self,
-        val: ast::StringLit,
+        val: ast::String,
+        build: RawResourceBuilder,
+    ) -> AppResult<(ResourceList, TransformList)> {
+        Ok((vec![build.build_as_string(&val.0)?], vec![]))
+    }
+
+    fn visit_text(
+        &self,
+        val: ast::Text,
         build: RawResourceBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_string(&val.0)?], vec![]))

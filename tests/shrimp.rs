@@ -28,14 +28,27 @@ const INDEX: &str = r#"
         inventory:
         {
             <@ ./drones/crawler
-                with <! ./drones_mods/monture >
-                with <! ./drones_mods/monture >
+                with <slots! ./drones_mods/monture >
+                with <slots! ./drones_mods/monture >
             >
 
-            
+
         }
     }
 "#;
+
+/*
+
+inventory:
+        {
+            <@ ./drones/crawler
+                with <slots! ./drones_mods/monture >
+                with <slots! ./drones_mods/monture >
+            >
+
+
+        }
+*/
 
 /*
 <@ ./drones/kanmushi
@@ -49,8 +62,10 @@ fn it_shoud_assemble_shrimp() {
     let (app, resolver, config) = MockedApp::new();
 
     todo!();
+
     config.borrow_mut().add_layer("FINAL_STATS");
     config.borrow_mut().add_layer("FINAL_STATS_END");
+    config.borrow_mut().add_layer("BUY_FINAL");
 
     resolver.borrow_mut().mock_file("./stats_base", STATS_BASE);
     resolver
@@ -70,6 +85,7 @@ fn it_shoud_assemble_shrimp() {
     let resolved_resources = app.assemble_from_str(INDEX);
     let resolved_resources = unwrap_or_print_error!(resolved_resources);
 
+    /* Testing base stats */
     assert_resource_at!(resolved_resources : "stats.con" => Number 1.0);
     assert_resource_at!(resolved_resources : "stats.con_mod" => Number 0.0);
     assert_resource_at!(resolved_resources : "stats.agi" => Number 4.0);
@@ -108,4 +124,10 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resolved_resources : "stats.traitement" => Number 6.0);
     assert_resource_at!(resolved_resources : "stats.corruption" => Number 4.0);
     assert_resource_at!(resolved_resources : "stats.attaque" => Number 2.0);
+
+    /* Testing drone rules */
+    assert_resource_at!(resolved_resources : "inventory.Crawler.stats.hit" => Number 11.0);
+
+    /* Testing buy util */
+    assert_resource_at!(resolved_resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
 }

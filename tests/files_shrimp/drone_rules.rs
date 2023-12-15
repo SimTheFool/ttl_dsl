@@ -5,5 +5,5 @@ pub const DRONE_RULES: &str = r#"
 }
 
 @TRANSFORM FINAL_STATS
-> $.hit += floor($.resistance /2)
+> $.stats.hit += floor($.stats.resistance /2)
 "#;

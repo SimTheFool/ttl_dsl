@@ -1,14 +1,15 @@
 use super::{
     objects::Object,
     parser::Rule,
-    primitives::{Number, Ref, StringLit, Variable},
+    primitives::{Number, Ref, String, Text, Variable},
 };
 use pest_ast::FromPest;
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::value))]
 pub enum Value {
-    String(StringLit),
+    Text(Text),
+    String(String),
     Number(Number),
     Object(Object),
     Reference(Ref),
@@ -25,7 +26,7 @@ pub struct Declaration {
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::meta))]
 pub enum Meta {
-    String(StringLit),
+    String(String),
     Number(Number),
     Reference(Ref),
 }
@@ -50,6 +51,7 @@ mod tests {
     fn it_should_parse_declaration() {
         let str = r#"["meta1" 15]var01: 745"#;
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();
+        println!("{:#?}", pairs);
         let declaration = Declaration::from_pest(&mut pairs).unwrap();
 
         let identifier = declaration.identifier;

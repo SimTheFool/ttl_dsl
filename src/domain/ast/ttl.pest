@@ -2,11 +2,13 @@ WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 
 ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
+ANYTEXT = @{ (!NEWLINE ~ ANY)* }
 
 identifier = @{ ALPHAFIRST }
 reference = @{ "$" ~ identifier }
 number = @{ ASCII_DIGIT+ }
 string = { "\"" ~ (ALPHATEXT) ~ "\"" }
+text = { ANYTEXT ~ NEWLINE? }
 
 object_element = { import | declaration }
 object = { "{" ~ object_element* ~ "}" }
@@ -15,7 +17,7 @@ meta = { number | string | reference }
 metas = { "[" ~ meta* ~ "]" }
 declaration = {metas? ~ identifier ~ ":" ~ value }
 
-value = { number | string | object | reference }
+value = { number | object | reference | string | text }
 
 import_id = @{ ("." | "/" | ALPHAFIRST)+ }
 import_variable = {identifier ~ ":" ~ value }

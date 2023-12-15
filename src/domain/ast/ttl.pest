@@ -15,7 +15,11 @@ object = { "{" ~ object_element* ~ "}" }
 
 meta = { number | string | reference }
 metas = { "[" ~ meta* ~ "]" }
-declaration = {metas? ~ identifier ~ ":" ~ value }
+
+declare_direct_mark = @{":"}
+declare_uniq_mark = @{"!"}
+declare_mark = { (declare_direct_mark | declare_uniq_mark) }
+declaration = {metas? ~ identifier ~ declare_mark ~ value }
 
 value = { number | object | reference | string | text }
 

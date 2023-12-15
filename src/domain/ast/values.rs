@@ -16,10 +16,26 @@ pub enum Value {
 }
 
 #[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::declare_direct_mark))]
+pub struct DeclarationDirectMark();
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::declare_uniq_mark))]
+pub struct DeclarationUniqMark();
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::declare_mark))]
+pub enum DeclarationMark {
+    Direct(DeclarationDirectMark),
+    Uniq(DeclarationUniqMark),
+}
+
+#[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::declaration))]
 pub struct Declaration {
     pub metas: Option<Metas>,
     pub identifier: Variable,
+    pub mark: DeclarationMark,
     pub value: Value,
 }
 
@@ -49,14 +65,17 @@ mod tests {
 
     #[test]
     fn it_should_parse_declaration() {
-        let str = r#"["meta1" 15]var01: 745"#;
+        let str = r#"["meta1" 15]var01! 745"#;
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();
-        println!("{:#?}", pairs);
-        let declaration = Declaration::from_pest(&mut pairs).unwrap();
+        let Declaration {
+            metas,
+            identifier,
+            mark,
+            value,
+        } = Declaration::from_pest(&mut pairs).unwrap();
 
-        let identifier = declaration.identifier;
-        let value = declaration.value;
-        let metas = declaration.metas;
+        as_variant!(mark, super::DeclarationMark::Uniq);
+
         let value = match value {
             super::Value::Number(m) => m.0,
             _ => panic!("Unexpected value"),
@@ -89,10 +108,14 @@ mod tests {
         let str = r#"somevar: $var001"#;
 
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();
-        let declaration = Declaration::from_pest(&mut pairs).unwrap();
+        let Declaration {
+            identifier,
+            mark,
+            value,
+            ..
+        } = Declaration::from_pest(&mut pairs).unwrap();
 
-        let identifier = declaration.identifier;
-        let value = declaration.value;
+        as_variant!(mark, super::DeclarationMark::Direct);
 
         assert_eq!(identifier.0, "somevar");
         let value = as_variant!(value, Value::Reference);

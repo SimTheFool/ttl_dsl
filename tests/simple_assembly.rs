@@ -1,7 +1,7 @@
 #[macro_use]
 mod utils;
+use crate::utils::*;
 use custom_dsl::domain::resolution::ResolvedResourceValue;
-use utils::*;
 
 const INDEX: &str = r#"
     {
@@ -20,8 +20,8 @@ const INDEX: &str = r#"
 
 const STATS: &str = r#"
     {
-        con: con
-        vol: vol
+        con: $con
+        vol: $vol
         ["con"]
         resist_phy: 0
         ["vol"]
@@ -40,9 +40,9 @@ const STATS: &str = r#"
 
 const MAGICIAN: &str = r#"
     {
-        mag: mag
-        initiation: initiation
-        [trad]
+        mag: $mag
+        initiation: $initiation
+        [$trad]
         resist_drain: 0
     }
     
@@ -60,7 +60,7 @@ fn it_shoud_assemble_from_different_files() {
     resolver.borrow_mut().mock_file("./magician", MAGICIAN);
 
     let resolved_resources = app.assemble_from_str(INDEX);
-    let resolved_resources = unwrap_or_print_error!(resolved_resources);
+    let resolved_resources = print_unwrap!(resolved_resources);
 
     assert_eq!(resolved_resources.len(), 9);
 

@@ -69,6 +69,7 @@ impl AstVisitor<'_> {
             identifier,
             value,
             metas,
+            ..
         } = val;
 
         let metas = match metas {

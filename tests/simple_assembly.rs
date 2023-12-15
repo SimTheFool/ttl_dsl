@@ -7,10 +7,10 @@ const INDEX: &str = r#"
     {
         stats:
         {
-            << ./stats
+            <? ./stats
                 with con : 5
                 with vol : 3 >
-            << ./magician
+            <? ./magician
                 with mag : 4
                 with initiation : 1
                 with trad : "vol" >

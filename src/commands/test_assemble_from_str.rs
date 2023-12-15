@@ -106,7 +106,7 @@ mod tests {
         let values = assemble_from_str
             .execute(
                 r#"{
-                << ./stats
+                <? ./stats
                     with var01 : 001
                     with var02 : "002" >
                 var03: 003
@@ -202,8 +202,8 @@ mod tests {
             mag: 3
         }"#;
         let root_input = r#"{
-            << ./stats
-                with << ./mag >
+            <? ./stats
+                with <? ./mag >
             >
         }"#;
 

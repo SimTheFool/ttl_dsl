@@ -28,7 +28,7 @@ mod tests {
     #[test]
     fn it_should_parse_object() {
         let str = r#"{
-            << ./import
+            <? ./import
                 with var01: 01 >
             var02: 745
             var03: "hello"

@@ -10,7 +10,7 @@ const INDEX: &str = r#"
     {
         stats:
         {
-            << ./stats_base
+            <? ./stats_base
                 with con : 1
                 with agi : 4
                 with rea : 2
@@ -20,7 +20,7 @@ const INDEX: &str = r#"
                 with int : 4
                 with cha : 2
                 with ess : 6 >
-            << ./stats_techno
+            <? ./stats_techno
                 with res : 7
                 with submersion : 1 >
         }
@@ -28,8 +28,8 @@ const INDEX: &str = r#"
         inventory:
         {
             <@ ./drones/crawler
-                with <slots! ./drones_mods/monture >
-                with <slots! ./drones_mods/monture >
+                with <? ./drones_mods/monture >
+                with <? ./drones_mods/monture >
             >
 
 
@@ -52,7 +52,7 @@ inventory:
 
 /*
 <@ ./drones/kanmushi
-                with << ./utils/quantity
+                with <? ./utils/quantity
                     with quantity : 2 >
             >
  */

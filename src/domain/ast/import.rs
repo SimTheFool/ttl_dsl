@@ -61,7 +61,7 @@ mod tests {
     #[test]
     fn it_should_parse_import() {
         let str = r#"
-        << ./stats
+        <? ./stats
             with var01: 01
             with var02: "002" >
         "#
@@ -94,9 +94,9 @@ mod tests {
     #[test]
     fn it_should_parse_nested_import() {
         let str = r#"
-        << ./root
+        <? ./root
             with aaa: 01
-            with << ./nested
+            with <? ./nested
                 with zzz: 02
                 with yyy: 03 >
             with bbb: "002" >

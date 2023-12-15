@@ -2,7 +2,7 @@ pub const DRONE_CRAWLER: &str = r#"
 @NAME Crawler
 
 {
-    << ./drones/rules >
+    <? ./drones/rules >
     
     name: Crawler
     manufacturer: Aztechnology
@@ -22,6 +22,6 @@ pub const DRONE_CRAWLER: &str = r#"
         armor: 2
     }
     
-    << ./utils/buy with cost: 9500>
+    <? ./utils/buy with cost: 9500>
 }
 "#;

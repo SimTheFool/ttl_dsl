@@ -9,6 +9,8 @@ mod files_shrimp;
 
 const INDEX: &str = r#"
     {
+        nuyens: 70000
+
         stats:
         {
             <? ./stats_base
@@ -32,16 +34,13 @@ const INDEX: &str = r#"
                 with <? ./drones_mods/monture >
                 with <? ./drones_mods/monture >
             >
+
+            <@ ./drones/kanmushi
+                with <? ./utils/quantity with q: 2 >
+            >
         }
     }
 "#;
-
-/*
-<@ ./drones/kanmushi
-                with <? ./utils/quantity
-                    with quantity : 2 >
-            >
- */
 
 #[test]
 fn it_shoud_assemble_shrimp() {
@@ -63,8 +62,14 @@ fn it_shoud_assemble_shrimp() {
         .mock_file("./drones/crawler", DRONE_CRAWLER);
     resolver
         .borrow_mut()
+        .mock_file("./drones/kanmushi", DRONE_KANMUSHI);
+    resolver
+        .borrow_mut()
         .mock_file("./drones_mods/monture", DRONE_MOD_MONTURE);
     resolver.borrow_mut().mock_file("./utils/buy", UTILS_BUY);
+    resolver
+        .borrow_mut()
+        .mock_file("./utils/quantity", UTILS_QUANTITY);
 
     let resources = app.assemble_from_str(INDEX);
     let resources = print_unwrap!(resources);
@@ -114,9 +119,6 @@ fn it_shoud_assemble_shrimp() {
     /* Testing drone rules */
     assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);
 
-    /* Testing buy util */
-    assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
-
     /* Testing drone mods */
     let crawler_slot_regex =
         Regex::new(r#"inventory\.Crawler\.slots\.([a-zA-Z0-9]+)\.name"#).unwrap();
@@ -128,4 +130,9 @@ fn it_shoud_assemble_shrimp() {
         })
         .collect::<Vec<_>>();
     assert_eq!(crawler_slots.len(), 2);
+
+    /* Testing buy util */
+    assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
+    assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
+    assert_resource_at!(resources : "nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0});
 }

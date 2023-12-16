@@ -7,9 +7,11 @@ pub const DRONE_CRAWLER: &str = r#"
     name: Crawler
     manufacturer: Aztechnology
     description: Moyen arthropode mécanique
+
     price: 0
+    quantity: 1
     
-    legal: true
+    status: free
     concealment: 2
     
     stats:

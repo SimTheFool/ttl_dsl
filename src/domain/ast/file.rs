@@ -18,7 +18,7 @@ pub struct Name(#[pest_ast(inner(with(span_into_string)))] pub String);
 #[pest_ast(rule(Rule::file))]
 pub struct File {
     pub name: Option<Name>,
-    pub value: Value,
+    pub value: Option<Value>,
     pub transforms: Option<Vec<Transform>>,
     _eoi: EOI,
 }
@@ -39,6 +39,7 @@ mod tests {
     use crate::{
         as_variant,
         domain::ast::{objects::ObjectElem, values::Value},
+        print_unwrap,
     };
     use from_pest::FromPest;
     use pest::Parser;
@@ -75,7 +76,7 @@ mod tests {
             None => panic!("Should have rules"),
         }
 
-        let object_elems = as_variant!(value, Value::Object).0;
+        let object_elems = as_variant!(value.unwrap(), Value::Object).0;
 
         let first_declaration = as_variant!(object_elems.get(0).unwrap(), ObjectElem::Declaration);
         let first_var = &first_declaration.identifier;
@@ -103,12 +104,75 @@ mod tests {
         "#;
 
         let mut pairs = super::TTLParser::parse(super::Rule::file, str).unwrap();
-        println!("{:#?}", pairs);
         let File { name, .. } = super::File::from_pest(&mut pairs).unwrap();
 
         match name {
             Some(super::Name(name)) => assert_eq!(name, "Something_indeed"),
             None => panic!("Should have an id"),
+        }
+    }
+
+    #[test]
+    fn it_should_parse_name_when_no_value() {
+        let str = r#"
+            @NAME Something_indeed
+        "#;
+
+        let mut pairs = super::TTLParser::parse(super::Rule::file, str).unwrap();
+        let File { name, value, .. } = super::File::from_pest(&mut pairs).unwrap();
+
+        match value {
+            Some(_) => panic!("Should not have a value"),
+            None => {}
+        }
+
+        match name {
+            Some(super::Name(name)) => assert_eq!(name, "Something_indeed"),
+            None => panic!("Should have an id"),
+        }
+    }
+
+    #[test]
+    fn it_should_parse_transform_when_no_value() {
+        let str = r#"
+
+
+        @TRANSFORM BUY_FINAL
+        > $.price += $cost
+        "#;
+
+        let mut pairs = print_unwrap!(super::TTLParser::parse(super::Rule::file, str));
+        let File {
+            name,
+            value,
+            transforms,
+            ..
+        } = super::File::from_pest(&mut pairs).unwrap();
+
+        match value {
+            Some(_) => panic!("Should not have a value"),
+            None => {}
+        }
+
+        match name {
+            Some(_) => panic!("Should not have a name"),
+            None => {}
+        }
+
+        match transforms {
+            Some(transforms) => {
+                assert_eq!(transforms.len(), 1);
+                let transform = transforms.get(0).unwrap();
+
+                match &transform.rules {
+                    Some(rules) => {
+                        assert_eq!(rules.len(), 1);
+                        assert_eq!(rules.get(0).unwrap().0, "$.price += $cost");
+                    }
+                    None => panic!("Should have rules"),
+                }
+            }
+            None => panic!("Should have transforms"),
         }
     }
 }

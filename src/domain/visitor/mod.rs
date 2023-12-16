@@ -191,10 +191,13 @@ impl AstVisitor<'_> {
                 .collect::<AppResult<Vec<_>>>()?;
             trans_acc.extend(transforms);
         }
-        let (sub_resources, sub_transforms) = self.visit_value(file_value, build)?;
 
-        trans_acc.splice(0..0, sub_transforms);
-        resource_acc.splice(0..0, sub_resources);
+        if let Some(value) = file_value {
+            let (sub_resources, sub_transforms) = self.visit_value(value, build)?;
+            trans_acc.splice(0..0, sub_transforms);
+            resource_acc.splice(0..0, sub_resources);
+        }
+
         Ok((resource_acc, trans_acc))
     }
 

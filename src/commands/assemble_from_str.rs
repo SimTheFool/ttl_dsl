@@ -41,7 +41,11 @@ where
 
         let visitor = AstVisitor::new(self.resolver);
 
-        let (resources, inner_transforms) = visitor.visit(value)?;
+        let (resources, inner_transforms) = match value {
+            Some(v) => visitor.visit(v)?,
+            None => (vec![], vec![]),
+        };
+
         transforms.extend(inner_transforms);
 
         let resources_map = resources

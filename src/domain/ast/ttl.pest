@@ -2,7 +2,7 @@ WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 
 ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
-ANYTEXT = @{ (!NEWLINE ~ ANY)* }
+ANYTEXT = @{!(NEWLINE | "$" | "@") ~ (!NEWLINE ~ ANY)+ }
 
 identifier = @{ ALPHAFIRST }
 reference = @{ "$" ~ identifier }
@@ -39,4 +39,4 @@ transform = ${ "@TRANSFORM" ~ WHITESPACE ~ transform_layer ~ (NEWLINE ~ WHITESPA
 
 name = { "@NAME" ~ identifier }
 
-file = { SOI ~ name? ~ value ~ transform* ~ EOI }
+file = { SOI ~ name? ~ value? ~ transform* ~ EOI }

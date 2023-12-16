@@ -1,6 +1,7 @@
 use crate::utils::*;
-use custom_dsl::domain::resolution::ResolvedResourceValue;
+use custom_dsl::domain::resolution::{ResolvedResource, ResolvedResourceValue};
 use files_shrimp::*;
+use regex::Regex;
 
 #[macro_use]
 mod utils;
@@ -31,24 +32,9 @@ const INDEX: &str = r#"
                 with <? ./drones_mods/monture >
                 with <? ./drones_mods/monture >
             >
-
-
         }
     }
 "#;
-
-/*
-
-inventory:
-        {
-            <@ ./drones/crawler
-                with <slots! ./drones_mods/monture >
-                with <slots! ./drones_mods/monture >
-            >
-
-
-        }
-*/
 
 /*
 <@ ./drones/kanmushi
@@ -80,54 +66,66 @@ fn it_shoud_assemble_shrimp() {
         .mock_file("./drones_mods/monture", DRONE_MOD_MONTURE);
     resolver.borrow_mut().mock_file("./utils/buy", UTILS_BUY);
 
-    let resolved_resources = app.assemble_from_str(INDEX);
-    let resolved_resources = print_unwrap!(resolved_resources);
+    let resources = app.assemble_from_str(INDEX);
+    let resources = print_unwrap!(resources);
 
-    println!("RESOURCES: {:#?}", resolved_resources);
+    println!("RESOURCES: {:#?}", resources);
 
     /* Testing base stats */
-    assert_resource_at!(resolved_resources : "stats.con" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.con_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.agi" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.agi_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.rea" => Number 2.0);
-    assert_resource_at!(resolved_resources : "stats.rea_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.for" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.for_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.vol" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.vol_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.log" => Number 6.0);
-    assert_resource_at!(resolved_resources : "stats.log_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.int" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.int_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.cha" => Number 2.0);
-    assert_resource_at!(resolved_resources : "stats.cha_mod" => Number 0.0);
-    assert_resource_at!(resolved_resources : "stats.ess" => Number 6.0);
-    assert_resource_at!(resolved_resources : "stats.edge" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.resist_phy" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.resist_ment" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.def_phy" => Number 6.0);
-    assert_resource_at!(resolved_resources : "stats.def_ment" => Number 8.0);
-    assert_resource_at!(resolved_resources : "stats.init_dice" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.init_base" => Number 6.0);
-    assert_resource_at!(resolved_resources : "stats.action_maj" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.action_min" => Number 2.0);
-    assert_resource_at!(resolved_resources : "stats.hit_phy" => Number 8.0);
-    assert_resource_at!(resolved_resources : "stats.hit_stun" => Number 10.0);
-    assert_resource_at!(resolved_resources : "stats.hit_over" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.heal" => Number 5.0);
+    assert_resource_at!(resources : "stats.con" => Number 1.0);
+    assert_resource_at!(resources : "stats.con_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.agi" => Number 4.0);
+    assert_resource_at!(resources : "stats.agi_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.rea" => Number 2.0);
+    assert_resource_at!(resources : "stats.rea_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.for" => Number 1.0);
+    assert_resource_at!(resources : "stats.for_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.vol" => Number 4.0);
+    assert_resource_at!(resources : "stats.vol_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.log" => Number 6.0);
+    assert_resource_at!(resources : "stats.log_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.int" => Number 4.0);
+    assert_resource_at!(resources : "stats.int_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.cha" => Number 2.0);
+    assert_resource_at!(resources : "stats.cha_mod" => Number 0.0);
+    assert_resource_at!(resources : "stats.ess" => Number 6.0);
+    assert_resource_at!(resources : "stats.edge" => Number 4.0);
+    assert_resource_at!(resources : "stats.resist_phy" => Number 1.0);
+    assert_resource_at!(resources : "stats.resist_ment" => Number 4.0);
+    assert_resource_at!(resources : "stats.def_phy" => Number 6.0);
+    assert_resource_at!(resources : "stats.def_ment" => Number 8.0);
+    assert_resource_at!(resources : "stats.init_dice" => Number 1.0);
+    assert_resource_at!(resources : "stats.init_base" => Number 6.0);
+    assert_resource_at!(resources : "stats.action_maj" => Number 1.0);
+    assert_resource_at!(resources : "stats.action_min" => Number 2.0);
+    assert_resource_at!(resources : "stats.hit_phy" => Number 8.0);
+    assert_resource_at!(resources : "stats.hit_stun" => Number 10.0);
+    assert_resource_at!(resources : "stats.hit_over" => Number 1.0);
+    assert_resource_at!(resources : "stats.heal" => Number 5.0);
 
-    assert_resource_at!(resolved_resources : "stats.res" => Number 7.0);
-    assert_resource_at!(resolved_resources : "stats.submersion" => Number 1.0);
-    assert_resource_at!(resolved_resources : "stats.resist_drain" => Number 3.0);
-    assert_resource_at!(resolved_resources : "stats.firewall" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.traitement" => Number 6.0);
-    assert_resource_at!(resolved_resources : "stats.corruption" => Number 4.0);
-    assert_resource_at!(resolved_resources : "stats.attaque" => Number 2.0);
+    assert_resource_at!(resources : "stats.res" => Number 7.0);
+    assert_resource_at!(resources : "stats.submersion" => Number 1.0);
+    assert_resource_at!(resources : "stats.resist_drain" => Number 3.0);
+    assert_resource_at!(resources : "stats.firewall" => Number 4.0);
+    assert_resource_at!(resources : "stats.traitement" => Number 6.0);
+    assert_resource_at!(resources : "stats.corruption" => Number 4.0);
+    assert_resource_at!(resources : "stats.attaque" => Number 2.0);
 
     /* Testing drone rules */
-    assert_resource_at!(resolved_resources : "inventory.Crawler.stats.hit" => Number 11.0);
+    assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);
 
     /* Testing buy util */
-    assert_resource_at!(resolved_resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
+    assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
+
+    /* Testing drone mods */
+    let crawler_slot_regex =
+        Regex::new(r#"inventory\.Crawler\.slots\.([a-zA-Z0-9]+)\.name"#).unwrap();
+    let crawler_slots = resources
+        .iter()
+        .filter(|ResolvedResource { identifier, .. }| match identifier {
+            Some(i) => crawler_slot_regex.is_match(i),
+            _ => false,
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(crawler_slots.len(), 2);
 }

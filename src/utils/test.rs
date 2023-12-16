@@ -5,7 +5,7 @@ macro_rules! as_variant {
             $(
                 $enum(inner) => inner,
             )+
-            _ => panic!("Unexpected variant"),
+            _ => panic!("Unexpected variant: "),
         }
     };
 }

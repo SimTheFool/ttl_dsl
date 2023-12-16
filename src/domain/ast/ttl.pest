@@ -1,14 +1,17 @@
 WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 
 ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
-ALPHATEXT = @{ ASCII_ALPHANUMERIC* }
-ANYTEXT = @{!(NEWLINE | "$" | "@") ~ (!NEWLINE ~ ANY)+ }
+
 
 identifier = @{ ALPHAFIRST }
 reference = @{ "$" ~ identifier }
 number = @{ ASCII_DIGIT+ }
-string = { "\"" ~ (ALPHATEXT) ~ "\"" }
-text = { ANYTEXT ~ NEWLINE? }
+
+TEXTCONTENT = @{!(NEWLINE | "$" | "@") ~ (!NEWLINE ~ ANY)+ }
+text = { TEXTCONTENT }
+
+STRINGCONTENT = @{ (!"\"" ~ ANY)* }
+string = { "\"" ~ STRINGCONTENT ~ "\"" }
 
 object_element = { import | declaration }
 object = { "{" ~ object_element* ~ "}" }

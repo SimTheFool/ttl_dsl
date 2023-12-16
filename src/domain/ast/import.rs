@@ -52,9 +52,9 @@ pub struct Import {
 
 #[cfg(test)]
 mod tests {
-    use crate::as_variant;
     use crate::domain::ast::Import;
     use crate::domain::ast::{parser::TTLParser, values::Value, ImportConfig, ImportVariable};
+    use crate::{as_variant, print_unwrap};
     use from_pest::FromPest;
     use pest::Parser;
 
@@ -67,12 +67,12 @@ mod tests {
         "#
         .trim();
 
-        let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::import, str));
         let Import {
             import_config,
             import_id,
             ..
-        } = super::Import::from_pest(&mut pairs).unwrap();
+        } = print_unwrap!(super::Import::from_pest(&mut pairs));
 
         assert_eq!(import_id.0, "./stats");
 
@@ -160,12 +160,12 @@ mod tests {
         "#
         .trim();
 
-        let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::import, str));
         let Import {
             import_config,
             import_id,
             import_mark,
-        } = super::Import::from_pest(&mut pairs).unwrap();
+        } = print_unwrap!(super::Import::from_pest(&mut pairs));
 
         assert_eq!(import_id.0, "./root");
         let _import_mark = as_variant!(import_mark, super::ImportMark::Named);
@@ -187,7 +187,6 @@ mod tests {
         .trim();
 
         let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
-        println!("{:#?}", pairs);
         let Import { import_mark, .. } = super::Import::from_pest(&mut pairs).unwrap();
 
         let _import_mark = as_variant!(import_mark, super::ImportMark::Uniq);

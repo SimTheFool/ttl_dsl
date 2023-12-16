@@ -59,6 +59,7 @@ mod tests {
             parser::TTLParser,
             values::{Declaration, Value},
         },
+        print_unwrap,
     };
     use from_pest::FromPest;
     use pest::Parser;
@@ -120,5 +121,15 @@ mod tests {
         assert_eq!(identifier.0, "somevar");
         let value = as_variant!(value, Value::Reference);
         assert_eq!(value.get_var_name(), "var001")
+    }
+
+    #[test]
+    fn it_should_parse_string_declaration() {
+        let str = r#"somevar: "aaa""#;
+
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::declaration, str));
+        let Declaration { value, .. } = print_unwrap!(super::Declaration::from_pest(&mut pairs));
+
+        as_variant!(value, Value::String);
     }
 }

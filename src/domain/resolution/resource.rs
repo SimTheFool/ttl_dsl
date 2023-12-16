@@ -13,6 +13,7 @@ pub enum RawResourceValue {
 #[derive(PartialEq, Debug, Clone, Builder)]
 #[builder(build_fn(error = "AppError"))]
 #[builder(pattern = "owned")]
+#[builder(name = "ResourceContextBuilder")]
 #[builder(derive(Clone))]
 pub struct RawResource {
     #[builder(setter(custom))]
@@ -33,7 +34,7 @@ pub struct RawResource {
     pub ctx_path: Option<String>,
 }
 
-impl RawResourceBuilder {
+impl ResourceContextBuilder {
     pub fn try_append_ctx_path(self, path: &str) -> AppResult<Self> {
         let resource_path = match (&self.ctx_path.clone().flatten(), path) {
             (None, id) => id.clone().to_string(),

@@ -1,15 +1,14 @@
 use super::{
     ast,
     resolution::{
-        RawResource, RawResourceBuilder, RawTransformation, ResourceList, TransformList,
+        RawResource, RawTransformation, ResourceContextBuilder, ResourceList, TransformList,
         VariablesMap,
     },
 };
-use crate::result::AppResult;
 use crate::{domain::resolution::Resolvable, result::AppError};
+use crate::{random::get_random_uf8, result::AppResult};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
-use uuid::Uuid;
 
 pub struct AstVisitor<'a> {
     pub resolver: &'a dyn crate::ports::ResolverPort,
@@ -21,14 +20,14 @@ impl<'a> AstVisitor<'a> {
 }
 impl AstVisitor<'_> {
     pub fn visit(&self, val: ast::Value) -> AppResult<(ResourceList, TransformList)> {
-        let build = RawResourceBuilder::default();
+        let build = ResourceContextBuilder::default();
         self.visit_value(val, build)
     }
 
     fn visit_value(
         &self,
         val: ast::Value,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         let visit_result = match val {
             ast::Value::String(s) => self.visit_string(s, build)?,
@@ -63,13 +62,13 @@ impl AstVisitor<'_> {
     fn visit_declaration(
         &self,
         val: ast::Declaration,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         let ast::Declaration {
             identifier,
             value,
             metas,
-            ..
+            mark,
         } = val;
 
         let metas = match metas {
@@ -90,10 +89,18 @@ impl AstVisitor<'_> {
             None => vec![],
         };
 
-        let updated_build = build
+        let build = build
             .metas(metas)
             .identifier(Some(identifier.0.clone()))
             .try_append_ctx_path(&identifier.0)?;
+
+        let updated_build = match mark {
+            ast::DeclarationMark::Direct(_) => build,
+            ast::DeclarationMark::Uniq(_) => {
+                let random_key = get_random_uf8(10)?;
+                build.try_append_ctx_path(&random_key)?
+            }
+        };
 
         self.visit_value(value, updated_build)
     }
@@ -101,7 +108,7 @@ impl AstVisitor<'_> {
     fn visit_import(
         &self,
         val: ast::Import,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         let ast::Import {
             import_config,
@@ -109,44 +116,7 @@ impl AstVisitor<'_> {
             import_mark,
         } = val;
 
-        let RawResource { ctx_path, .. } = build.clone().build_as_string("UNUSED")?;
-
-        let (mut variables_acc, mut resource_acc, mut trans_acc) = (
-            VariablesMap::new(),
-            ResourceList::new(),
-            TransformList::new(),
-        );
-
-        let add_variable =
-            |map: &mut VariablesMap, variable: ast::ImportVariable| -> AppResult<()> {
-                let ast::ImportVariable { identifier, value } = variable;
-                let (sub_resource_map, _) = self.visit_value(value, build.clone())?;
-                for resource in sub_resource_map {
-                    map.insert(identifier.0.clone(), resource.try_resolve()?);
-                }
-                Ok(())
-            };
-
-        let add_resource_and_transform = |r_list: &mut ResourceList,
-                                          t_list: &mut TransformList,
-                                          import: ast::Import|
-         -> AppResult<()> {
-            let (sub_resources, sub_transforms) = self.visit_import(import, build.clone())?;
-            r_list.extend(sub_resources);
-            t_list.extend(sub_transforms);
-            Ok(())
-        };
-
-        import_config.into_iter().try_for_each(|elem| {
-            match elem {
-                ast::ImportConfig::Variable(var) => add_variable(&mut variables_acc, var)?,
-                ast::ImportConfig::Import(i) => {
-                    add_resource_and_transform(&mut resource_acc, &mut trans_acc, i)?
-                }
-            }
-            AppResult::Ok(())
-        })?;
-
+        // Récupérer le fichier + name
         let ast::File {
             transforms: file_transforms,
             value: file_value,
@@ -154,31 +124,71 @@ impl AstVisitor<'_> {
             ..
         } = ast::File::try_from(self.resolver.read(&import_id.0)?.as_str())?;
 
-        let build = match (import_mark, name) {
-            (ast::ImportMark::Anon(_), _) => build,
-            (ast::ImportMark::Named(_), Some(name)) => build.try_append_ctx_path(&name.0)?,
+        // Changer le context build
+        let new_ctx_path = match (import_mark, name) {
+            (ast::ImportMark::Anon(_), _) => None,
+            (ast::ImportMark::Named(_), Some(name)) => Some(name.0),
             (ast::ImportMark::Named(_), None) => Err(AppError::String(format!(
                 "Imported file {} should have a name",
                 import_id.0
             )))?,
-            (ast::ImportMark::Uniq(_), None) => {
-                build.try_append_ctx_path(&Uuid::new_v4().to_string())?
-            }
+            (ast::ImportMark::Uniq(_), None) => Some(get_random_uf8(10)?),
             (ast::ImportMark::Uniq(_), Some(name)) => {
-                let id = format!("{}_{}", name.0, Uuid::new_v4().to_string());
-                build.try_append_ctx_path(&id)?
+                let random_key = get_random_uf8(10)?;
+                Some(format!("{}_{}", name.0, random_key))
             }
         };
+
+        let build = match new_ctx_path {
+            Some(new_ctx_path) => build.try_append_ctx_path(&new_ctx_path)?,
+            None => build,
+        };
+
+        // Récupérer les variables et les imports associées
+        let (mut variables_acc, mut resource_acc, mut trans_acc) = (
+            VariablesMap::new(),
+            ResourceList::new(),
+            TransformList::new(),
+        );
+
+        let mut add_variable = |variable: ast::ImportVariable| -> AppResult<()> {
+            let ast::ImportVariable { identifier, value } = variable;
+            let (sub_resource_map, _) = self.visit_value(value, build.clone())?;
+            for resource in sub_resource_map {
+                variables_acc.insert(identifier.0.clone(), resource.try_resolve()?);
+            }
+            Ok(())
+        };
+
+        let mut add_resource_and_transform = |import: ast::Import| -> AppResult<()> {
+            let (sub_resources, sub_transforms) = self.visit_import(import, build.clone())?;
+            resource_acc.extend(sub_resources);
+            trans_acc.extend(sub_transforms);
+            Ok(())
+        };
+
+        import_config.into_iter().try_for_each(|elem| {
+            match elem {
+                ast::ImportConfig::Variable(var) => add_variable(var)?,
+                ast::ImportConfig::Import(i) => add_resource_and_transform(i)?,
+            }
+            AppResult::Ok(())
+        })?;
+
+        // Résoudre les transformations et les ressources
         let build = build.ctx_variables(variables_acc.clone());
 
         if let Some(t) = file_transforms {
             let transforms = t
                 .into_iter()
-                .flat_map(|t| {
-                    RawTransformation::from_ast(t, Some(variables_acc.clone()), ctx_path.clone())
-                        .unwrap_or_default()
+                .map(|t| {
+                    RawTransformation::from_ast(t, build.clone()).map(|v| v.unwrap_or_default())
                 })
-                .collect::<Vec<RawTransformation>>();
+                .flat_map(|r| match r {
+                    Ok(vec) => vec.into_iter().map(|item| Ok(item)).collect(),
+                    Err(er) => vec![Err(er)],
+                })
+                .collect::<AppResult<Vec<_>>>()?;
             trans_acc.extend(transforms);
         }
         let (sub_resources, sub_transforms) = self.visit_value(file_value, build)?;
@@ -191,7 +201,7 @@ impl AstVisitor<'_> {
     fn visit_string(
         &self,
         val: ast::String,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_string(&val.0)?], vec![]))
     }
@@ -199,7 +209,7 @@ impl AstVisitor<'_> {
     fn visit_text(
         &self,
         val: ast::Text,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_string(&val.0)?], vec![]))
     }
@@ -207,7 +217,7 @@ impl AstVisitor<'_> {
     fn visit_number(
         &self,
         val: ast::Number,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_number(val.0)?], vec![]))
     }
@@ -215,7 +225,7 @@ impl AstVisitor<'_> {
     fn visit_reference(
         &self,
         val: ast::Ref,
-        build: RawResourceBuilder,
+        build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_reference(&val.get_var_name())?], vec![]))
     }

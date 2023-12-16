@@ -1,7 +1,7 @@
 use crate::domain::ast::{self};
-use crate::domain::resolution::RawTransformation;
 use crate::domain::resolution::Resolvable;
 use crate::domain::resolution::ResolvedResource;
+use crate::domain::resolution::{RawTransformation, ResourceContextBuilder};
 use crate::domain::transformation::apply_transforms;
 use crate::domain::visitor::AstVisitor;
 use crate::utils::result::AppResult;
@@ -29,8 +29,15 @@ where
         let mut transforms = transforms
             .unwrap_or_default()
             .into_iter()
-            .flat_map(|t| RawTransformation::from_ast(t, None, None).unwrap_or_default())
-            .collect::<Vec<RawTransformation>>();
+            .map(|t| {
+                let blank_context = ResourceContextBuilder::default();
+                RawTransformation::from_ast(t, blank_context).map(|v| v.unwrap_or_default())
+            })
+            .flat_map(|r| match r {
+                Ok(vec) => vec.into_iter().map(|item| Ok(item)).collect(),
+                Err(er) => vec![Err(er)],
+            })
+            .collect::<AppResult<Vec<RawTransformation>>>()?;
 
         let visitor = AstVisitor::new(self.resolver);
 

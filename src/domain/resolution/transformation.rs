@@ -1,5 +1,5 @@
-use super::ResolvedResource;
-use crate::domain::ast;
+use super::{RawResource, ResolvedResource, ResourceContextBuilder};
+use crate::{domain::ast, result::AppResult};
 use std::collections::HashMap;
 
 pub struct RawTransformation {
@@ -17,12 +17,16 @@ pub struct ResolvedTransformation {
 impl RawTransformation {
     pub fn from_ast(
         ast: ast::Transform,
-        ctx_variables: Option<HashMap<String, ResolvedResource>>,
-        ctx_path: Option<String>,
-    ) -> Option<Vec<Self>> {
+        build: ResourceContextBuilder,
+    ) -> AppResult<Option<Vec<Self>>> {
         let rules = ast.rules;
+        let RawResource {
+            ctx_path,
+            ctx_variables,
+            ..
+        } = build.clone().build_as_string("UNUSED")?;
 
-        match rules {
+        let transf = match rules {
             Some(rules) => Some(
                 rules
                     .into_iter()
@@ -35,6 +39,8 @@ impl RawTransformation {
                     .collect(),
             ),
             None => None,
-        }
+        };
+
+        Ok(transf)
     }
 }

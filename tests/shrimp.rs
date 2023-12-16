@@ -56,7 +56,7 @@ inventory:
                     with quantity : 2 >
             >
  */
-/*
+
 #[test]
 fn it_shoud_assemble_shrimp() {
     let (app, resolver, config) = MockedApp::new();
@@ -82,6 +82,8 @@ fn it_shoud_assemble_shrimp() {
 
     let resolved_resources = app.assemble_from_str(INDEX);
     let resolved_resources = print_unwrap!(resolved_resources);
+
+    println!("RESOURCES: {:#?}", resolved_resources);
 
     /* Testing base stats */
     assert_resource_at!(resolved_resources : "stats.con" => Number 1.0);
@@ -129,4 +131,3 @@ fn it_shoud_assemble_shrimp() {
     /* Testing buy util */
     assert_resource_at!(resolved_resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
 }
- */

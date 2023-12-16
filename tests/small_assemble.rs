@@ -31,28 +31,6 @@ fn it_should_create_resources_only() {
 }
 
 #[test]
-fn it_should_create_resources_with_context() {
-    let (app, _, _) = MockedApp::new();
-    let index = r#"{
-            var05: "hello"
-            var06: {
-                var07: 07
-            }
-        }"#;
-
-    let values = app.assemble_from_str(index);
-    let values = print_unwrap!(values);
-
-    assert_eq!(values.len(), 2);
-
-    let first_ressource = values.get(0).unwrap();
-    assert_resource!(first_ressource: "var05", String "hello");
-
-    let second_ressource = values.get(1).unwrap();
-    assert_resource!(second_ressource: "var06.var07", Number 7.0);
-}
-
-#[test]
 fn it_should_create_resources_with_import() {
     let (app, resolver, _) = MockedApp::new();
     let index = r#"{
@@ -220,7 +198,7 @@ fn it_should_assemble_uniq_imports() {
     let values = print_unwrap!(values);
 
     assert_eq!(values.len(), 2);
-    let key_regex = Regex::new(r"^stats_([a-zA-Z0-9-]+)\.con$").unwrap();
+    let key_regex = Regex::new(r"^stats_([a-zA-Z0-9]+)\.con$").unwrap();
 
     let first_ressource = values.get(0).unwrap();
     let match_group_first = key_regex
@@ -243,4 +221,48 @@ fn it_should_assemble_uniq_imports() {
     assert_eq!(value, &1.0);
 
     assert_ne!(match_group_first, match_group_second);
+}
+
+#[test]
+fn it_should_handle_uniq_declaration() {
+    let (app, _, _) = MockedApp::new();
+    let index = r#"{
+        con! 1
+        con! 2
+        con:
+        {
+            var10: I'm a subvalue
+        }
+    }"#;
+    let values = app.assemble_from_str(index);
+    let values = print_unwrap!(values);
+
+    assert_eq!(values.len(), 3);
+
+    let key_regex = Regex::new(r"^con\.([a-zA-Z0-9]+)$").unwrap();
+
+    let first_ressource = values.get(0).unwrap();
+    let match_group_first = key_regex
+        .captures(first_ressource.identifier.as_ref().unwrap())
+        .unwrap()
+        .get(1)
+        .unwrap()
+        .as_str();
+    let value = as_variant!(&first_ressource.value, ResolvedResourceValue::Number);
+    assert_eq!(value, &1.0);
+
+    let second_ressource = values.get(1).unwrap();
+    let match_group_second = key_regex
+        .captures(second_ressource.identifier.as_ref().unwrap())
+        .unwrap()
+        .get(1)
+        .unwrap()
+        .as_str();
+    let value = as_variant!(&second_ressource.value, ResolvedResourceValue::Number);
+    assert_eq!(value, &2.0);
+
+    assert_ne!(match_group_first, match_group_second);
+
+    let third_ressource = values.get(2).unwrap();
+    assert_resource!(third_ressource: "con.var10", String "I'm a subvalue");
 }

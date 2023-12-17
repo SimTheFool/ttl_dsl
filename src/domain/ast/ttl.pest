@@ -1,15 +1,12 @@
 WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
-
 ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+identifier = @{ (ASCII_ALPHANUMERIC | CASED_LETTER | " " | "_")*}
 
 
-identifier = @{ ALPHAFIRST }
-reference = @{ "$" ~ identifier }
+reference = @{ "$" ~ ALPHAFIRST }
 number = @{ ASCII_DIGIT+ }
-
 TEXTCONTENT = @{!(NEWLINE | "$" | "@") ~ (!NEWLINE ~ ANY)+ }
 text = { TEXTCONTENT }
-
 STRINGCONTENT = @{ (!"\"" ~ ANY)* }
 string = { "\"" ~ STRINGCONTENT ~ "\"" }
 
@@ -22,7 +19,7 @@ metas = { "[" ~ meta* ~ "]" }
 declare_direct_mark = @{":"}
 declare_uniq_mark = @{"!"}
 declare_mark = { (declare_direct_mark | declare_uniq_mark) }
-declaration = {metas? ~ identifier ~ declare_mark ~ value }
+declaration = {metas? ~ identifier ~ declare_mark ~ value}
 
 value = { number | object | reference | string | text }
 

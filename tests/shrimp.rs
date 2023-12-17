@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::utils::*;
 use custom_dsl::domain::resolution::{ResolvedResource, ResolvedResourceValue};
 use files_shrimp::*;
@@ -42,42 +40,24 @@ const INDEX: &str = r#"
 
         skills:
         {
-            <! ./skill
-                with name: combat rapproché
-                with score: 1
-            >
-            <! ./skill
-                with name: perception
-                with score: 1
-            >
-            <! ./skill
-                with name: furtivité
-                with score: 1
-            >
-            <! ./skill
-                with name: athlétisme
-                with score: 3
-            >
-            <! ./skill
-                with name: électronique
-                with score: 4
-            >
-            <! ./skill
-                with <? ./skill/spec with name: "Ingénierie" >
-                with name: ingénierie
+            combat rapproché: {<? ./skill with score: 1>}
+            perception:{<? ./skill with score: 1>}
+            furtivité: {<? ./skill with score: 1>}
+            athlétisme: {<? ./skill with score: 3 >}
+            électronique: {<? ./skill with score: 4>}
+            ingénierie: {<? ./skill
                 with score: 6
-            >
-            <! ./skill
-                with name: pilotage
+                with <? ./skill/spec with name: "Artillerie" > 
+            >}
+            pilotage: {<? ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Appareils aux sols" >
-            >
-            <! ./skill
-                with name: technomancie
+            >}
+            technomancie: {<? ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Compilation" >
                 with <? ./skill/mast with name: "Inscription" >
-            >       
+            >}       
         }
 
         inventory:
@@ -191,26 +171,14 @@ fn it_shoud_assemble_shrimp() {
     assert_eq!(value, "technorigger");
 
     /* Testing skills */
-    let skills = get_uniq_keys("skills", vec!["score", "name"], &resources);
-    assert_eq!(skills.len(), 8);
-    skills.iter().for_each(|vec| match vec.as_slice() {
-        [score, name] => {
-            let name = as_variant!(&name.value, ResolvedResourceValue::String);
-            let score = as_variant!(&score.value, ResolvedResourceValue::Number);
-            match name.as_str() {
-                "combat rapproché" => assert_eq!(score, &1.0),
-                "perception" => assert_eq!(score, &1.0),
-                "furtivité" => assert_eq!(score, &1.0),
-                "athlétisme" => assert_eq!(score, &3.0),
-                "électronique" => assert_eq!(score, &4.0),
-                "ingénierie" => assert_eq!(score, &6.0),
-                "pilotage" => assert_eq!(score, &6.0),
-                "technomancie" => assert_eq!(score, &6.0),
-                _ => panic!("Unknown skill: {}", name),
-            }
-        }
-        _ => panic!("Unknown skill"),
-    });
+    assert_resource_at!(resources : "skills.combat rapproché.score" => Number 1.0);
+    assert_resource_at!(resources : "skills.perception.score" => Number 1.0);
+    assert_resource_at!(resources : "skills.furtivité.score" => Number 1.0);
+    assert_resource_at!(resources : "skills.athlétisme.score" => Number 3.0);
+    assert_resource_at!(resources : "skills.électronique.score" => Number 4.0);
+    assert_resource_at!(resources : "skills.ingénierie.score" => Number 6.0);
+    assert_resource_at!(resources : "skills.pilotage.score" => Number 6.0);
+    assert_resource_at!(resources : "skills.technomancie.score" => Number 6.0);
 
     /* Testing drone rules */
     assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);
@@ -233,7 +201,7 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0});
 }
 
-fn get_uniq_keys<'a>(
+/* fn get_uniq_keys<'a>(
     prefix: &str,
     suffixes: Vec<&str>,
     resources: &'a Vec<ResolvedResource>,
@@ -273,4 +241,4 @@ fn get_uniq_keys<'a>(
         .collect();
 
     resources_tuples
-}
+} */

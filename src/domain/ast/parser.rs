@@ -6,8 +6,8 @@ use pest_derive::Parser;
 pub struct TTLParser;
 
 pub fn span_into_string(span: Span) -> String {
-    span.as_str().to_string()
+    span.as_str().trim().to_string()
 }
 pub fn span_into_str(span: Span) -> &str {
-    span.as_str()
+    span.as_str().trim()
 }

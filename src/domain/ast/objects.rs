@@ -14,7 +14,6 @@ pub struct Object(pub Vec<ObjectElem>);
 
 #[cfg(test)]
 mod tests {
-    use crate::as_variant;
     use crate::domain::ast::{
         import::Import,
         objects::{Object, ObjectElem},
@@ -22,6 +21,7 @@ mod tests {
         values::Value,
     };
     use crate::domain::ast::{Declaration, ImportConfig, ImportVariable};
+    use crate::{as_variant, print_unwrap};
     use from_pest::FromPest;
     use pest::Parser;
 
@@ -70,5 +70,34 @@ mod tests {
         assert_eq!(identifier.0, "var01");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 1.0);
+    }
+
+    #[test]
+    fn it_should_parse_text_key_object() {
+        let str = r#"{
+            varé 02: 745
+            var 03: "hello"
+        }"#;
+
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::object, str));
+        let Object(elems) = print_unwrap!(Object::from_pest(&mut pairs));
+
+        assert_eq!(elems.len(), 2);
+
+        let first_element = elems.get(0).unwrap();
+        let Declaration {
+            identifier, value, ..
+        } = as_variant!(first_element, ObjectElem::Declaration);
+        assert_eq!(identifier.0, "varé 02");
+        let value = as_variant!(value, Value::Number);
+        assert_eq!(value.0, 745.0);
+
+        let second_element = elems.get(1).unwrap();
+        let Declaration {
+            identifier, value, ..
+        } = as_variant!(second_element, ObjectElem::Declaration);
+        assert_eq!(identifier.0, "var 03");
+        let value = as_variant!(value, Value::String);
+        assert_eq!(value.0, "hello");
     }
 }

@@ -66,8 +66,9 @@ mod tests {
 
     #[test]
     fn it_should_parse_declaration() {
-        let str = r#"["meta1" 15]var01! 745"#;
+        let str = r#"["meta1" 15] var01! 745"#;
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();
+        println!("{:#?}", pairs);
         let Declaration {
             metas,
             identifier,
@@ -105,7 +106,7 @@ mod tests {
     }
 
     #[test]
-    fn it_should_parse_declaration_with_reference() {
+    fn it_should_parse_declare_with_reference() {
         let str = r#"somevar: $var001"#;
 
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();

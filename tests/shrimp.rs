@@ -40,24 +40,24 @@ const INDEX: &str = r#"
 
         skills:
         {
-            combat rapproché: {<? ./skill with score: 1>}
-            perception:{<? ./skill with score: 1>}
-            furtivité: {<? ./skill with score: 1>}
-            athlétisme: {<? ./skill with score: 3 >}
-            électronique: {<? ./skill with score: 4>}
-            ingénierie: {<? ./skill
+            <combat rapproché| ./skill with score: 1>
+            <perception| ./skill with score: 1>
+            <furtivité| ./skill with score: 1>
+            <athlétisme| ./skill with score: 3 >
+            <électronique| ./skill with score: 4>
+            <ingénierie| ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Artillerie" > 
-            >}
-            pilotage: {<? ./skill
+            >
+            <pilotage| ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Appareils aux sols" >
-            >}
-            technomancie: {<? ./skill
+            >
+            <technomancie| ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Compilation" >
                 with <? ./skill/mast with name: "Inscription" >
-            >}       
+            >       
         }
 
         inventory:

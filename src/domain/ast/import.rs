@@ -27,17 +27,22 @@ pub enum ImportConfig {
 pub struct ImportAnonMark();
 
 #[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::import_named_mark))]
-pub struct ImportNamedMark();
+#[pest_ast(rule(Rule::import_default_name_mark))]
+pub struct ImportDefaultNameMark();
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_uniq_mark))]
 pub struct ImportUniqMark();
 
 #[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::import_named_mark))]
+pub struct ImportNamedMark(#[pest_ast(inner(with(span_into_string)))] pub String);
+
+#[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_mark))]
 pub enum ImportMark {
     Anon(ImportAnonMark),
+    Default(ImportDefaultNameMark),
     Named(ImportNamedMark),
     Uniq(ImportUniqMark),
 }
@@ -57,6 +62,8 @@ mod tests {
     use crate::{as_variant, print_unwrap};
     use from_pest::FromPest;
     use pest::Parser;
+
+    use super::ImportNamedMark;
 
     #[test]
     fn it_should_parse_import() {
@@ -154,7 +161,7 @@ mod tests {
     }
 
     #[test]
-    fn it_should_parse_named_import() {
+    fn it_should_parse_default_name_import() {
         let str = r#"
         <@ ./root with aaa: 01 >
         "#
@@ -168,7 +175,7 @@ mod tests {
         } = print_unwrap!(super::Import::from_pest(&mut pairs));
 
         assert_eq!(import_id.0, "./root");
-        let _import_mark = as_variant!(import_mark, super::ImportMark::Named);
+        let _import_mark = as_variant!(import_mark, super::ImportMark::Default);
 
         let first_element = import_config.get(0).unwrap();
         let ImportVariable { identifier, value } =
@@ -190,5 +197,19 @@ mod tests {
         let Import { import_mark, .. } = super::Import::from_pest(&mut pairs).unwrap();
 
         let _import_mark = as_variant!(import_mark, super::ImportMark::Uniq);
+    }
+
+    #[test]
+    fn it_should_parse_named_import() {
+        let str = r#"
+        <something indeed| ./root >
+        "#
+        .trim();
+
+        let mut pairs = TTLParser::parse(super::Rule::import, str).unwrap();
+        let Import { import_mark, .. } = super::Import::from_pest(&mut pairs).unwrap();
+
+        let ImportNamedMark(name) = as_variant!(import_mark, super::ImportMark::Named);
+        assert_eq!(name, "something indeed");
     }
 }

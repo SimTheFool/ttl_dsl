@@ -127,8 +127,9 @@ impl AstVisitor<'_> {
         // Changer le context build
         let new_ctx_path = match (import_mark, name) {
             (ast::ImportMark::Anon(_), _) => None,
-            (ast::ImportMark::Named(_), Some(name)) => Some(name.0),
-            (ast::ImportMark::Named(_), None) => Err(AppError::String(format!(
+            (ast::ImportMark::Named(ast::ImportNamedMark(name)), _) => Some(name),
+            (ast::ImportMark::Default(_), Some(name)) => Some(name.0),
+            (ast::ImportMark::Default(_), None) => Err(AppError::String(format!(
                 "Imported file {} should have a name",
                 import_id.0
             )))?,

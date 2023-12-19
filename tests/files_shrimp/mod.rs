@@ -33,3 +33,15 @@ pub use skill_spec::*;
 
 mod skill_mast;
 pub use skill_mast::*;
+
+mod trait_ami_des_sprites;
+pub use trait_ami_des_sprites::*;
+
+mod trait_bricoleur_prevoyant;
+pub use trait_bricoleur_prevoyant::*;
+
+mod trait_paralysie_du_combat;
+pub use trait_paralysie_du_combat::*;
+
+mod trait_rhinite_chronique;
+pub use trait_rhinite_chronique::*;

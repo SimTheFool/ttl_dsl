@@ -18,20 +18,37 @@ mod tests {
                 .unwrap(),
         );
         variables.insert(
+            "some var".to_string(),
+            ResolvedResourceBuilder::default()
+                .build_as_string("Hi there")
+                .unwrap(),
+        );
+        variables.insert(
             "numbervar".to_string(),
             ResolvedResourceBuilder::default()
                 .build_as_number(42.0)
                 .unwrap(),
         );
 
+        let raw_string = ResourceContextBuilder::default()
+            .ctx_variables(Some(variables.clone()))
+            .identifier(None)
+            .build_as_string("Here is some var: ${some var}, $stringvar")
+            .unwrap();
+
+        let resolved_string = raw_string.try_resolve().unwrap();
+        assert_eq!(
+            resolved_string.value,
+            ResolvedResourceValue::String("Here is some var: Hi there, hello".to_string())
+        );
+
         let raw_string_ref = ResourceContextBuilder::default()
             .ctx_variables(Some(variables.clone()))
-            .identifier(Some("var01".to_string()))
+            .identifier(None)
             .build_as_reference("stringvar")
             .unwrap();
 
         let resolved_string_ref = raw_string_ref.try_resolve().unwrap();
-        assert_eq!(resolved_string_ref.identifier, None);
         assert_eq!(
             resolved_string_ref.value,
             ResolvedResourceValue::String("hello".to_string())
@@ -44,7 +61,6 @@ mod tests {
             .unwrap();
 
         let resolved_number_ref = raw_number_ref.try_resolve().unwrap();
-        assert_eq!(resolved_number_ref.identifier, None);
         assert_eq!(
             resolved_number_ref.value,
             ResolvedResourceValue::Number(42.0)

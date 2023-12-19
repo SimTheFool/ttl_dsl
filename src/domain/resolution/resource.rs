@@ -66,6 +66,14 @@ pub enum ResolvedResourceValue {
     String(String),
     Number(f64),
 }
+impl ToString for ResolvedResourceValue {
+    fn to_string(&self) -> String {
+        match self {
+            ResolvedResourceValue::String(s) => s.clone(),
+            ResolvedResourceValue::Number(n) => n.to_string(),
+        }
+    }
+}
 
 #[derive(PartialEq, Debug, Clone, Builder)]
 #[builder(build_fn(error = "AppError"))]

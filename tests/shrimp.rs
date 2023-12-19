@@ -47,7 +47,7 @@ const INDEX: &str = r#"
             <électronique| ./skill with score: 4>
             <ingénierie| ./skill
                 with score: 6
-                with <? ./skill/spec with name: "Artillerie" > 
+                with <? ./skill/spec with name: "Artillerie" >
             >
             <pilotage| ./skill
                 with score: 6
@@ -57,7 +57,15 @@ const INDEX: &str = r#"
                 with score: 6
                 with <? ./skill/spec with name: "Compilation" >
                 with <? ./skill/mast with name: "Inscription" >
-            >       
+            >
+        }
+
+        traits:
+        {
+            <@ ./traits/bricoleur_prevoyant >
+            <@ ./traits/ami_des_sprites with type: "machine" >
+            <@ ./traits/paralysie_du_combat>
+            <@ ./traits/rhinite_chronique>
         }
 
         inventory:
@@ -108,6 +116,18 @@ fn it_shoud_assemble_shrimp() {
     resolver.borrow_mut().mock_file("./skill", SKILL);
     resolver.borrow_mut().mock_file("./skill/spec", SKILL_SPEC);
     resolver.borrow_mut().mock_file("./skill/mast", SKILL_MAST);
+    resolver
+        .borrow_mut()
+        .mock_file("./traits/ami_des_sprites", TRAIT_AMI_DES_SPRITES);
+    resolver
+        .borrow_mut()
+        .mock_file("./traits/bricoleur_prevoyant", TRAIT_BRICOLEUR_PREVOYANT);
+    resolver
+        .borrow_mut()
+        .mock_file("./traits/paralysie_du_combat", TRAIT_PARALYSIE_DU_COMBAT);
+    resolver
+        .borrow_mut()
+        .mock_file("./traits/rhinite_chronique", TRAIT_RHINITE_CHRONIQUE);
 
     let resources = app.assemble_from_str(INDEX);
     let resources = print_unwrap!(resources);
@@ -179,6 +199,12 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "skills.ingénierie.score" => Number 6.0);
     assert_resource_at!(resources : "skills.pilotage.score" => Number 6.0);
     assert_resource_at!(resources : "skills.technomancie.score" => Number 6.0);
+
+    /* Testing traits */
+    assert_resource_at!(resources : "traits.ami des sprites.description" => String "__A1__ lorsque vous compilez ou inscrivez un sprite machine.");
+    assert_resource_at!(resources : "traits.bricoleur prévoyant.description" => String "__A1__ lorsque vous utilisez une machine que vous avez bricolé.");
+    assert_resource_at!(resources : "traits.paralysie du combat.description" => String "Au premier round, vous ne pouvez pas vous déplacer et vous jouez en dernier.");
+    assert_resource_at!(resources : "traits.rhinite chronique.description" => String "Vous éternuez souvent. __D1__ lors des tests de discrétion.");
 
     /* Testing drone rules */
     assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);

@@ -24,16 +24,28 @@ const INDEX: &str = r#"
         identities:
         {
             <! ./identity/legacy
-                with <? ./identity/contact
+                with <contacts! ./identity/contact
                     with name: "D-Boss"
                     with loyalty: 4
                     with connection: 4
                     with description: "Decker fan de complot">
-                with <? ./identity/contact
+                with <contacts! ./identity/contact
                     with name: "Terrance"
                     with loyalty: 3
                     with connection: 2
                     with description: "Ouvrier de casse militaire d'ARES">
+            >
+            <! ./identity/fake
+                with name: "Laurence Guinvite"
+                with quality: 4
+                with <? ./utils/transfer_all_nuyens >
+                with <lifestyles! ./identity/lifestyle/squat >
+                with <licences! ./licence
+                    with name: "Concierge de chantier"
+                    with description: ""
+                    with quality: 4 
+                >
+                
             >
         }
 
@@ -56,20 +68,20 @@ const INDEX: &str = r#"
 
         skills:
         {
-            <combat rapproché| ./skill with score: 1>
-            <perception| ./skill with score: 1>
-            <furtivité| ./skill with score: 1>
-            <athlétisme| ./skill with score: 3 >
-            <électronique| ./skill with score: 4>
-            <ingénierie| ./skill
+            <combat rapproché? ./skill with score: 1>
+            <perception? ./skill with score: 1>
+            <furtivité? ./skill with score: 1>
+            <athlétisme? ./skill with score: 3 >
+            <électronique? ./skill with score: 4>
+            <ingénierie? ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Artillerie" >
             >
-            <pilotage| ./skill
+            <pilotage? ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Appareils aux sols" >
             >
-            <technomancie| ./skill
+            <technomancie? ./skill
                 with score: 6
                 with <? ./skill/spec with name: "Compilation" >
                 with <? ./skill/mast with name: "Inscription" >
@@ -132,6 +144,7 @@ fn it_shoud_assemble_shrimp() {
     config.borrow_mut().add_layer("FINAL_STATS");
     config.borrow_mut().add_layer("FINAL_STATS_END");
     config.borrow_mut().add_layer("BUY_FINAL");
+    config.borrow_mut().add_layer("BANK");
 
     let mocks = [
         ("./stats/base", STATS_BASE),
@@ -142,6 +155,7 @@ fn it_shoud_assemble_shrimp() {
         ("./drones_mods/monture", DRONE_MOD_MONTURE),
         ("./utils/buy", UTILS_BUY),
         ("./utils/quantity", UTILS_QUANTITY),
+        ("./utils/transfer_all_nuyens", UTILS_TRANSFER_ALL_NUYENS),
         ("./metatypes/human", METATYPE_HUMAN),
         ("./skill", SKILL),
         ("./skill/spec", SKILL_SPEC),
@@ -152,6 +166,9 @@ fn it_shoud_assemble_shrimp() {
         ("./traits/rhinite_chronique", TRAIT_RHINITE_CHRONIQUE),
         ("./identity/contact", IDENTITY_CONTACT),
         ("./identity/legacy", IDENTITY_LEGACY),
+        ("./identity/fake", IDENTITY_FAKE),
+        ("./identity/lifestyle/squat", IDENTITY_LIFESTYLE_SQUAT),
+        ("./licence", LICENCE),
     ];
     mocks.iter().for_each(|(path, content)| {
         resolver.borrow_mut().mock_file(path, content);
@@ -220,6 +237,15 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.connection" => Number 2.0);
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.description" => String "Ouvrier de casse militaire d'ARES");
 
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.name" => String "Laurence Guinvite");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.quality" => String "i4");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.lifestyles.[a-zA-Z0-9]+.name" => String "squatteur");
+
+    /* Testing licences */
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.name" => String "Concierge de chantier");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.description" => String "");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.quality" => String "i4");
+
     /* Testing traits */
     assert_resource_at!(resources : "traits.ami des sprites.description" => String "__A1__ lorsque vous compilez ou inscrivez un sprite machine.");
     assert_resource_at!(resources : "traits.bricoleur prévoyant.description" => String "__A1__ lorsque vous utilisez une machine que vous avez bricolé.");
@@ -262,5 +288,6 @@ fn it_shoud_assemble_shrimp() {
     /* Testing buy util */
     assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
     assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
-    assert_resource_at!(resources : "nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0});
+    assert_resource_at!(resources : "nuyens" => Number 0.0);
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0});
 }

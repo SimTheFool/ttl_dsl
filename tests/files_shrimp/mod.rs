@@ -22,6 +22,9 @@ pub use utils_buy::*;
 mod utils_quantity;
 pub use utils_quantity::*;
 
+mod utils_transfer_all_nuyens;
+pub use utils_transfer_all_nuyens::*;
+
 mod metatype_human;
 pub use metatype_human::*;
 
@@ -51,3 +54,12 @@ pub use identity_contact::*;
 
 mod identity_legacy;
 pub use identity_legacy::*;
+
+mod identity_fake;
+pub use identity_fake::*;
+
+mod identity_lifestyle_squat;
+pub use identity_lifestyle_squat::*;
+
+mod licence;
+pub use licence::*;

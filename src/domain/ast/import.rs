@@ -1,6 +1,6 @@
 use super::{
     parser::{span_into_string, Rule},
-    Value, Variable,
+    span_into_string_option, Value, Variable,
 };
 use pest_ast::FromPest;
 
@@ -24,25 +24,20 @@ pub enum ImportConfig {
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_anon_mark))]
-pub struct ImportAnonMark();
-
-#[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::import_default_name_mark))]
-pub struct ImportDefaultNameMark();
-
-#[derive(Debug, PartialEq, FromPest)]
-#[pest_ast(rule(Rule::import_uniq_mark))]
-pub struct ImportUniqMark();
+pub struct ImportAnonMark(#[pest_ast(inner(with(span_into_string_option)))] pub Option<String>);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_named_mark))]
-pub struct ImportNamedMark(#[pest_ast(inner(with(span_into_string)))] pub String);
+pub struct ImportNamedMark(#[pest_ast(inner(with(span_into_string_option)))] pub Option<String>);
+
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::import_uniq_mark))]
+pub struct ImportUniqMark(#[pest_ast(inner(with(span_into_string_option)))] pub Option<String>);
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_mark))]
 pub enum ImportMark {
     Anon(ImportAnonMark),
-    Default(ImportDefaultNameMark),
     Named(ImportNamedMark),
     Uniq(ImportUniqMark),
 }
@@ -175,7 +170,7 @@ mod tests {
         } = print_unwrap!(super::Import::from_pest(&mut pairs));
 
         assert_eq!(import_id.0, "./root");
-        let _import_mark = as_variant!(import_mark, super::ImportMark::Default);
+        let _import_mark = as_variant!(import_mark, super::ImportMark::Named);
 
         let first_element = import_config.get(0).unwrap();
         let ImportVariable { identifier, value } =
@@ -200,9 +195,9 @@ mod tests {
     }
 
     #[test]
-    fn it_should_parse_named_import() {
+    fn it_should_parse_import_with_custom_identifier() {
         let str = r#"
-        <something indeed| ./root >
+        <something indeed@ ./root >
         "#
         .trim();
 
@@ -210,6 +205,6 @@ mod tests {
         let Import { import_mark, .. } = super::Import::from_pest(&mut pairs).unwrap();
 
         let ImportNamedMark(name) = as_variant!(import_mark, super::ImportMark::Named);
-        assert_eq!(name, "something indeed");
+        assert_eq!(name, Some("something indeed".to_string()));
     }
 }

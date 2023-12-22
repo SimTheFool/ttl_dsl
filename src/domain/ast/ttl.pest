@@ -27,11 +27,10 @@ import_id = @{ ("." | "/" | ALPHAFIRST)+ }
 import_variable = {identifier ~ ":" ~ value }
 import_config = { "with" ~ (import_variable | import) }
 
-import_anon_mark = {"<?"}
-import_default_name_mark = {"<@"}
-import_named_mark = {"<" ~ identifier ~ "|"}
-import_uniq_mark = {"<!"}
-import_mark = { (import_anon_mark | import_default_name_mark | import_named_mark | import_uniq_mark) }
+import_anon_mark = {"<" ~ identifier? ~ "?"}
+import_named_mark = {"<" ~ identifier? ~ "@"}
+import_uniq_mark = {"<" ~ identifier? ~ "!"}
+import_mark = { (import_anon_mark | import_named_mark | import_uniq_mark) }
 import = { import_mark ~ import_id ~ import_config* ~ ">" }
 
 transform_layer = { identifier }

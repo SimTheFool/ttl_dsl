@@ -198,7 +198,7 @@ fn it_should_assemble_uniq_imports() {
     let values = print_unwrap!(values);
 
     assert_eq!(values.len(), 2);
-    let key_regex = Regex::new(r"^stats_([a-zA-Z0-9]+)\.con$").unwrap();
+    let key_regex = Regex::new(r"^([a-zA-Z0-9]+)\.con$").unwrap();
 
     let first_ressource = values.get(0).unwrap();
     let match_group_first = key_regex

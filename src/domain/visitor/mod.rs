@@ -92,13 +92,13 @@ impl AstVisitor<'_> {
         let build = build
             .metas(metas)
             .identifier(Some(identifier.0.clone()))
-            .try_append_ctx_path(&identifier.0)?;
+            .try_append_ctx_path(Some(identifier.0))?;
 
         let updated_build = match mark {
             ast::DeclarationMark::Direct(_) => build,
             ast::DeclarationMark::Uniq(_) => {
                 let random_key = get_random_uf8(10)?;
-                build.try_append_ctx_path(&random_key)?
+                build.try_append_ctx_path(Some(random_key))?
             }
         };
 
@@ -125,25 +125,31 @@ impl AstVisitor<'_> {
         } = ast::File::try_from(self.resolver.read(&import_id.0)?.as_str())?;
 
         // Changer le context build
-        let new_ctx_path = match (import_mark, name) {
-            (ast::ImportMark::Anon(_), _) => None,
-            (ast::ImportMark::Named(ast::ImportNamedMark(name)), _) => Some(name),
-            (ast::ImportMark::Default(_), Some(name)) => Some(name.0),
-            (ast::ImportMark::Default(_), None) => Err(AppError::String(format!(
-                "Imported file {} should have a name",
-                import_id.0
-            )))?,
-            (ast::ImportMark::Uniq(_), None) => Some(get_random_uf8(10)?),
-            (ast::ImportMark::Uniq(_), Some(name)) => {
-                let random_key = get_random_uf8(10)?;
-                Some(format!("{}_{}", name.0, random_key))
+        let append_new_path: Box<
+            dyn FnOnce(ResourceContextBuilder) -> Result<ResourceContextBuilder, AppError>,
+        > = match (import_mark, name) {
+            (ast::ImportMark::Anon(ast::ImportAnonMark(custom_id)), _) => {
+                Box::new(|build: ResourceContextBuilder| build.try_append_ctx_path(custom_id))
+            }
+            (ast::ImportMark::Named(ast::ImportNamedMark(custom_id)), name) => {
+                Box::new(|build: ResourceContextBuilder| {
+                    let name = name.map(|name| name.0);
+                    build
+                        .try_append_ctx_path(custom_id)?
+                        .try_append_ctx_path(name)
+                })
+            }
+            (ast::ImportMark::Uniq(ast::ImportUniqMark(custom_id)), _) => {
+                Box::new(|build: ResourceContextBuilder| {
+                    let random_id = get_random_uf8(10)?;
+                    build
+                        .try_append_ctx_path(custom_id)?
+                        .try_append_ctx_path(Some(random_id))
+                })
             }
         };
 
-        let build = match new_ctx_path {
-            Some(new_ctx_path) => build.try_append_ctx_path(&new_ctx_path)?,
-            None => build,
-        };
+        let build = append_new_path(build)?;
 
         // Récupérer les variables et les imports associées
         let (mut variables_acc, mut resource_acc, mut trans_acc) = (

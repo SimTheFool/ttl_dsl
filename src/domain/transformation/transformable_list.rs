@@ -28,6 +28,10 @@ impl TransformableList {
                 value: ResolvedResourceValue::Number(n.clone()),
                 ..rs.clone()
             },
+            (Some(rs), Value::Int(n)) => ResolvedResource {
+                value: ResolvedResourceValue::Number((*n as f64).clone()),
+                ..rs.clone()
+            },
             (_, x) => panic!("Unhandled evaluated type {:#?}", x),
         };
 

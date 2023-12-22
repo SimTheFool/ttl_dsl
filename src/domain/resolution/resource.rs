@@ -35,13 +35,14 @@ pub struct RawResource {
 }
 
 impl ResourceContextBuilder {
-    pub fn try_append_ctx_path(self, path: &str) -> AppResult<Self> {
-        let resource_path = match (&self.ctx_path.clone().flatten(), path) {
-            (None, id) => id.clone().to_string(),
-            (Some(base), id) => format!("{}.{}", base, id),
+    pub fn try_append_ctx_path(self, path: Option<impl Into<String>>) -> AppResult<Self> {
+        let new_path: Option<String> = match (self.ctx_path.clone().flatten(), path) {
+            (base, None) => base,
+            (None, Some(id)) => Some(id.into()),
+            (Some(base), Some(id)) => Some(format!("{}.{}", base, id.into())),
         };
 
-        let build = self.ctx_path(resource_path);
+        let build = self.ctx_path(new_path);
         Ok(build)
     }
 

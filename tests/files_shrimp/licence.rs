@@ -1,11 +1,9 @@
 pub const LICENCE: &str = r#"
 {
+    <? ./utils/quality_buy with cost: 200>
+    quality: $quality
+    
     name: $name
     description: $description
 
-    quality: i$quality
-    price: 0
-    quantity: $quality
-
-    <? ./utils/buy with cost: 200>
 }"#;

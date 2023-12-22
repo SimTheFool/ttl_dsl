@@ -53,6 +53,9 @@ impl From<IndexMap<String, ResolvedResource>> for TransformableList {
                 ResolvedResourceValue::Number(l) => {
                     index_map.insert(key.to_string(), Value::Float(l.clone()));
                 }
+                ResolvedResourceValue::Null => {
+                    index_map.insert(key.to_string(), Value::Empty);
+                }
             }
         }
 

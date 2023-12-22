@@ -6,6 +6,6 @@ pub const DRONE_MOD_MONTURE: &str = r#"
         size: S
     }
 
-    <? ./utils/buy with cost: 2500>
+    <? ./utils/quantity_buy with cost: 2500>
 }
 "#;

@@ -66,12 +66,14 @@ impl ResourceContextBuilder {
 pub enum ResolvedResourceValue {
     String(String),
     Number(f64),
+    Null,
 }
 impl ToString for ResolvedResourceValue {
     fn to_string(&self) -> String {
         match self {
             ResolvedResourceValue::String(s) => s.clone(),
             ResolvedResourceValue::Number(n) => n.to_string(),
+            ResolvedResourceValue::Null => "".to_string(),
         }
     }
 }
@@ -80,7 +82,6 @@ impl ToString for ResolvedResourceValue {
 #[builder(build_fn(error = "AppError"))]
 #[builder(pattern = "owned")]
 pub struct ResolvedResource {
-    #[builder(setter(custom))]
     pub value: ResolvedResourceValue,
 
     #[builder(default)]
@@ -98,6 +99,11 @@ impl ResolvedResourceBuilder {
 
     pub fn build_as_number(mut self, value: f64) -> AppResult<ResolvedResource> {
         self.value = Some(ResolvedResourceValue::Number(value));
+        self.build()
+    }
+
+    pub fn build_as_null(mut self) -> AppResult<ResolvedResource> {
+        self.value = Some(ResolvedResourceValue::Null);
         self.build()
     }
 }

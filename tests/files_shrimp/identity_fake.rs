@@ -1,11 +1,9 @@
 pub const IDENTITY_FAKE: &str = r#"
 {
+    <? ./utils/quality_buy with cost: 2500>
+    quality: $quality
+    
     name: $name
-    quality: i$quality
 
-    price: 0
-    quantity: $quality
-
-    <? ./utils/buy with cost: 2500>
 }
 "#;

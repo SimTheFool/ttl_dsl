@@ -3,13 +3,11 @@ pub const DRONE_CRAWLER: &str = r#"
 
 {
     <? ./drones/rules >
+    <? ./utils/quantity_buy with cost: 9500>
     
     name: Crawler
     manufacturer: Aztechnology
     description: Moyen arthropode mécanique
-
-    price: 0
-    quantity: 1
     
     status: free
     concealment: 2
@@ -25,6 +23,5 @@ pub const DRONE_CRAWLER: &str = r#"
         armor: 2
     }
     
-    <? ./utils/buy with cost: 9500>
 }
 "#;

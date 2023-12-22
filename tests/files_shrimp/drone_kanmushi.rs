@@ -7,9 +7,6 @@ pub const DRONE_KANMUSHI: &str = r#"
     name: Kanmushi
     manufacturer: Shiawase
     description: Petit arthropode mécanique
-
-    price: 0
-    quantity: 1
     
     status: free
     concealment: 6
@@ -25,6 +22,6 @@ pub const DRONE_KANMUSHI: &str = r#"
         armor: 0
     }
     
-    <? ./utils/buy with cost: 450>
+    <? ./utils/quantity_buy with cost: 450>
 }
 "#;

@@ -4,7 +4,7 @@ use regex::{Captures, Regex};
 
 use super::{
     RawResource, RawResourceValue, RawTransformation, ResolvedResource, ResolvedResourceBuilder,
-    ResolvedResourceValue, ResolvedTransformation,
+    ResolvedTransformation,
 };
 use crate::{
     regex::replace_all,
@@ -72,15 +72,10 @@ impl Resolvable for RawResource {
             }
             RawResourceValue::Number(n) => resolved_build.build_as_number(n)?,
             RawResourceValue::Reference(var_name) => {
-                let var_value = variables
-                    .get(&var_name)
-                    .ok_or(AppError::String(format!("No variables {var_name} found")))?
-                    .value
-                    .clone();
-
+                let var_value = variables.get(&var_name).map(|r| r.value.clone());
                 match var_value {
-                    ResolvedResourceValue::String(s) => resolved_build.build_as_string(&s)?,
-                    ResolvedResourceValue::Number(n) => resolved_build.build_as_number(n)?,
+                    Some(r) => resolved_build.value(r).build()?,
+                    None => resolved_build.build_as_null()?,
                 }
             }
         };

@@ -42,10 +42,8 @@ const INDEX: &str = r#"
                 with <lifestyles! ./identity/lifestyle/squat >
                 with <licences! ./licence
                     with name: "Concierge de chantier"
-                    with description: ""
                     with quality: 4 
-                >
-                
+                >    
             >
         }
 
@@ -110,33 +108,6 @@ const INDEX: &str = r#"
     }
 "#;
 
-/*
-
-<! identity/fake
-                with name: "Laurence Guinvite"
-                with <? identity/lifestyle/squat >
-
-
-            >
-*/
-
-/*
-<! ./identity/legacy
-                with <? ./identity/contact
-                    with name: "D-Boss"
-                    with loyalty: 4
-                    with connection: 4
-                    with description: "Decker fan de complot">
-                >
-                with <? ./identity/contact
-                    with name: "Terrance"
-                    with loyalty: 3
-                    with connection: 2
-                    with description: "Ouvrier de casse militaire d'ARES">
-                >
-            >
-*/
-
 #[test]
 fn it_shoud_assemble_shrimp() {
     let (app, resolver, config) = MockedApp::new();
@@ -153,7 +124,8 @@ fn it_shoud_assemble_shrimp() {
         ("./drones/crawler", DRONE_CRAWLER),
         ("./drones/kanmushi", DRONE_KANMUSHI),
         ("./drones_mods/monture", DRONE_MOD_MONTURE),
-        ("./utils/buy", UTILS_BUY),
+        ("./utils/quantity_buy", UTILS_QUANTITY_BUY),
+        ("./utils/quality_buy", UTILS_QUALITY_BUY),
         ("./utils/quantity", UTILS_QUANTITY),
         ("./utils/transfer_all_nuyens", UTILS_TRANSFER_ALL_NUYENS),
         ("./metatypes/human", METATYPE_HUMAN),
@@ -238,13 +210,13 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.description" => String "Ouvrier de casse militaire d'ARES");
 
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.name" => String "Laurence Guinvite");
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.quality" => String "i4");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.quality" => Number 4.0);
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.lifestyles.[a-zA-Z0-9]+.name" => String "squatteur");
 
     /* Testing licences */
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.name" => String "Concierge de chantier");
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.description" => String "");
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.quality" => String "i4");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.description" => Null);
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.quality" => Number 4.0);
 
     /* Testing traits */
     assert_resource_at!(resources : "traits.ami des sprites.description" => String "__A1__ lorsque vous compilez ou inscrivez un sprite machine.");

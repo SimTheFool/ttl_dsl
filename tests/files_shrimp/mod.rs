@@ -45,3 +45,9 @@ pub use trait_paralysie_du_combat::*;
 
 mod trait_rhinite_chronique;
 pub use trait_rhinite_chronique::*;
+
+mod identity_contact;
+pub use identity_contact::*;
+
+mod identity_legacy;
+pub use identity_legacy::*;

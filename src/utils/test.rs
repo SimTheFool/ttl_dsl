@@ -57,22 +57,32 @@ macro_rules! assert_resource {
 
 #[macro_export]
 macro_rules! assert_resource_at {
-    ($name:ident : $identifier:expr => $type:ident $value:expr) => {
-        let value = &$name
-            .iter()
-            .find(|r| r.identifier == Some($identifier.to_string()))
-            .unwrap()
-            .value;
+    ($name:ident: $identifier:expr => $type:ident $value:expr) => {
+        let regex = Regex::new($identifier).unwrap();
 
-        match value {
-            ResolvedResourceValue::$type(n) => {
-                assert_eq!(n, &$value, "Error for id: {}", stringify!($identifier))
-            }
-            _ => panic!(concat!(
-                stringify!($identifier),
-                " should be a ",
-                stringify!($type)
-            )),
-        }
+        let values = &$name
+            .iter()
+            .filter(|r| r.identifier.is_some() && regex.is_match(&r.identifier.as_ref().unwrap()))
+            .map(|r| &r.value)
+            .collect::<Vec<_>>();
+
+        let res1 = values
+            .into_iter()
+            .filter_map(|v| match v {
+                ResolvedResourceValue::$type(x) => Some(x),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+
+        assert!(
+            res1.len() >= 1,
+            "No {} found for id: {}",
+            stringify!($type),
+            $identifier
+        );
+
+        let res2 = res1.into_iter().any(|x| x == &$value);
+
+        assert!(res2, "Error for id: {}", $identifier);
     };
 }

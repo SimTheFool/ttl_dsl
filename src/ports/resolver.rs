@@ -7,7 +7,7 @@ pub trait ResolverPort: Sync {
 }
 
 pub struct MockedResolverAdapter<'a> {
-    mocking_store: std::collections::HashMap<&'a str, &'a str>,
+    mocking_store: std::collections::HashMap<String, &'a str>,
 }
 
 impl<'a> MockedResolverAdapter<'a> {
@@ -17,8 +17,8 @@ impl<'a> MockedResolverAdapter<'a> {
         }
     }
 
-    pub fn mock_file(&mut self, path: &'a str, content: &'a str) {
-        self.mocking_store.insert(path, content);
+    pub fn mock_file(&mut self, path: impl Into<String>, content: &'a str) {
+        self.mocking_store.insert(path.into(), content);
     }
 }
 
@@ -27,7 +27,11 @@ impl<'a> ResolverPort for MockedResolverAdapter<'a> {
         let file = self
             .mocking_store
             .get(path)
-            .ok_or(AppError::Str("Cannot find mocked file"))?;
+            .ok_or(AppError::String(format!(
+                "Cannot find mocked file, asking for {:#?}, available {:#?}",
+                path,
+                self.mocking_store.keys()
+            )))?;
         return Ok(file.to_string());
     }
 }

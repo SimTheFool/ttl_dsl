@@ -1,4 +1,3 @@
-pub const LICENCE: &str = r#"
 {
     <? ./utils/quality_buy with cost: 200>
     quality: $quality
@@ -6,4 +5,4 @@ pub const LICENCE: &str = r#"
     name: $name
     description: $description
 
-}"#;
+}

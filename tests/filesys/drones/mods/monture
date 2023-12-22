@@ -1,4 +1,3 @@
-pub const DRONE_MOD_MONTURE: &str = r#"
 {
     slots!
     {
@@ -8,4 +7,3 @@ pub const DRONE_MOD_MONTURE: &str = r#"
 
     <? ./utils/quantity_buy with cost: 2500>
 }
-"#;

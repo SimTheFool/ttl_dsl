@@ -1,152 +1,58 @@
 use crate::utils::*;
 use custom_dsl::domain::resolution::{ResolvedResource, ResolvedResourceValue};
-use files_shrimp::*;
 use regex::Regex;
 
 #[macro_use]
 mod utils;
-mod files_shrimp;
-
-const INDEX: &str = r#"
-    {
-        name: Shrimp
-
-        <? ./metatypes/human >
-        tags! "13 ans"
-        tags! technorigger
-
-        knowledges! Jeux tridéos
-        knowledges! Séries tridéos
-        knowledges! Drônes
-
-        nuyens: 70000
-
-        identities:
-        {
-            <! ./identity/legacy
-                with <contacts! ./identity/contact
-                    with name: "D-Boss"
-                    with loyalty: 4
-                    with connection: 4
-                    with description: "Decker fan de complot">
-                with <contacts! ./identity/contact
-                    with name: "Terrance"
-                    with loyalty: 3
-                    with connection: 2
-                    with description: "Ouvrier de casse militaire d'ARES">
-            >
-            <! ./identity/fake
-                with name: "Laurence Guinvite"
-                with quality: 4
-                with <? ./utils/transfer_all_nuyens >
-                with <lifestyles! ./identity/lifestyle/squat >
-                with <licences! ./licence
-                    with name: "Concierge de chantier"
-                    with quality: 4 
-                >    
-            >
-        }
-
-        stats:
-        {
-            <? ./stats/base
-                with con : 1
-                with agi : 4
-                with rea : 2
-                with for : 1
-                with vol : 4
-                with log : 6
-                with int : 4
-                with cha : 2
-                with ess : 6 >
-            <? ./stats/techno
-                with res : 7
-                with submersion : 1 >
-        }
-
-        skills:
-        {
-            <combat rapproché? ./skill with score: 1>
-            <perception? ./skill with score: 1>
-            <furtivité? ./skill with score: 1>
-            <athlétisme? ./skill with score: 3 >
-            <électronique? ./skill with score: 4>
-            <ingénierie? ./skill
-                with score: 6
-                with <? ./skill/spec with name: "Artillerie" >
-            >
-            <pilotage? ./skill
-                with score: 6
-                with <? ./skill/spec with name: "Appareils aux sols" >
-            >
-            <technomancie? ./skill
-                with score: 6
-                with <? ./skill/spec with name: "Compilation" >
-                with <? ./skill/mast with name: "Inscription" >
-            >
-        }
-
-        traits:
-        {
-            <@ ./traits/bricoleur_prevoyant >
-            <@ ./traits/ami_des_sprites with type: "machine" >
-            <@ ./traits/paralysie_du_combat>
-            <@ ./traits/rhinite_chronique>
-        }
-
-        inventory:
-        {
-            <@ ./drones/crawler
-                with <? ./drones_mods/monture >
-                with <? ./drones_mods/monture >
-            >
-
-            <@ ./drones/kanmushi
-                with <? ./utils/quantity with q: 2 >
-            >
-        }
-    }
-"#;
 
 #[test]
 fn it_shoud_assemble_shrimp() {
     let (app, resolver, config) = MockedApp::new();
+    macro_rules! mock_file {
+        ($path:expr) => {{
+            let stripped_path = $path.replace("/filesys", "");
+            resolver
+                .borrow_mut()
+                .mock_file(&stripped_path, include_str!($path))
+        }};
+    }
 
     config.borrow_mut().add_layer("FINAL_STATS");
     config.borrow_mut().add_layer("FINAL_STATS_END");
     config.borrow_mut().add_layer("BUY_FINAL");
     config.borrow_mut().add_layer("BANK");
 
-    let mocks = [
-        ("./stats/base", STATS_BASE),
-        ("./stats/techno", STATS_TECHNO),
-        ("./drones/rules", DRONE_RULES),
-        ("./drones/crawler", DRONE_CRAWLER),
-        ("./drones/kanmushi", DRONE_KANMUSHI),
-        ("./drones_mods/monture", DRONE_MOD_MONTURE),
-        ("./utils/quantity_buy", UTILS_QUANTITY_BUY),
-        ("./utils/quality_buy", UTILS_QUALITY_BUY),
-        ("./utils/quantity", UTILS_QUANTITY),
-        ("./utils/transfer_all_nuyens", UTILS_TRANSFER_ALL_NUYENS),
-        ("./metatypes/human", METATYPE_HUMAN),
-        ("./skill", SKILL),
-        ("./skill/spec", SKILL_SPEC),
-        ("./skill/mast", SKILL_MAST),
-        ("./traits/ami_des_sprites", TRAIT_AMI_DES_SPRITES),
-        ("./traits/bricoleur_prevoyant", TRAIT_BRICOLEUR_PREVOYANT),
-        ("./traits/paralysie_du_combat", TRAIT_PARALYSIE_DU_COMBAT),
-        ("./traits/rhinite_chronique", TRAIT_RHINITE_CHRONIQUE),
-        ("./identity/contact", IDENTITY_CONTACT),
-        ("./identity/legacy", IDENTITY_LEGACY),
-        ("./identity/fake", IDENTITY_FAKE),
-        ("./identity/lifestyle/squat", IDENTITY_LIFESTYLE_SQUAT),
-        ("./licence", LICENCE),
-    ];
-    mocks.iter().for_each(|(path, content)| {
-        resolver.borrow_mut().mock_file(path, content);
-    });
+    mock_file!("./filesys/stats/base");
+    mock_file!("./filesys/stats/techno");
+    mock_file!("./filesys/metatypes/human");
 
-    let resources = app.assemble_from_str(INDEX);
+    mock_file!("./filesys/traits/ami_des_sprites");
+    mock_file!("./filesys/traits/bricoleur_prevoyant");
+    mock_file!("./filesys/traits/paralysie_du_combat");
+    mock_file!("./filesys/traits/rhinite_chronique");
+
+    mock_file!("./filesys/skills/base");
+    mock_file!("./filesys/skills/spec");
+    mock_file!("./filesys/skills/mast");
+
+    mock_file!("./filesys/identity/native");
+    mock_file!("./filesys/identity/fake");
+    mock_file!("./filesys/identity/contact");
+    mock_file!("./filesys/lifestyles/squat");
+    mock_file!("./filesys/identity/licence");
+
+    mock_file!("./filesys/drones/base");
+    mock_file!("./filesys/drones/mods/monture");
+    mock_file!("./filesys/drones/crawler");
+    mock_file!("./filesys/drones/kanmushi");
+
+    mock_file!("./filesys/utils/quantity_buy");
+    mock_file!("./filesys/utils/quality_buy");
+    mock_file!("./filesys/utils/quantity");
+    mock_file!("./filesys/utils/transfer_all_nuyens");
+
+    let shrimp_index = include_str!("./filesys/shrimp");
+    let resources = app.assemble_from_str(shrimp_index);
     let resources = print_unwrap!(resources);
 
     /* Testing base stats */
@@ -225,22 +131,9 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "traits.rhinite chronique.description" => String "Vous éternuez souvent. __D1__ lors des tests de discrétion.");
 
     /* Testing tags */
-    let tags_regex = Regex::new(r#"tags\.([a-zA-Z0-9]+)"#).unwrap();
-    let tags = resources
-        .iter()
-        .filter(|ResolvedResource { identifier, .. }| match identifier {
-            Some(i) => tags_regex.is_match(i),
-            _ => false,
-        })
-        .collect::<Vec<_>>();
-    assert_eq!(tags.len(), 3);
-
-    let first_tag = *tags.get(1).unwrap();
-    let value = as_variant!(&first_tag.value, ResolvedResourceValue::String);
-    assert_eq!(value, "13 ans");
-    let second_tag = tags.get(2).unwrap();
-    let value = as_variant!(&second_tag.value, ResolvedResourceValue::String);
-    assert_eq!(value, "technorigger");
+    assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "13 ans");
+    assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "technorigger");
+    assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "humain");
 
     /* Testing drone rules */
     assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);

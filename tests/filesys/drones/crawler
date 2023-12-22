@@ -1,8 +1,7 @@
-pub const DRONE_CRAWLER: &str = r#"
 @NAME Crawler
 
 {
-    <? ./drones/rules >
+    <? ./drones/base >
     <? ./utils/quantity_buy with cost: 9500>
     
     name: Crawler
@@ -24,4 +23,3 @@ pub const DRONE_CRAWLER: &str = r#"
     }
     
 }
-"#;

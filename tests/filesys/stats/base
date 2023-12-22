@@ -1,4 +1,3 @@
-pub const STATS_BASE: &str = r#"
 {
     con: $con
     con_mod: 0
@@ -55,4 +54,3 @@ pub const STATS_BASE: &str = r#"
 > $.hit_over = $.hit_over + $.con - $.con_mod
 > $.heal = $.heal + $.con + $.vol
 > $.init_base = $.init_base + $.rea + $.int
-"#;

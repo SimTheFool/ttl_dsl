@@ -1,4 +1,3 @@
-pub const UTILS_QUANTITY_BUY: &str = r#"
 {
     price: 0
     quantity: 1
@@ -6,4 +5,3 @@ pub const UTILS_QUANTITY_BUY: &str = r#"
 @TRANSFORM BUY_FINAL
 > $.price += $cost * $.quantity
 > nuyens -= $cost * $.quantity
-"#;

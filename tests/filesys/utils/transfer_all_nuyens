@@ -1,0 +1,7 @@
+{
+    nuyens: 0
+}
+
+@TRANSFORM BANK
+> $.nuyens += nuyens
+> nuyens = 0

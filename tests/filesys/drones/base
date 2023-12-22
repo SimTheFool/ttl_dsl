@@ -1,0 +1,2 @@
+@TRANSFORM FINAL_STATS
+> $.stats.hit += floor($.stats.resistance /2)

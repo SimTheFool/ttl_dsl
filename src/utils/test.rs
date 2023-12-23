@@ -1,3 +1,4 @@
+#[cfg(test)]
 #[macro_export]
 macro_rules! as_variant {
     ($expr:expr, $( $enum:path ),+) => {
@@ -9,7 +10,7 @@ macro_rules! as_variant {
         }
     };
 }
-
+#[cfg(test)]
 #[macro_export]
 macro_rules! print_unwrap {
     ($result:expr) => {
@@ -23,7 +24,7 @@ macro_rules! print_unwrap {
         }
     };
 }
-
+#[cfg(test)]
 #[macro_export]
 macro_rules! assert_resource {
     ($name:ident : $ident:expr, $type:ident $value:expr) => {
@@ -45,7 +46,7 @@ macro_rules! assert_resource {
         }
     };
 }
-
+#[cfg(test)]
 #[macro_export]
 macro_rules! assert_resource_at {
     ($name:ident: $identifier:expr => $type:ident $value:expr) => {

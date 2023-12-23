@@ -1,5 +1,9 @@
-mod config;
-mod resolver;
+use crate::result::AppResult;
 
-pub use config::*;
-pub use resolver::*;
+pub trait ConfigProviderPort: Sync {
+    fn get_transform_layers(&self) -> AppResult<Vec<&str>>;
+}
+
+pub trait ResolverPort: Sync {
+    fn read(&self, path: &str) -> AppResult<String>;
+}

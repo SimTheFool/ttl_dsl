@@ -1,11 +1,10 @@
-use std::{cell::RefCell, rc::Rc};
-
 use custom_dsl::{
     commands::AssembleFromStr,
     domain::resolution::ResolvedResource,
-    ports::{MockedConfigProviderAdapter, MockedResolverAdapter},
-    result::AppResult,
+    ports::{ConfigProviderPort, ResolverPort},
+    result::{AppError, AppResult},
 };
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 pub struct MockedApp {
     resolver: Rc<RefCell<MockedResolverAdapter<'static>>>,
@@ -38,5 +37,53 @@ impl MockedApp {
         };
 
         assemble_from_str.execute(file_str)
+    }
+}
+
+pub struct MockedResolverAdapter<'a> {
+    mocking_store: std::collections::HashMap<String, &'a str>,
+}
+impl<'a> MockedResolverAdapter<'a> {
+    pub fn new() -> Self {
+        MockedResolverAdapter {
+            mocking_store: HashMap::new(),
+        }
+    }
+
+    pub fn mock_file(&mut self, path: impl Into<String>, content: &'a str) {
+        self.mocking_store.insert(path.into(), content);
+    }
+}
+impl<'a> ResolverPort for MockedResolverAdapter<'a> {
+    fn read(&self, path: &str) -> AppResult<String> {
+        let file = self
+            .mocking_store
+            .get(path)
+            .ok_or(AppError::String(format!(
+                "Cannot find mocked file, asking for {:#?}, available {:#?}",
+                path,
+                self.mocking_store.keys()
+            )))?;
+        return Ok(file.to_string());
+    }
+}
+
+pub struct MockedConfigProviderAdapter {
+    mocking_store: Vec<&'static str>,
+}
+impl MockedConfigProviderAdapter {
+    pub fn new() -> Self {
+        MockedConfigProviderAdapter {
+            mocking_store: Vec::new(),
+        }
+    }
+
+    pub fn add_layer(&mut self, layer: &'static str) {
+        self.mocking_store.push(layer);
+    }
+}
+impl ConfigProviderPort for MockedConfigProviderAdapter {
+    fn get_transform_layers(&self) -> AppResult<Vec<&str>> {
+        return Ok(self.mocking_store.clone());
     }
 }

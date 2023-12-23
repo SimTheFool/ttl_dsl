@@ -32,14 +32,15 @@ pub struct Number(
 
 #[cfg(test)]
 mod tests {
-    use crate::{domain::ast::parser::TTLParser, print_unwrap, str_to_ast};
+    use crate::{domain::ast::parser::TTLParser, print_unwrap};
     use from_pest::FromPest;
     use pest::Parser;
 
     #[test]
     fn it_should_parse_identifier() {
         let str = "var01";
-        let variable = str_to_ast!(str, super::Rule::identifier, super::Variable);
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::identifier, str));
+        let variable = print_unwrap!(super::Variable::from_pest(&mut pairs));
 
         assert_eq!(variable.0, "var01");
     }
@@ -47,8 +48,9 @@ mod tests {
     #[test]
     fn it_should_parse_text() {
         let str = r#"Moyen arthropode mécanique"#;
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::text, str));
+        let variable = print_unwrap!(super::Text::from_pest(&mut pairs));
 
-        let variable = str_to_ast!(str, super::Rule::text, super::Text);
         assert_eq!(variable.0, "Moyen arthropode mécanique");
     }
 }

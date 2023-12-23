@@ -25,15 +25,6 @@ macro_rules! print_unwrap {
 }
 
 #[macro_export]
-macro_rules! str_to_ast {
-    ($str:expr, $parser:path, $ast_type:path) => {{
-        use $ast_type as f;
-        let mut pairs = print_unwrap!(TTLParser::parse($parser, $str));
-        print_unwrap!(f::from_pest(&mut pairs))
-    }};
-}
-
-#[macro_export]
 macro_rules! assert_resource {
     ($name:ident : $ident:expr, $type:ident $value:expr) => {
         assert_eq!($name.identifier, Some($ident.to_string()));

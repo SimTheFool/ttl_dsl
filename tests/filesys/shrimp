@@ -56,7 +56,7 @@
 
     skills:
     {
-        <combat rapproché? ./skills/base with score: 1>
+        <combat_rapproché? ./skills/base with score: 1>
         <perception? ./skills/base with score: 1>
         <furtivité? ./skills/base with score: 1>
         <athlétisme? ./skills/base with score: 3 >

@@ -1,4 +1,4 @@
-@NAME paralysie du combat
+@NAME paralysie_du_combat
 
 {
     description: Au premier round, vous ne pouvez pas vous déplacer et vous jouez en dernier.

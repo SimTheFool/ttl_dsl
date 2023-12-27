@@ -101,7 +101,7 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "stats.attaque" => Number 2.0);
 
     /* Testing skills */
-    assert_resource_at!(resources : "skills.combat rapproché.score" => Number 1.0);
+    assert_resource_at!(resources : "skills.combat_rapproché.score" => Number 1.0);
     assert_resource_at!(resources : "skills.perception.score" => Number 1.0);
     assert_resource_at!(resources : "skills.furtivité.score" => Number 1.0);
     assert_resource_at!(resources : "skills.athlétisme.score" => Number 3.0);
@@ -131,10 +131,10 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.quality" => Number 4.0);
 
     /* Testing traits */
-    assert_resource_at!(resources : "traits.ami des sprites.description" => String "__A1__ lorsque vous compilez ou inscrivez un sprite machine.");
-    assert_resource_at!(resources : "traits.bricoleur prévoyant.description" => String "__A1__ lorsque vous utilisez une machine que vous avez bricolé.");
-    assert_resource_at!(resources : "traits.paralysie du combat.description" => String "Au premier round, vous ne pouvez pas vous déplacer et vous jouez en dernier.");
-    assert_resource_at!(resources : "traits.rhinite chronique.description" => String "Vous éternuez souvent. __D1__ lors des tests de discrétion.");
+    assert_resource_at!(resources : "traits.ami_des_sprites.description" => String "__A1__ lorsque vous compilez ou inscrivez un sprite machine.");
+    assert_resource_at!(resources : "traits.bricoleur_prévoyant.description" => String "__A1__ lorsque vous utilisez une machine que vous avez bricolé.");
+    assert_resource_at!(resources : "traits.paralysie_du_combat.description" => String "Au premier round, vous ne pouvez pas vous déplacer et vous jouez en dernier.");
+    assert_resource_at!(resources : "traits.rhinite_chronique.description" => String "Vous éternuez souvent. __D1__ lors des tests de discrétion.");
 
     /* Testing tags */
     assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "13 ans");

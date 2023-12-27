@@ -1,6 +1,6 @@
 WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
 ALPHAEXTENDED = @{ ASCII_ALPHANUMERIC | "_" }
-identifier = @{ (ASCII_ALPHANUMERIC | CASED_LETTER | " " | "_")*}
+identifier = @{ (ASCII_ALPHANUMERIC | CASED_LETTER | "_")*}
 
 
 reference = @{ "$" ~ ALPHAEXTENDED* }

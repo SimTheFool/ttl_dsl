@@ -197,7 +197,7 @@ mod tests {
     #[test]
     fn it_should_parse_import_with_custom_identifier() {
         let str = r#"
-        <something indeed@ ./root >
+        <élégant_import@ ./root >
         "#
         .trim();
 
@@ -205,6 +205,6 @@ mod tests {
         let Import { import_mark, .. } = super::Import::from_pest(&mut pairs).unwrap();
 
         let ImportNamedMark(name) = as_variant!(import_mark, super::ImportMark::Named);
-        assert_eq!(name, Some("something indeed".to_string()));
+        assert_eq!(name, Some("élégant_import".to_string()));
     }
 }

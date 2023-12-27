@@ -75,8 +75,8 @@ mod tests {
     #[test]
     fn it_should_parse_text_key_object() {
         let str = r#"{
-            varé 02: 745
-            var 03: "hello"
+            varé_02: 745
+            var_03: "hello"
         }"#;
 
         let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::object, str));
@@ -88,7 +88,7 @@ mod tests {
         let Declaration {
             identifier, value, ..
         } = as_variant!(first_element, ObjectElem::Declaration);
-        assert_eq!(identifier.0, "varé 02");
+        assert_eq!(identifier.0, "varé_02");
         let value = as_variant!(value, Value::Number);
         assert_eq!(value.0, 745.0);
 
@@ -96,7 +96,7 @@ mod tests {
         let Declaration {
             identifier, value, ..
         } = as_variant!(second_element, ObjectElem::Declaration);
-        assert_eq!(identifier.0, "var 03");
+        assert_eq!(identifier.0, "var_03");
         let value = as_variant!(value, Value::String);
         assert_eq!(value.0, "hello");
     }

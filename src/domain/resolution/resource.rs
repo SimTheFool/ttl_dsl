@@ -46,6 +46,19 @@ impl ResourceContextBuilder {
         Ok(build)
     }
 
+    pub fn extend_ctx_variables<T>(self, variables: T) -> Self
+    where
+        T: IntoIterator<Item = (String, ResolvedResource)>,
+    {
+        let mut new_variables = self.ctx_variables.clone().flatten().unwrap_or_default();
+        new_variables.extend(variables);
+        self.ctx_variables(new_variables)
+    }
+
+    pub fn get_ctx_path(&self) -> Option<String> {
+        self.ctx_path.clone().flatten()
+    }
+
     pub fn build_as_string(mut self, value: &str) -> AppResult<RawResource> {
         self.value = Some(RawResourceValue::String(value.to_string()));
         self.build()

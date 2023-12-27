@@ -20,7 +20,12 @@ impl<'a> AstVisitor<'a> {
 }
 impl AstVisitor<'_> {
     pub fn visit(&self, val: ast::Value) -> AppResult<(ResourceList, TransformList)> {
-        let build = ResourceContextBuilder::default();
+        let build = ResourceContextBuilder::default().extend_ctx_variables(vec![(
+            String::default(),
+            ResourceContextBuilder::default()
+                .build_as_string(&String::default())?
+                .try_resolve()?,
+        )]);
         self.visit_value(val, build)
     }
 
@@ -148,7 +153,6 @@ impl AstVisitor<'_> {
                 })
             }
         };
-
         let build = append_new_path(build)?;
 
         // Récupérer les variables et les imports associées
@@ -183,7 +187,14 @@ impl AstVisitor<'_> {
         })?;
 
         // Résoudre les transformations et les ressources
-        let build = build.ctx_variables(variables_acc.clone());
+        let build = build.extend_ctx_variables(variables_acc);
+        let root_ctx_path = build.get_ctx_path().unwrap_or_default();
+        let build = build.extend_ctx_variables(vec![(
+            String::default(),
+            ResourceContextBuilder::default()
+                .build_as_string(&root_ctx_path)?
+                .try_resolve()?,
+        )]);
 
         if let Some(t) = file_transforms {
             let transforms = t

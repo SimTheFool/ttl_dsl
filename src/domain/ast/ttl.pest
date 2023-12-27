@@ -1,10 +1,10 @@
 WHITESPACE = _{ (" " | "\t" | "\r" | "\n")+ }
-ALPHAFIRST = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+ALPHAEXTENDED = @{ ASCII_ALPHANUMERIC | "_" }
 identifier = @{ (ASCII_ALPHANUMERIC | CASED_LETTER | " " | "_")*}
 
 
-reference = @{ "$" ~ ALPHAFIRST }
-number = @{ ASCII_DIGIT+ }
+reference = @{ "$" ~ ALPHAEXTENDED* }
+number = @{ "-"? ~ ASCII_DIGIT+ }
 TEXTCONTENT = @{!(NEWLINE | "$" | "@") ~ (!NEWLINE ~ ANY)+ }
 text = { TEXTCONTENT }
 STRINGCONTENT = @{ (!"\"" ~ ANY)* }
@@ -23,7 +23,7 @@ declaration = {metas? ~ identifier ~ declare_mark ~ value}
 
 value = { number | object | reference | string | text }
 
-import_id = @{ ("." | "/" | ALPHAFIRST)+ }
+import_id = @{ ("." | "/" | ALPHAEXTENDED)+ }
 import_variable = {identifier ~ ":" ~ value }
 import_config = { "with" ~ (import_variable | import) }
 

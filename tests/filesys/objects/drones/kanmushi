@@ -1,7 +1,7 @@
 @NAME Kanmushi
 
 {
-    <? ./drones/base >
+    <? ./objects/drones/base >
     
     name: Kanmushi
     manufacturer: Shiawase

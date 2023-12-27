@@ -266,3 +266,41 @@ fn it_should_handle_uniq_declaration() {
     let third_ressource = values.get(2).unwrap();
     assert_resource!(third_ressource: "con.var10", String "I'm a subvalue");
 }
+
+#[test]
+fn it_should_replace_root_variables() {
+    let (app, resolver, _) = MockedApp::new();
+    let index = r#"
+        {
+            var01:
+            {
+                var02:
+                {
+                    <@ ./stats with ref: $ >
+                }
+            }
+        }
+    "#;
+
+    let stats = r#"
+        {
+            con: $ref
+            vol: {
+                score: $
+            }
+        }
+    "#;
+
+    resolver.borrow_mut().mock_file("./stats", stats);
+
+    let values = app.assemble_from_str(index);
+    let values = print_unwrap!(values);
+
+    assert_eq!(values.len(), 2);
+
+    let first_ressource = values.get(0).unwrap();
+    assert_resource!(first_ressource: "var01.var02.con", String "");
+
+    let second_ressource = values.get(1).unwrap();
+    assert_resource!(second_ressource: "var01.var02.vol.score", String "var01.var02");
+}

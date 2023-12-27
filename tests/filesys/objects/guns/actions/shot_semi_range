@@ -1,0 +1,7 @@
+{
+    label: $label
+    accuracy: $score
+}
+
+@TRANSFORM FINAL_STATS
+> $.accuracy = if($.accuracy<=0,$.accuracy-1,$.accuracy)

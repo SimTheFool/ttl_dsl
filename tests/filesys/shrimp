@@ -86,13 +86,15 @@
 
     inventory:
     {
-        <@ ./drones/crawler
-            with <? ./drones/mods/monture >
-            with <? ./drones/mods/monture >
+        <@ ./objects/drones/crawler
+            with <? ./objects/mods/monture >
+            with <? ./objects/mods/monture >
         >
 
-        <@ ./drones/kanmushi
+        <@ ./objects/drones/kanmushi
             with <? ./utils/quantity with q: 2 >
         >
+
+        <@ ./objects/guns/crockett >
     }
 }

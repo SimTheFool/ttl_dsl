@@ -1,4 +1,5 @@
-- cfg test for test adapters
+- suppirmer les espaces dans les identifier
 - reproduire entièrement shrimp
 - gérer les tableau (notemment pour la partie knowledges par exemple)
 - handle log (used one medikit)
+

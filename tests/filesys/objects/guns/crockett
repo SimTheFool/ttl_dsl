@@ -1,0 +1,34 @@
+@NAME Crockett
+
+{
+    <? ./utils/quantity_buy with cost: 10250>
+
+    name: Crockett
+    manufacturer: Cavalier Arms
+    description: Fusil d'assaut polyvalent
+
+    status: illegal
+    concealment: 1
+
+    ammo: 30
+    damage: 5
+
+    actions:
+    {
+        <@ ./objects/guns/actions/shot
+            with ref: $
+            with <ranges! ./objects/guns/actions/shot_range with label: 0 with score: -1 >
+            with <ranges! ./objects/guns/actions/shot_range with label: 50 with score: 0 >
+            with <ranges! ./objects/guns/actions/shot_range with label: 100 with score: 1 >
+            with <ranges! ./objects/guns/actions/shot_range with label: 750 with score: 0 >
+        >
+
+        <@ ./objects/guns/actions/shot_semi
+            with ref: $
+            with <ranges! ./objects/guns/actions/shot_semi_range with label: 0 with score: -1 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with label: 50 with score: 0 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with label: 100 with score: 1 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with label: 750 with score: 0 >
+        >
+    }
+}

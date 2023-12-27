@@ -1,0 +1,12 @@
+@NAME Tir
+
+{
+    major: 1
+    minor: 0
+    damage: 0
+    ammo: 1
+}
+
+
+@TRANSFORM FINAL_STATS
+> $.damage = $ref.damage

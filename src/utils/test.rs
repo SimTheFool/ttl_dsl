@@ -34,7 +34,7 @@ macro_rules! assert_resource {
             ResolvedResourceValue::$type(x) => {
                 assert_eq!(x, &$value);
             }
-            _ => panic!(concat!("Should be a ", stringify!($type))),
+            x => panic!("{:#?} Should be a {:#?}", x, stringify!($type)),
         }
     };
     ($name:ident : $type:ident $value:expr) => {
@@ -42,7 +42,7 @@ macro_rules! assert_resource {
             ResolvedResourceValue::$type(x) => {
                 assert_eq!(x, &$value);
             }
-            _ => panic!(concat!("Should be a ", stringify!($type))),
+            x => panic!("{:#?} Should be a {:#?}", x, stringify!($type)),
         }
     };
 }
@@ -99,5 +99,20 @@ macro_rules! assert_resource_at {
         if !has_variant {
             panic!("No {} found for id: {}", stringify!($type), $identifier);
         }
+    };
+}
+#[cfg(test)]
+#[macro_export]
+macro_rules! assert_resource_number {
+    ($name:ident: $identifier:expr => $length:expr) => {
+        let regex = Regex::new($identifier).unwrap();
+
+        let values = &$name
+            .iter()
+            .filter(|r| r.identifier.is_some() && regex.is_match(&r.identifier.as_ref().unwrap()))
+            .map(|r| &r.value)
+            .collect::<Vec<_>>();
+
+        assert_eq!(values.len(), $length);
     };
 }

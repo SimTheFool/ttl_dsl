@@ -1,5 +1,5 @@
 use crate::utils::*;
-use custom_dsl::domain::resolution::{ResolvedResource, ResolvedResourceValue};
+use custom_dsl::domain::resolution::ResolvedResourceValue;
 use regex::Regex;
 
 #[macro_use]
@@ -41,10 +41,16 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/lifestyles/squat");
     mock_file!("./filesys/identity/licence");
 
-    mock_file!("./filesys/drones/base");
-    mock_file!("./filesys/drones/mods/monture");
-    mock_file!("./filesys/drones/crawler");
-    mock_file!("./filesys/drones/kanmushi");
+    mock_file!("./filesys/objects/drones/base");
+    mock_file!("./filesys/objects/drones/crawler");
+    mock_file!("./filesys/objects/drones/kanmushi");
+    mock_file!("./filesys/objects/mods/monture");
+
+    mock_file!("./filesys/objects/guns/crockett");
+    mock_file!("./filesys/objects/guns/actions/shot");
+    mock_file!("./filesys/objects/guns/actions/shot_range");
+    mock_file!("./filesys/objects/guns/actions/shot_semi");
+    mock_file!("./filesys/objects/guns/actions/shot_semi_range");
 
     mock_file!("./filesys/utils/quantity_buy");
     mock_file!("./filesys/utils/quality_buy");
@@ -135,24 +141,31 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "technorigger");
     assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "humain");
 
-    /* Testing drone rules */
+    /* Testing drones */
     assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);
+    assert_resource_number!(resources : r#"inventory.Crawler.slots.[a-zA-Z0-9]+.name"# => 2);
 
-    /* Testing drone mods */
-    let crawler_slot_regex =
-        Regex::new(r#"inventory\.Crawler\.slots\.([a-zA-Z0-9]+)\.name"#).unwrap();
-    let crawler_slots = resources
-        .iter()
-        .filter(|ResolvedResource { identifier, .. }| match identifier {
-            Some(i) => crawler_slot_regex.is_match(i),
-            _ => false,
-        })
-        .collect::<Vec<_>>();
-    assert_eq!(crawler_slots.len(), 2);
+    /* Testing crockett */
+    assert_resource_at!(resources : "inventory.Crockett.manufacturer" => String "Cavalier Arms");
+    assert_resource_at!(resources : "inventory.Crockett.status" => String "illegal");
+    assert_resource_at!(resources : "inventory.Crockett.ammo" => Number 30.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.damage" => Number 5.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ammo" => Number 1.0);
+    assert_resource_number!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.label" => 4);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.accuracy" => Number -1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.accuracy" => Number 1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.accuracy" => Number 0.0);
+
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.damage" => Number 6.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ammo" => Number 2.0);
+    assert_resource_number!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.label" => 4);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.accuracy" => Number -2.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.accuracy" => Number 1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.accuracy" => Number -1.0);
 
     /* Testing buy util */
     assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
     assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
     assert_resource_at!(resources : "nuyens" => Number 0.0);
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0});
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0});
 }

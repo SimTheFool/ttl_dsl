@@ -1,0 +1,3 @@
+@TRANSFORM MODS
+> $.description += "Adaptée pour la monture."
+> $.ammo = 250

@@ -1,0 +1,18 @@
+
+
+{
+    <? ./utils/quantity_buy with cost: 350>
+
+    actions:
+    {
+        guncam:
+        {
+            minor: 1
+            major: 0
+            description: Vous ignorez les désavantages pour votre prochain tir à distance.
+        }
+    }
+}
+
+@TRANSFORM MODS
+> $.description += "La guncam permet de calculer la trajectoire des balles."

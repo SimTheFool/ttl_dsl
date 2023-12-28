@@ -1,0 +1,10 @@
+@NAME recharger
+
+{
+    major: 1
+    minor: 0
+    ammo: 0
+}
+
+@TRANSFORM FINAL_STATS
+> $.ammo = $ref.ammo

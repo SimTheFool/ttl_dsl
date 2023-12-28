@@ -4,4 +4,4 @@
 }
 
 @TRANSFORM FINAL_STATS
-> $.accuracy = $ref.accuracies.$label
+> $.accuracy = $ref.accuracies.$label - 1

@@ -12,23 +12,40 @@
 
     ammo: 30
     damage: 5
+    accuracies:
+    {
+        0: -1
+        50: 0
+        100: 1
+        750: 0
+    }
 
     actions:
     {
         <@ ./objects/guns/actions/shot
             with ref: $
-            with <ranges! ./objects/guns/actions/shot_range with label: 0 with score: -1 >
-            with <ranges! ./objects/guns/actions/shot_range with label: 50 with score: 0 >
-            with <ranges! ./objects/guns/actions/shot_range with label: 100 with score: 1 >
-            with <ranges! ./objects/guns/actions/shot_range with label: 750 with score: 0 >
+            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 0 >
+            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 50 >
+            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 100 >
+            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 750 >
         >
 
         <@ ./objects/guns/actions/shot_semi
             with ref: $
-            with <ranges! ./objects/guns/actions/shot_semi_range with label: 0 with score: -1 >
-            with <ranges! ./objects/guns/actions/shot_semi_range with label: 50 with score: 0 >
-            with <ranges! ./objects/guns/actions/shot_semi_range with label: 100 with score: 1 >
-            with <ranges! ./objects/guns/actions/shot_semi_range with label: 750 with score: 0 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 0 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 50 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 100 >
+            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 750 >
         >
+
+        <@ ./objects/guns/actions/shot_rafale
+            with ref: $
+            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 0 >
+            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 50 >
+            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 100 >
+            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 750 >
+        >
+
+        <@ ./actions/recharger with ref: $ >
     }
 }

@@ -95,6 +95,9 @@
             with <? ./utils/quantity with q: 2 >
         >
 
-        <@ ./objects/guns/crockett >
+        <@ ./objects/guns/crockett
+            with <? ./objects/accessories/guncam >
+            with <? ./objects/mods/chasse_big >
+        >
     }
 }

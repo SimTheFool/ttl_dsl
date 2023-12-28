@@ -26,20 +26,17 @@ impl RawTransformation {
             ..
         } = build.clone().build_as_string("UNUSED")?;
 
-        let transf = match rules {
-            Some(rules) => Some(
-                rules
-                    .into_iter()
-                    .map(|r| Self {
-                        rule: r.0,
-                        layer: Some(ast.layer.0.clone()),
-                        ctx_variables: ctx_variables.clone(),
-                        ctx_path: ctx_path.clone(),
-                    })
-                    .collect(),
-            ),
-            None => None,
-        };
+        let transf: Option<Vec<RawTransformation>> = rules.map(|rules| {
+            rules
+                .into_iter()
+                .map(|r| Self {
+                    rule: r.0,
+                    layer: Some(ast.layer.0.clone()),
+                    ctx_variables: ctx_variables.clone(),
+                    ctx_path: ctx_path.clone(),
+                })
+                .collect()
+        });
 
         Ok(transf)
     }

@@ -25,7 +25,7 @@ impl MockedApp {
             config: config.clone(),
         };
 
-        return (app, resolver, config);
+        (app, resolver, config)
     }
 }
 
@@ -64,7 +64,7 @@ impl<'a> ResolverPort for MockedResolverAdapter<'a> {
                 path,
                 self.mocking_store.keys()
             )))?;
-        return Ok(file.to_string());
+        Ok(file.to_string())
     }
 }
 
@@ -84,6 +84,6 @@ impl MockedConfigProviderAdapter {
 }
 impl ConfigProviderPort for MockedConfigProviderAdapter {
     fn get_transform_layers(&self) -> AppResult<Vec<&str>> {
-        return Ok(self.mocking_store.clone());
+        Ok(self.mocking_store.clone())
     }
 }

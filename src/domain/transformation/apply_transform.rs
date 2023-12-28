@@ -16,7 +16,7 @@ pub fn apply_transforms(
     for layer in layers {
         let layer_transforms: Vec<&ResolvedTransformation> = transforms
             .iter()
-            .filter(|t| t.layer.as_deref() == Some(&layer))
+            .filter(|t| t.layer.as_deref() == Some(layer))
             .collect();
 
         if !layer_transforms.is_empty() {
@@ -29,7 +29,7 @@ pub fn apply_transforms(
     for (_, transforms) in transforms_by_ordered_layer {
         transforms.into_iter().try_for_each(|transform| {
             let rule = &transform.rule;
-            evalexpr::eval_with_context_mut(&rule, &mut transformable_list).map_err(|e| {
+            evalexpr::eval_with_context_mut(rule, &mut transformable_list).map_err(|e| {
                 AppError::String(format!("Error while evaluating rule {} : {}", rule, e))
             })?;
             AppResult::Ok(())

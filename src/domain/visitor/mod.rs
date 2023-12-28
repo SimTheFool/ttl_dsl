@@ -15,7 +15,7 @@ pub struct AstVisitor<'a> {
 }
 impl<'a> AstVisitor<'a> {
     pub fn new(resolver: &'a impl crate::ports::ResolverPort) -> Self {
-        Self { resolver: resolver }
+        Self { resolver }
     }
 }
 impl AstVisitor<'_> {
@@ -203,7 +203,7 @@ impl AstVisitor<'_> {
                     RawTransformation::from_ast(t, build.clone()).map(|v| v.unwrap_or_default())
                 })
                 .flat_map(|r| match r {
-                    Ok(vec) => vec.into_iter().map(|item| Ok(item)).collect(),
+                    Ok(vec) => vec.into_iter().map(Ok).collect(),
                     Err(er) => vec![Err(er)],
                 })
                 .collect::<AppResult<Vec<_>>>()?;
@@ -248,6 +248,6 @@ impl AstVisitor<'_> {
         val: ast::Ref,
         build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
-        Ok((vec![build.build_as_reference(&val.get_var_name())?], vec![]))
+        Ok((vec![build.build_as_reference(val.get_var_name())?], vec![]))
     }
 }

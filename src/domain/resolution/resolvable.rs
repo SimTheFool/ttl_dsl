@@ -31,7 +31,7 @@ pub trait Resolvable {
                 None => Err(AppError::String(format!("No group found for {}", full)))?,
                 Some(group) => {
                     let var_value = variables.get(&group.to_string()).ok_or_else(|| {
-                        AppError::String(format!("Variable not found: {}", group.to_string()))
+                        AppError::String(format!("Variable not found: {}", group))
                     })?;
 
                     var_value.value.to_string()
@@ -42,7 +42,7 @@ pub trait Resolvable {
         };
 
         let mut replaced: String = str;
-        for regex in vec![regex1, regex2] {
+        for regex in [regex1, regex2] {
             replaced = replace_all(&regex, &replaced, variable_replacer)?;
         }
 

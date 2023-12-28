@@ -8,7 +8,7 @@ use pest_ast::FromPest;
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(Rule::EOI))]
-struct EOI;
+struct Eoi;
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::name))]
@@ -20,7 +20,7 @@ pub struct File {
     pub name: Option<Name>,
     pub value: Option<Value>,
     pub transforms: Option<Vec<Transform>>,
-    _eoi: EOI,
+    _eoi: Eoi,
 }
 impl TryFrom<&str> for File {
     type Error = AppError;
@@ -121,9 +121,8 @@ mod tests {
         let mut pairs = super::TTLParser::parse(super::Rule::file, str).unwrap();
         let File { name, value, .. } = super::File::from_pest(&mut pairs).unwrap();
 
-        match value {
-            Some(_) => panic!("Should not have a value"),
-            None => {}
+        if value.is_some() {
+            panic!("Should not have a value");
         }
 
         match name {
@@ -149,14 +148,12 @@ mod tests {
             ..
         } = super::File::from_pest(&mut pairs).unwrap();
 
-        match value {
-            Some(_) => panic!("Should not have a value"),
-            None => {}
+        if value.is_some() {
+            panic!("Should not have a value");
         }
 
-        match name {
-            Some(_) => panic!("Should not have a name"),
-            None => {}
+        if name.is_some() {
+            panic!("Should not have a name");
         }
 
         match transforms {

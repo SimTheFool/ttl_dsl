@@ -16,20 +16,18 @@ impl TransformableList {
     fn set(&mut self, key: String, value: Value) -> AppResult<()> {
         let old_resource = self.origin.get(&key);
         let new_resource = match (old_resource, &value) {
-            (None, Value::String(s)) => ResolvedResourceBuilder::default().build_as_string(&s)?,
-            (None, Value::Float(l)) => {
-                ResolvedResourceBuilder::default().build_as_number(l.clone())?
-            }
+            (None, Value::String(s)) => ResolvedResourceBuilder::default().build_as_string(s)?,
+            (None, Value::Float(l)) => ResolvedResourceBuilder::default().build_as_number(*l)?,
             (Some(rs), Value::String(s)) => ResolvedResource {
                 value: ResolvedResourceValue::String(s.clone()),
                 ..rs.clone()
             },
             (Some(rs), Value::Float(n)) => ResolvedResource {
-                value: ResolvedResourceValue::Number(n.clone()),
+                value: ResolvedResourceValue::Number(*n),
                 ..rs.clone()
             },
             (Some(rs), Value::Int(n)) => ResolvedResource {
-                value: ResolvedResourceValue::Number((*n as f64).clone()),
+                value: ResolvedResourceValue::Number(*n as f64),
                 ..rs.clone()
             },
             (_, x) => panic!("Unhandled evaluated type {:#?}", x),
@@ -51,7 +49,7 @@ impl From<IndexMap<String, ResolvedResource>> for TransformableList {
                     index_map.insert(key.to_string(), Value::String(s.clone()));
                 }
                 ResolvedResourceValue::Number(l) => {
-                    index_map.insert(key.to_string(), Value::Float(l.clone()));
+                    index_map.insert(key.to_string(), Value::Float(*l));
                 }
                 ResolvedResourceValue::Null => {
                     index_map.insert(key.to_string(), Value::Empty);
@@ -66,9 +64,9 @@ impl From<IndexMap<String, ResolvedResource>> for TransformableList {
     }
 }
 
-impl Into<IndexMap<String, ResolvedResource>> for TransformableList {
-    fn into(self) -> IndexMap<String, ResolvedResource> {
-        self.origin
+impl From<TransformableList> for IndexMap<String, ResolvedResource> {
+    fn from(transformable_list: TransformableList) -> Self {
+        transformable_list.origin
     }
 }
 

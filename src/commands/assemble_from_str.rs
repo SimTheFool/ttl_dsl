@@ -34,7 +34,7 @@ where
                 RawTransformation::from_ast(t, blank_context).map(|v| v.unwrap_or_default())
             })
             .flat_map(|r| match r {
-                Ok(vec) => vec.into_iter().map(|item| Ok(item)).collect(),
+                Ok(vec) => vec.into_iter().map(Ok).collect(),
                 Err(er) => vec![Err(er)],
             })
             .collect::<AppResult<Vec<RawTransformation>>>()?;
@@ -53,7 +53,7 @@ where
             .map(|r| {
                 let key_path = r.ctx_path.clone().unwrap_or_default();
                 let new_kv = (key_path, r.try_resolve()?);
-                return AppResult::Ok(new_kv);
+                AppResult::Ok(new_kv)
             })
             .try_fold(
                 IndexMap::<String, ResolvedResource>::new(),

@@ -9,9 +9,9 @@ pub struct Variable(#[pest_ast(outer(with(span_into_string)))] pub std::string::
 #[pest_ast(rule(Rule::reference))]
 pub struct Ref(#[pest_ast(outer(with(span_into_string)))] pub std::string::String);
 impl Ref {
-    pub fn get_var_name<'a>(&'a self) -> &'a str {
+    pub fn get_var_name(&self) -> &str {
         self.0
-            .strip_prefix("$")
+            .strip_prefix('$')
             .expect("Variable does not start with $")
     }
 }

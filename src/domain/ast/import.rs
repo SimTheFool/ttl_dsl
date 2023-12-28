@@ -6,6 +6,7 @@ use pest_ast::FromPest;
 
 #[derive(Debug, PartialEq, FromPest)]
 #[pest_ast(rule(Rule::import_id))]
+
 pub struct ImportId(#[pest_ast(outer(with(span_into_string)))] pub String);
 
 #[derive(Debug, PartialEq, FromPest)]

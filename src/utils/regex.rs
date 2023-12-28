@@ -45,7 +45,7 @@ mod test {
                 None => Err(AppError::String(format!("No group found for {}", full)))?,
                 Some(group) => {
                     let var_value = variables.get(&group.to_string()).ok_or_else(|| {
-                        AppError::String(format!("Variable not found: {}", group.to_string()))
+                        AppError::String(format!("Variable not found: {}", group))
                     })?;
 
                     var_value.to_string()

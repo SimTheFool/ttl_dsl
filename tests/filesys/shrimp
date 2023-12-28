@@ -98,6 +98,8 @@
         <@ ./objects/guns/crockett
             with <? ./objects/accessories/guncam >
             with <? ./objects/mods/chasse_big >
+            with <? ./objects/mods/canon_long >
+            with <? ./objects/mods/disassembly_kit >
         >
     }
 }

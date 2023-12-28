@@ -5,7 +5,20 @@
     minor: 0
     damage: 0
     ammo: 4
+    ranges:
+    {
+        contact: 0
+        near: 0
+        short: 0
+        mid: 0
+        far: 0
+    }
 }
 
 @TRANSFORM FINAL_STATS
 > $.damage = $ref.damage + 2
+> $.ranges.contact = $ref.ranges.contact.base - 1
+> $.ranges.near = $ref.ranges.near.base - 1
+> $.ranges.short = $ref.ranges.short.base - 1
+> $.ranges.mid = $ref.ranges.mid.base - 1
+> $.ranges.far = $ref.ranges.far.base - 1

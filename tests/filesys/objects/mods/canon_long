@@ -1,0 +1,11 @@
+{
+    <? ./utils/quantity_buy with cost: 350>
+}
+
+@TRANSFORM MODS
+> $.description += "Le canon a été allongé pour une meilleure précision à distance."
+> $.ranges.contact.base -= 1
+> $.ranges.mid.base += 1
+> $.ranges.far.base += 1
+> $.concealment -= 1
+> $.status = if($.status == "illegal", $.status, "licenced")

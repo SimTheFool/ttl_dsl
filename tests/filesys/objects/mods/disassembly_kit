@@ -1,0 +1,17 @@
+{
+    <? ./utils/quantity_buy with cost: 400>
+
+    actions:
+    {
+        démonter:
+        {
+            minor: 0
+            major: 2
+            description: Dissimulation +2 lorsque démontée.
+        }
+    }
+}
+
+@TRANSFORM MODS
+> $.description += "Modifiée pour le démontage."
+> $.status = "illegal"

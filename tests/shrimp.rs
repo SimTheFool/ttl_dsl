@@ -51,14 +51,13 @@ fn it_shoud_assemble_shrimp() {
 
     mock_file!("./filesys/objects/accessories/guncam");
     mock_file!("./filesys/objects/mods/chasse_big");
+    mock_file!("./filesys/objects/mods/canon_long");
+    mock_file!("./filesys/objects/mods/disassembly_kit");
 
     mock_file!("./filesys/objects/guns/crockett");
     mock_file!("./filesys/objects/guns/actions/shot");
-    mock_file!("./filesys/objects/guns/actions/shot_range");
     mock_file!("./filesys/objects/guns/actions/shot_semi");
-    mock_file!("./filesys/objects/guns/actions/shot_semi_range");
     mock_file!("./filesys/objects/guns/actions/shot_rafale");
-    mock_file!("./filesys/objects/guns/actions/shot_rafale_range");
 
     mock_file!("./filesys/utils/quantity_buy");
     mock_file!("./filesys/utils/quality_buy");
@@ -155,30 +154,32 @@ fn it_shoud_assemble_shrimp() {
 
     /* Testing crockett */
     assert_resource_at!(resources : "inventory.Crockett.manufacturer" => String "Cavalier Arms");
-    assert_resource_at!(resources : "inventory.Crockett.price" => Number 10600.0);
     assert_resource_at!(resources : "inventory.Crockett.status" => String "illegal");
-    assert_resource_at!(resources : "inventory.Crockett.ammo" => Number 250.0);
+
     assert_resource_at!(resources : "inventory.Crockett.actions.Tir.damage" => Number 5.0);
     assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ammo" => Number 1.0);
-    assert_resource_number!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.label" => 4);
-    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.accuracy" => Number -1.0);
-    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.accuracy" => Number 1.0);
-    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.[a-zA-Z0-9]+.accuracy" => Number 0.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.contact" => Number -2.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.near" => Number 0.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.short" => Number 1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.mid" => Number 2.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir.ranges.far" => Number 1.0);
 
     assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.damage" => Number 6.0);
     assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ammo" => Number 2.0);
-    assert_resource_number!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.label" => 4);
-    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.accuracy" => Number -2.0);
-    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.accuracy" => Number 1.0);
-    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.[a-zA-Z0-9]+.accuracy" => Number -1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.contact" => Number -3.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.near" => Number -1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.short" => Number 1.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.mid" => Number 2.0);
+    assert_resource_at!(resources : "inventory.Crockett.actions.Tir_semi_auto.ranges.far" => Number 1.0);
 
     assert_resource_at!(resources : "inventory.Crockett.actions.recharger.ammo" => Number 250.0);
     assert_resource_at!(resources : "inventory.Crockett.actions.guncam.major" => Number 0.0);
     assert_resource_at!(resources : "inventory.Crockett.actions.guncam.minor" => Number 1.0);
 
     /* Testing buy util */
+    assert_resource_at!(resources : "inventory.Crockett.price" => Number 11350.0);
     assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
     assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
     assert_resource_at!(resources : "nuyens" => Number 0.0);
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0});
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0 - 350.0 - 400.0});
 }

@@ -12,40 +12,39 @@
 
     ammo: 30
     damage: 5
-    accuracies:
+    ranges:
     {
-        0: -1
-        50: 0
-        100: 1
-        750: 0
+        contact:
+        {
+            label: 0
+            base: -1
+        }
+        near:
+        {
+            label: 50
+            base: 0
+        }
+        short:
+        {
+            base: 1
+        }
+        mid:
+        {
+            label: 100
+            base: 1
+        }
+        far:
+        {
+            label: 750
+            base: 0
+        }
     }
 
     actions:
     {
-        <@ ./objects/guns/actions/shot
-            with ref: $
-            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 0 >
-            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 50 >
-            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 100 >
-            with <ranges! ./objects/guns/actions/shot_range with ref: $ with label: 750 >
-        >
-
-        <@ ./objects/guns/actions/shot_semi
-            with ref: $
-            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 0 >
-            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 50 >
-            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 100 >
-            with <ranges! ./objects/guns/actions/shot_semi_range with ref: $ with label: 750 >
-        >
-
-        <@ ./objects/guns/actions/shot_rafale
-            with ref: $
-            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 0 >
-            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 50 >
-            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 100 >
-            with <ranges! ./objects/guns/actions/shot_rafale_range with ref: $ with label: 750 >
-        >
-
+        <@ ./objects/guns/actions/shot with ref: $ >
+        <@ ./objects/guns/actions/shot_semi with ref: $ >
+        <@ ./objects/guns/actions/shot_rafale with ref: $ >
         <@ ./actions/recharger with ref: $ >
     }
 }

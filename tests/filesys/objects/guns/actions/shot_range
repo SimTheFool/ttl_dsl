@@ -1,7 +1,0 @@
-{
-    label: $label
-    accuracy: 0
-}
-
-@TRANSFORM FINAL_STATS
-> $.accuracy = $ref.accuracies.$label

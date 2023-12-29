@@ -3,10 +3,7 @@ name = "custom_dsl"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[lints.clippy]
-clone_on_copy = "allow"
 
 [dependencies]
 anyhow = "1.0.75"
@@ -25,3 +22,6 @@ evalexpr = "11.2.0"
 unwrap = "1.2.1"
 rand = "0.8.5"
 
+
+[lints.clippy]
+clone_on_copy = "allow"

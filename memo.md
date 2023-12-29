@@ -1,3 +1,2 @@
-- reproduire entièrement shrimp
-- gérer les tableau (notemment pour la partie knowledges par exemple)
-- handle log (used one medikit)
+- générer un wasm
+- tester à l'aide d'un simple index.js

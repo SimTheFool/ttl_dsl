@@ -1,2 +1,0 @@
-- générer un wasm
-- tester à l'aide d'un simple index.js

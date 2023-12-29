@@ -1,4 +1,4 @@
-use custom_dsl::{
+use lib_interpreter::{
     commands::AssembleFromStr,
     domain::resolution::ResolvedResource,
     ports::{ConfigProviderPort, ResolverPort},

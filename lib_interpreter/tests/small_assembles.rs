@@ -1,7 +1,7 @@
 #[macro_use]
 mod utils;
 use crate::utils::*;
-use custom_dsl::domain::resolution::ResolvedResourceValue;
+use lib_interpreter::domain::resolution::ResolvedResourceValue;
 use regex::Regex;
 
 #[test]

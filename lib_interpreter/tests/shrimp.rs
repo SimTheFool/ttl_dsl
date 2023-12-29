@@ -1,5 +1,5 @@
 use crate::utils::*;
-use custom_dsl::domain::resolution::ResolvedResourceValue;
+use lib_interpreter::domain::resolution::ResolvedResourceValue;
 use regex::Regex;
 
 #[macro_use]

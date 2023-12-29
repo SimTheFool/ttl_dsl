@@ -1,27 +1,5 @@
-[package]
-name = "custom_dsl"
-version = "0.1.0"
-edition = "2021"
-
-
-
-[dependencies]
-anyhow = "1.0.75"
-thiserror = "1.0.50"
-pest = "2.6"
-pest_derive = "2.6"
-serde = "1.0.192"
-serde_json = "1.0.108"
-from-pest = "0.3.2"
-pest-ast = "0.3.4"
-indexmap = "2.1.0"
-rayon = "1.8.0"
-derive_builder = "0.12.0"
-regex = "1.10.2"
-evalexpr = "11.2.0"
-unwrap = "1.2.1"
-rand = "0.8.5"
-
-
-[lints.clippy]
-clone_on_copy = "allow"
+[workspace]
+members = [
+    "lib_interpreter",
+    "lib_ts",
+]

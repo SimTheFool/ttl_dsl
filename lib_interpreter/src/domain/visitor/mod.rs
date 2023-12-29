@@ -5,16 +5,16 @@ use super::{
         VariablesMap,
     },
 };
-use crate::{domain::resolution::Resolvable, result::AppError};
+use crate::{domain::resolution::Resolvable, ports::ResolverPort, result::AppError};
 use crate::{random::get_random_uf8, result::AppResult};
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 
 pub struct AstVisitor<'a> {
-    pub resolver: &'a dyn crate::ports::ResolverPort,
+    pub resolver: &'a dyn ResolverPort,
 }
 impl<'a> AstVisitor<'a> {
-    pub fn new(resolver: &'a impl crate::ports::ResolverPort) -> Self {
+    pub fn new(resolver: &'a impl ResolverPort) -> Self {
         Self { resolver }
     }
 }

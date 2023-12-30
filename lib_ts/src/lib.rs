@@ -1,26 +1,27 @@
-use crate::utils::{into_app_result, AppErr};
+use crate::{js_ports::JsResolverPort, utils::into_app_result};
 use lib_interpreter::ports::ResolverPort;
-use resolver_adapters::JSClosureResolver;
+use std::{cell::RefCell, rc::Rc};
 use wasm_bindgen::prelude::*;
 
-mod resolver_adapters;
+pub mod js_ports;
 mod utils;
 
 #[wasm_bindgen]
 pub struct Interpreter {
-    resolver: JSClosureResolver,
+    resolver: Rc<RefCell<dyn ResolverPort>>,
 }
 
 #[wasm_bindgen]
 impl Interpreter {
     #[wasm_bindgen(constructor)]
-    pub fn new(f: &js_sys::Function) -> Self {
-        let resolver = JSClosureResolver::new(f.clone());
+    pub fn new(resolver: JsResolverPort) -> Self {
+        let resolver = Rc::new(RefCell::new(resolver));
+
         Self { resolver }
     }
 
-    pub fn test(&self, input: &str) -> Result<String, AppErr> {
-        let res = self.resolver.read(input);
+    pub fn test(&self, input: &str) -> Result<String, JsValue> {
+        let res = self.resolver.borrow().read(input);
         into_app_result(res)
     }
 }

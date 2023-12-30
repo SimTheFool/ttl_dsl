@@ -3,6 +3,7 @@ members = [
     "lib_interpreter",
     "lib_ts",
 ]
+resolver = "2"
 
 
 

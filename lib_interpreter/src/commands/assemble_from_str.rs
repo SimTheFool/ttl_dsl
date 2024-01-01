@@ -1,27 +1,19 @@
 use crate::domain::ast::{self};
 use crate::domain::resolution::Resolvable;
-use crate::domain::resolution::ResolvedResource;
 use crate::domain::resolution::{RawTransformation, ResourceContextBuilder};
 use crate::domain::transformation::apply_transforms;
 use crate::domain::visitor::AstVisitor;
+use crate::ports::{ConfigProviderPort, FormatterPort, ResolverPort};
 use crate::utils::result::AppResult;
-use indexmap::IndexMap;
 
-pub struct AssembleFromStr<'a, R, C>
-where
-    R: crate::ports::ResolverPort,
-    C: crate::ports::ConfigProviderPort,
-{
+pub struct AssembleFromStr<'a, R: ResolverPort, C: ConfigProviderPort, F: FormatterPort> {
     pub resolver: &'a R,
     pub config: &'a C,
+    pub formatter: &'a F,
 }
 
-impl<R, C> AssembleFromStr<'_, R, C>
-where
-    R: crate::ports::ResolverPort,
-    C: crate::ports::ConfigProviderPort,
-{
-    pub fn execute(&self, file_str: &str) -> AppResult<Vec<ResolvedResource>> {
+impl<R: ResolverPort, C: ConfigProviderPort, F: FormatterPort> AssembleFromStr<'_, R, C, F> {
+    pub fn execute(&self, file_str: &str) -> AppResult<F::Format> {
         let ast::File {
             value, transforms, ..
         } = ast::File::try_from(file_str)?;
@@ -48,29 +40,15 @@ where
 
         transforms.extend(inner_transforms);
 
-        let resources_map = resources
-            .into_iter()
-            .map(|r| {
-                let key_path = r.ctx_path.clone().unwrap_or_default();
-                let new_kv = (key_path, r.try_resolve()?);
-                AppResult::Ok(new_kv)
-            })
-            .try_fold(
-                IndexMap::<String, ResolvedResource>::new(),
-                |mut map, kv| {
-                    let (k, v) = kv?;
-                    map.insert(k, v);
-                    AppResult::Ok(map)
-                },
-            )?;
-
         let layers = self.config.get_transform_layers()?;
 
         let resources_map = match transforms {
-            t if t.is_empty() => Ok(resources_map),
-            t => apply_transforms(resources_map, t.try_resolve()?, layers),
+            t if t.is_empty() => Ok(resources.try_resolve()?),
+            t => apply_transforms(resources.try_resolve()?, t.try_resolve()?, layers),
         }?;
 
-        Ok(resources_map.into_iter().map(|(_, v)| v).collect())
+        let formatted = self.formatter.format(resources_map)?;
+
+        Ok(formatted)
     }
 }

@@ -7,10 +7,26 @@ use indexmap::IndexMap;
 use super::transformable_list::TransformableList;
 
 pub fn apply_transforms(
-    resources: IndexMap<String, ResolvedResource>,
+    resources: Vec<ResolvedResource>,
     transforms: Vec<ResolvedTransformation>,
     layers: Vec<&str>,
-) -> AppResult<IndexMap<String, ResolvedResource>> {
+) -> AppResult<Vec<ResolvedResource>> {
+    let resources_map = resources
+        .into_iter()
+        .map(|r| {
+            let key_path = r.identifier.clone().unwrap_or_default();
+            let new_kv = (key_path, r);
+            AppResult::Ok(new_kv)
+        })
+        .try_fold(
+            IndexMap::<String, ResolvedResource>::new(),
+            |mut map, kv| {
+                let (k, v) = kv?;
+                map.insert(k, v);
+                AppResult::Ok(map)
+            },
+        )?;
+
     let mut transforms_by_ordered_layer = Vec::new();
 
     for layer in layers {
@@ -24,7 +40,7 @@ pub fn apply_transforms(
         }
     }
 
-    let mut transformable_list: TransformableList = resources.into();
+    let mut transformable_list: TransformableList = resources_map.into();
 
     for (_, transforms) in transforms_by_ordered_layer {
         transforms.into_iter().try_for_each(|transform| {
@@ -41,12 +57,10 @@ pub fn apply_transforms(
 
 #[cfg(test)]
 mod test {
+    use super::*;
     use crate::domain::resolution::{
         RawTransformation, Resolvable, ResolvedResourceBuilder, ResolvedResourceValue,
     };
-
-    use super::*;
-    use indexmap::IndexMap;
     use std::collections::HashMap;
 
     #[test]
@@ -80,20 +94,16 @@ mod test {
 
         let transforms = vec![transform_x_1, transform_x_2];
 
-        let mut resources = IndexMap::<String, ResolvedResource>::new();
-        resources.insert(
-            "root.x".to_string(),
-            ResolvedResourceBuilder::default()
-                .identifier(Some("x".to_string()))
-                .build_as_number(7.0)
-                .unwrap(),
-        );
+        let resources = vec![ResolvedResourceBuilder::default()
+            .identifier(Some("root.x".to_string()))
+            .build_as_number(7.0)
+            .unwrap()];
 
         let transformed_resources =
             apply_transforms(resources, transforms.try_resolve().unwrap(), layers).unwrap();
 
         assert_eq!(transformed_resources.len(), 1);
-        let x = transformed_resources.get("root.x").unwrap();
+        let x = transformed_resources.get(0).unwrap();
         match x.value {
             ResolvedResourceValue::Number(n) => assert_eq!(n, 24.0),
             _ => panic!("Unexpected resource type"),

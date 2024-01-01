@@ -64,9 +64,13 @@ impl From<IndexMap<String, ResolvedResource>> for TransformableList {
     }
 }
 
-impl From<TransformableList> for IndexMap<String, ResolvedResource> {
+impl From<TransformableList> for Vec<ResolvedResource> {
     fn from(transformable_list: TransformableList) -> Self {
-        transformable_list.origin
+        transformable_list
+            .origin
+            .into_iter()
+            .map(|(_, v)| v)
+            .collect()
     }
 }
 

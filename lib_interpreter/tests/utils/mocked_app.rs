@@ -9,6 +9,7 @@ use std::{cell::RefCell, collections::HashMap, rc::Rc};
 pub struct MockedApp {
     resolver: Rc<RefCell<MockedResolverAdapter<'static>>>,
     config: Rc<RefCell<MockedConfigProviderAdapter>>,
+    formatter: Rc<RefCell<NoFormatterAdapter>>,
 }
 
 impl MockedApp {
@@ -19,10 +20,12 @@ impl MockedApp {
     ) {
         let resolver = Rc::new(RefCell::new(MockedResolverAdapter::new()));
         let config = Rc::new(RefCell::new(MockedConfigProviderAdapter::new()));
+        let formatter = Rc::new(RefCell::new(NoFormatterAdapter::new()));
 
         let app = MockedApp {
             resolver: resolver.clone(),
             config: config.clone(),
+            formatter: formatter.clone(),
         };
 
         (app, resolver, config)
@@ -34,6 +37,7 @@ impl MockedApp {
         let assemble_from_str = AssembleFromStr {
             resolver: &*self.resolver.borrow(),
             config: &*self.config.borrow(),
+            formatter: &*self.formatter.borrow(),
         };
 
         assemble_from_str.execute(file_str)
@@ -85,5 +89,21 @@ impl MockedConfigProviderAdapter {
 impl ConfigProviderPort for MockedConfigProviderAdapter {
     fn get_transform_layers(&self) -> AppResult<Vec<&str>> {
         Ok(self.mocking_store.clone())
+    }
+}
+
+pub struct NoFormatterAdapter {}
+
+impl NoFormatterAdapter {
+    pub fn new() -> Self {
+        NoFormatterAdapter {}
+    }
+}
+
+impl lib_interpreter::ports::FormatterPort for NoFormatterAdapter {
+    type Format = Vec<ResolvedResource>;
+
+    fn format(&self, resources: Vec<ResolvedResource>) -> AppResult<Self::Format> {
+        Ok(resources)
     }
 }

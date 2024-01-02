@@ -6,5 +6,6 @@
 
 ### Améliorations:
 
+- Faire un builder dans la lib_ts qui permet de peupler avec des prefabs (JSFormatter par exemple) ou du custom
 - Gérer un map <Layer, Rule> dans le visitor, plutôt que de remonter l'AST
 - Ajouter un logger port

@@ -1,1 +1,1 @@
-export { Interpreter } from "./bindgen/lib_ts";
+export * from "./bindgen/lib_ts";

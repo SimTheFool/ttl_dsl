@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Interpreter } from "../src";
+import { InterpreterBuilder } from "../src";
 
 const INDEX = `
     {
@@ -15,7 +15,7 @@ const INDEX = `
         }
     }`;
 
-const STATS = `"
+const STATS = `
     {
         con: $con
         vol: $vol
@@ -35,7 +35,7 @@ const STATS = `"
     > $.heal += $.con + $.vol
     `;
 
-const MAGICIAN = `"
+const MAGICIAN = `
     {
         mag: $mag
         initiation: $initiation
@@ -47,7 +47,7 @@ const MAGICIAN = `"
     > $.resist_drain += floor($.$trad / 2)
     `;
 
-/* describe("mocked resolver interpreter", () => {
+describe("mocked resolver interpreter", () => {
   let mockedResolver = {
     read: (str: string) => {
       switch (str) {
@@ -62,18 +62,28 @@ const MAGICIAN = `"
   };
 
   let mockedConfig = {
-    get_transform_layers: () => ["FINAL_STATS", "FINAL_STATS_END"],
+    getTransformLayers: () => ["FINAL_STATS", "FINAL_STATS_END"],
   };
 
-  let formatter = new JSONFormatter();
-
-  let interpreter = new Interpreter(mockedResolver, mockedConfig, formatter);
-
   it("should pass", async () => {
-    let result = interpreter.assembleFromString(INDEX);
+    let interpreter = new InterpreterBuilder()
+      .with_custom_resolver(mockedResolver)
+      .with_custom_config_provider(mockedConfig)
+      .with_json_formatter()
+      .build();
+    let result = interpreter.assemble_from_str(INDEX);
 
-    expect(result.stats.con).toBe(5);
-    expect(result.stats.con).toBe(3);
+    expect(result.stats.con.value).toBe(5);
+    expect(result.stats.vol.value).toBe(3);
+    expect(result.stats.resist_phy.metas.includes("con")).toBe(true);
+    expect(result.stats.resist_phy.value).toBe(5);
+    expect(result.stats.resist_ment.metas.includes("vol")).toBe(true);
+    expect(result.stats.resist_ment.value).toBe(3);
+    expect(result.stats.hit.value).toBe(10);
+    expect(result.stats.heal.value).toBe(8);
+    expect(result.stats.resist_drain.metas.includes("vol")).toBe(true);
+    expect(result.stats.resist_drain.value).toBe(1);
+    expect(result.stats.mag.value).toBe(4);
+    expect(result.stats.initiation.value).toBe(1);
   });
 });
- */

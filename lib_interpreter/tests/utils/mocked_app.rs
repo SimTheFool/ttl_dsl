@@ -73,7 +73,7 @@ impl<'a> ResolverPort for MockedResolverAdapter<'a> {
 }
 
 pub struct MockedConfigProviderAdapter {
-    mocking_store: Vec<&'static str>,
+    mocking_store: Vec<String>,
 }
 impl MockedConfigProviderAdapter {
     pub fn new() -> Self {
@@ -83,11 +83,11 @@ impl MockedConfigProviderAdapter {
     }
 
     pub fn add_layer(&mut self, layer: &'static str) {
-        self.mocking_store.push(layer);
+        self.mocking_store.push(layer.to_string());
     }
 }
 impl ConfigProviderPort for MockedConfigProviderAdapter {
-    fn get_transform_layers(&self) -> AppResult<Vec<&str>> {
+    fn get_transform_layers(&self) -> AppResult<Vec<String>> {
         Ok(self.mocking_store.clone())
     }
 }

@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest",
-    "build": "wasm-pack build --target nodejs --release --no-pack --out-dir src/bindgen"
+    "build": "wasm-pack build --target nodejs --release --no-pack --out-dir src/ts_bindgen"
   },
   "devDependencies": {
     "vitest": "^1.1.0"

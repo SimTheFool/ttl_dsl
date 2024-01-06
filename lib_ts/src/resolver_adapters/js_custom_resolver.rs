@@ -6,23 +6,23 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(typescript_custom_section)]
 const IRESOLVER_PORT_DEFINITION: &'static str = r#"
-interface IResolver {
+interface ICustomResolver {
     read: (input: string) => string;
 }
 "#;
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(typescript_type = "IResolver")]
-    pub type IResolver;
+    #[wasm_bindgen(typescript_type = "ICustomResolver")]
+    pub type JsCustomResolver;
 
     #[wasm_bindgen(structural, method, catch)]
-    pub fn read(this: &IResolver, input: &str) -> Result<String, JsValue>;
+    pub fn read(this: &JsCustomResolver, input: &str) -> Result<String, JsValue>;
 }
 
-unsafe impl Sync for IResolver {}
-unsafe impl Send for IResolver {}
-impl ResolverPort for IResolver {
+unsafe impl Sync for JsCustomResolver {}
+unsafe impl Send for JsCustomResolver {}
+impl ResolverPort for JsCustomResolver {
     fn read(&self, path: &str) -> AppResult<String> {
         let res = self
             .read(path)

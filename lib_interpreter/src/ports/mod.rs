@@ -1,7 +1,7 @@
 use crate::{domain::resolution::ResolvedResource, result::AppResult};
 
 pub trait ConfigProviderPort: Sync {
-    fn get_transform_layers(&self) -> AppResult<Vec<&str>>;
+    fn get_transform_layers(&self) -> AppResult<Vec<String>>;
 }
 
 pub trait ResolverPort: Sync {

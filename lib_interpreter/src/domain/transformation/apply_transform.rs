@@ -9,7 +9,7 @@ use super::transformable_list::TransformableList;
 pub fn apply_transforms(
     resources: Vec<ResolvedResource>,
     transforms: Vec<ResolvedTransformation>,
-    layers: Vec<&str>,
+    layers: Vec<String>,
 ) -> AppResult<Vec<ResolvedResource>> {
     let resources_map = resources
         .into_iter()
@@ -32,7 +32,7 @@ pub fn apply_transforms(
     for layer in layers {
         let layer_transforms: Vec<&ResolvedTransformation> = transforms
             .iter()
-            .filter(|t| t.layer.as_deref() == Some(layer))
+            .filter(|t| t.layer.as_deref() == Some(&layer))
             .collect();
 
         if !layer_transforms.is_empty() {
@@ -90,7 +90,7 @@ mod test {
             ctx_variables: Some(ctx_variables.clone()),
         };
 
-        let layers = vec!["FIRST_LAYER", "SECOND_LAYER"];
+        let layers = vec!["FIRST_LAYER".to_string(), "SECOND_LAYER".to_string()];
 
         let transforms = vec![transform_x_1, transform_x_2];
 

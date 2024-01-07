@@ -275,7 +275,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "lib_interpreter"
+name = "lib_core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -297,20 +297,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lib_ts"
-version = "0.1.0"
-dependencies = [
- "getrandom",
- "js-sys",
- "lib_interpreter",
- "serde",
- "serde-wasm-bindgen",
- "serde_json",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.151"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -327,6 +313,20 @@ name = "memchr"
 version = "2.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "523dc4f511e55ab87b694dc30d0f820d60906ef06413f93d4d7a1385599cc149"
+
+[[package]]
+name = "node_client"
+version = "0.1.0"
+dependencies = [
+ "getrandom",
+ "js-sys",
+ "lib_core",
+ "serde",
+ "serde-wasm-bindgen",
+ "serde_json",
+ "wasm-bindgen",
+ "web-sys",
+]
 
 [[package]]
 name = "once_cell"

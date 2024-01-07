@@ -1,7 +1,7 @@
 #[macro_use]
 mod utils;
 use crate::utils::*;
-use lib_interpreter::domain::resolution::ResolvedResourceValue;
+use lib_core::domain::resolution::ResolvedResourceValue;
 use regex::Regex;
 
 #[test]

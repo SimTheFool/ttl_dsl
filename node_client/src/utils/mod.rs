@@ -1,4 +1,4 @@
-use lib_interpreter::result::AppResult;
+use lib_core::result::AppResult;
 use wasm_bindgen::prelude::*;
 
 pub fn into_app_result<T>(res: AppResult<T>) -> Result<T, JsValue> {

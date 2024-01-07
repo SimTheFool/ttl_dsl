@@ -1,4 +1,4 @@
-use lib_interpreter::{
+use lib_core::{
     commands::AssembleFromStr,
     domain::resolution::ResolvedResource,
     ports::{ConfigProviderPort, FormatterPort, ResolverPort},

@@ -1,4 +1,4 @@
-use lib_interpreter::ports::ConfigProviderPort;
+use lib_core::ports::ConfigProviderPort;
 
 mod js_custom_config;
 pub use js_custom_config::*;

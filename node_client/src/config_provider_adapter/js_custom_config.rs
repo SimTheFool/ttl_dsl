@@ -1,4 +1,4 @@
-use lib_interpreter::{
+use lib_core::{
     ports::ConfigProviderPort,
     result::{AppError, AppResult},
 };

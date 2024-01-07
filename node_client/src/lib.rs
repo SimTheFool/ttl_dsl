@@ -3,7 +3,7 @@ use crate::{
 };
 use config_provider_adapter::{ConfigProvider, JsCustomConfig};
 use formatter_adapters::Formatter;
-use lib_interpreter::{commands::AssembleFromStr, statics::logger};
+use lib_core::{commands::AssembleFromStr, statics::logger};
 use logger_adapters::Logger;
 use resolver_adapters::{JsCustomResolver, Resolver};
 use wasm_bindgen::prelude::*;

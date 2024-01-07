@@ -1,6 +1,6 @@
 mod js_custom_resolver;
 pub use js_custom_resolver::*;
-use lib_interpreter::ports::ResolverPort;
+use lib_core::ports::ResolverPort;
 
 pub enum Resolver {
     JsResolver(JsCustomResolver),

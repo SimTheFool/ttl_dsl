@@ -1,4 +1,4 @@
-use lib_interpreter::ports::FormatterPort;
+use lib_core::ports::FormatterPort;
 use wasm_bindgen::JsValue;
 
 mod js_json_formatter;

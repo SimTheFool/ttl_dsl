@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "lib_interpreter",
-    "lib_ts",
+    "lib_core",
+    "node_client",
 ]
 resolver = "2"
 

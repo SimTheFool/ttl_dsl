@@ -1,4 +1,4 @@
-use lib_interpreter::statics::logger::{self, Level};
+use lib_core::statics::logger::{self, Level};
 use wasm_bindgen::JsValue;
 use web_sys::console;
 

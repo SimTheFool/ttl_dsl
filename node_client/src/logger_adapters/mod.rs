@@ -5,7 +5,7 @@ pub enum Logger {
     ConsoleLogger(JSConsoleLogger),
 }
 impl Logger {
-    pub fn get_owned(self) -> impl lib_interpreter::statics::logger::Log {
+    pub fn get_owned(self) -> impl lib_core::statics::logger::Log {
         match self {
             Self::ConsoleLogger(logger) => logger,
         }

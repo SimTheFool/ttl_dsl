@@ -1,4 +1,4 @@
-use lib_interpreter::{
+use lib_core::{
     domain::resolution::ResolvedResource,
     ports::FormatterPort,
     prefab::JsonFormatter,

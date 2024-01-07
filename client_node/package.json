@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "license": "MIT",
-  "scripts": {
-    "test": "vitest",
-    "build": "wasm-pack build --target nodejs --release --no-pack --out-dir src/ts_bindgen"
-  },
   "devDependencies": {
     "vitest": "^1.1.0"
   }

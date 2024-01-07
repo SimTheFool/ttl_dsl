@@ -1,0 +1,7 @@
+.bottom > * {
+    border-top: none !important;
+}
+
+.noBorderBottom > :global(.rt-Card) {
+    border-bottom: none !important;
+}

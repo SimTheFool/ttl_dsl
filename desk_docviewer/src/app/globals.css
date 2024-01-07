@@ -1,0 +1,16 @@
+main {
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.rt-Card.rt-variant-surface::after {
+    display: none;
+}
+
+html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}

@@ -1,0 +1,687 @@
+{
+  "complex_forms": {
+    "canal de données": {
+      "description": "Vous réduisez le bruit de votre connexion de 1 par __SN__.",
+      "maintained": true,
+      "major": 1,
+      "minor": 0,
+      "type": "forme"
+    },
+    "tempête de données": {
+      "description": "Vous ajoutez 1 niveau de bruit par __SN__ au persona ciblé.",
+      "maintained": true,
+      "major": 1,
+      "minor": 0,
+      "type": "forme"
+    }
+  },
+  "drones": {
+    "crawler": {
+      "concealment": 2,
+      "description": "Moyen arthropode mécanique",
+      "hit": 11,
+      "legal": true,
+      "licenced": true,
+      "manufacturer": "Aztechnology",
+      "name": "Crawler",
+      "price": 14500,
+      "slots": [
+        {
+          "name": "châsse",
+          "size": "S"
+        },
+        {
+          "name": "châsse",
+          "size": "S"
+        }
+      ],
+      "stats": {
+        "acceleration": 8,
+        "armor": 2,
+        "autopilot": 2,
+        "maniability_flat": 3,
+        "maniability_rough": 4,
+        "max_speed": 30,
+        "resistance": 6,
+        "sensors": 2,
+        "step": 10
+      },
+      "type": "drône"
+    },
+    "kanmushi": {
+      "concealment": 6,
+      "description": "Petit arthropode mécanique",
+      "hit": 8,
+      "legal": true,
+      "licenced": false,
+      "manufacturer": "Shiawase",
+      "name": "Kanmushi",
+      "price": 450,
+      "quantity": 2,
+      "stats": {
+        "acceleration": 4,
+        "armor": 0,
+        "autopilot": 3,
+        "maniability_flat": 2,
+        "maniability_rough": 3,
+        "max_speed": 15,
+        "resistance": 0,
+        "sensors": 2,
+        "step": 5
+      },
+      "type": "drône"
+    },
+    "packmule": {
+      "concealment": 0,
+      "description": "Grand arthropode mécanique",
+      "hit": 12,
+      "legal": true,
+      "licenced": true,
+      "manufacturer": "ARES",
+      "name": "Packmule",
+      "price": 16000,
+      "slots": [
+        {
+          "name": "châsse",
+          "size": "S"
+        },
+        {
+          "name": "châsse",
+          "size": "S"
+        },
+        {
+          "concealment": 3,
+          "name": "cache",
+          "size": "M"
+        }
+      ],
+      "stats": {
+        "acceleration": 6,
+        "armor": 10,
+        "autopilot": 2,
+        "maniability_flat": 3,
+        "maniability_rough": 4,
+        "max_speed": 30,
+        "resistance": 8,
+        "sensors": 1,
+        "step": 5
+      },
+      "type": "drône"
+    }
+  },
+  "effects": [
+    {
+      "description": "Utlisez votre persona incarné comme noeud PAN.",
+      "name": "Reseau vivant",
+      "type": "echo"
+    },
+    {
+      "description": "__A1__ lorsque vous utilisez une machine que vous avez bricolé.",
+      "name": "Bricoleur prévoyant",
+      "type": "trait"
+    },
+    {
+      "description": "__A1__ lorsque vous compilez ou inscrivez un sprite machine.",
+      "name": "Ami des sprites machine",
+      "type": "trait"
+    },
+    {
+      "description": "Au premier round, vous ne pouvez pas vous déplacer et vous jouez en dernier",
+      "name": "Paralysie du combat",
+      "type": "trait"
+    },
+    {
+      "description": "Vous éternuez souvent. __D1__ lors des tests de discrétion.",
+      "name": "Rhinite chronique",
+      "type": "trait"
+    }
+  ],
+  "global_nuyens": 0,
+  "identities": [
+    {
+      "contacts": [
+        {
+          "connection": 4,
+          "description": "Decker fan de complot",
+          "loyalty": 4,
+          "name": "D-Boss"
+        },
+        {
+          "connection": 2,
+          "description": "Ouvrier de casse militaire d'ARES",
+          "loyalty": 3,
+          "name": "Terrance"
+        }
+      ],
+      "name": "$NAME"
+    },
+    {
+      "licences": [
+        {
+          "name": "Chasse d'arme",
+          "price": 800,
+          "quality": "i4"
+        },
+        {
+          "name": "Packmule",
+          "price": 800,
+          "quality": "i4"
+        },
+        {
+          "name": "Crawler",
+          "price": 800,
+          "quality": "i4"
+        }
+      ],
+      "lifestyle": {
+        "name": "squatteur",
+        "price": 100
+      },
+      "name": "Laurence Guinvite",
+      "nuyens": 560,
+      "price": 10000,
+      "quality": "i4"
+    }
+  ],
+  "knowledges": ["drônes", "séries tridéos", "jeux tridéos"],
+  "name": "shrimp",
+  "other": {
+    "charge_medikit": {
+      "concealment": 5,
+      "legal": true,
+      "licenced": false,
+      "name": "Charge medikit",
+      "price": 20,
+      "quantity": 9
+    },
+    "chargeur_250_b": {
+      "legal": true,
+      "licenced": false,
+      "name": "Recharges",
+      "price": 250,
+      "quantity": 2
+    },
+    "chargeur_30_taser": {
+      "legal": true,
+      "licenced": false,
+      "name": "Recharges",
+      "price": 30,
+      "quantity": 2
+    },
+    "cordes_standard": {
+      "description": "Corde de 60m qui peut soutenir 400 Kg.",
+      "legal": true,
+      "licenced": false,
+      "name": "Corde",
+      "price": 1,
+      "quantity": 25
+    },
+    "dérivateur_de_données": {
+      "concealment": 4,
+      "description": "Copie les données transitant sur n'importe quel cable de données et de fournit une connexion sans fil à un système filaire.",
+      "legal": true,
+      "licenced": false,
+      "name": "Dérivateur de données",
+      "price": 300
+    },
+    "kit_de_réparation": {
+      "concealment": 3,
+      "legal": true,
+      "licenced": false,
+      "name": "Kit de réparation",
+      "price": 500,
+      "quantity": 3
+    },
+    "medikit": {
+      "concealment": 3,
+      "description": "Soigne les __DOM__ récents (<1h). Utilise la compétence --Biotech-- ou l'--indice-- de l'appareil.",
+      "legal": true,
+      "licenced": false,
+      "name": "Medikit",
+      "price": 1000,
+      "quality": 4
+    },
+    "patch_stim": {
+      "concealment": 6,
+      "description": "Soigne 4 __DOM__ étourdissants, pendant 4 x 10min. La cible subit 4 + 1 __DOM__ étourdissants lorsque le patch expire.",
+      "legal": true,
+      "licenced": false,
+      "name": "Patch stim",
+      "price": 400,
+      "quality": 4,
+      "quantity": 6
+    },
+    "scanner_de_proximité": {
+      "concealment": 4,
+      "description": "Scanne les appareils sans fil dans un rayon de 20m.",
+      "legal": true,
+      "licenced": false,
+      "name": "Scanner de proximité",
+      "price": 200
+    }
+  },
+  "outfits": {
+    "invisi_shield": {
+      "concealment": 4,
+      "description": "Revêtement protecteur camouflé. Couvre la totalité du corps sauf la tête. Lorsque vous subissez moins de un dommage, vous n'en subissez pas du tout.",
+      "legal": true,
+      "licenced": false,
+      "manufacturer": "Securetech",
+      "name": "Invisi Shield",
+      "price": 5400
+    },
+    "sac": {
+      "concealment": 0,
+      "legal": true,
+      "licenced": false,
+      "name": "Sac",
+      "price": 0,
+      "slots": [
+        {
+          "name": "Sac",
+          "size": "XL"
+        }
+      ]
+    },
+    "tenue_de_gamin_des_rues": {
+      "actions": {
+        "utiliser une poche secrète": {
+          "major": 1,
+          "minor": 0
+        }
+      },
+      "concealment": 0,
+      "description": "Tenue pratique. Vous avez __A1__ pour résister aux entraves.",
+      "legal": true,
+      "licenced": false,
+      "name": "Tenue de gamin des rues",
+      "price": 550,
+      "slots": [
+        {
+          "name": "Poche",
+          "size": "S"
+        },
+        {
+          "concealment": 5,
+          "name": "Poche secrète",
+          "size": "S"
+        },
+        {
+          "concealment": 5,
+          "name": "Poche secrète",
+          "size": "S"
+        }
+      ]
+    }
+  },
+  "skills": {
+    "athlétisme": {
+      "base": 3
+    },
+    "combat": {
+      "base": 1
+    },
+    "furtivité": {
+      "base": 1
+    },
+    "ingénierie": {
+      "base": 6,
+      "specialisations": ["Artillerie"]
+    },
+    "perception": {
+      "base": 1
+    },
+    "pilotage": {
+      "base": 6,
+      "specialisations": ["Appareils au sol"]
+    },
+    "technomancie": {
+      "base": 6,
+      "expertises": ["Inscription"],
+      "specialisations": ["Compilation"]
+    },
+    "électronique": {
+      "base": 4
+    }
+  },
+  "sprites": {
+    "machine": {
+      "actions": {
+        "diagnostique": {
+          "description": "Opère un monitoring de l'appareil. Vous avez __A1__ lorsque vous utilisez l'appareil.",
+          "maintained": true,
+          "major": 1,
+          "minor": 0,
+          "name": "Diagnostique"
+        },
+        "investir_un_appareil": {
+          "description": "Le sprite occupe un appareil quelque soit le niveau d'accréditation.",
+          "maintained": false,
+          "major": 1,
+          "minor": 0,
+          "name": "Investir un appareil"
+        },
+        "stabilité": {
+          "description": "Surveille les dysfonctionnments de l'appareil. Vous pouvez retirez des echecs à vos tests avec cet appareil.",
+          "maintained": true,
+          "major": 0,
+          "minor": 1,
+          "name": "Stabilité"
+        }
+      },
+      "skills": ["Ingenierie", "Electronique"],
+      "stats": {
+        "action_maj": 1,
+        "action_min": 4,
+        "attaque": 1,
+        "corruption": 3,
+        "firewall": 0,
+        "hit": {
+          "base": 8,
+          "factor": 2
+        },
+        "traitement": 2
+      }
+    }
+  },
+  "stats": {
+    "action_maj": 1,
+    "action_min": 2,
+    "agi": 4,
+    "agi_mod": 0,
+    "attaque": 2,
+    "cha": 2,
+    "cha_mod": 0,
+    "con": 1,
+    "con_mod": 0,
+    "corruption": 4,
+    "def_ment": {
+      "score": 8,
+      "stat": ["vol", "int"]
+    },
+    "def_phy": {
+      "score": 6,
+      "stat": ["rea", "int"]
+    },
+    "edge": 4,
+    "ess": 6,
+    "firewall": 4,
+    "for": 1,
+    "for_mod": 0,
+    "hit_over": 1,
+    "hit_phy": 8,
+    "hit_stun": 10,
+    "init": {
+      "score": 6,
+      "stat": ["rea", "int"]
+    },
+    "init_dice": 1,
+    "int": 4,
+    "int_mod": 0,
+    "log": 6,
+    "log_mod": 0,
+    "max_edge": 0,
+    "natural_heal": {
+      "score": 5,
+      "stat": ["con", "vol"]
+    },
+    "rea": 2,
+    "rea_mod": 0,
+    "res": 7,
+    "resist_drain": {
+      "score": 3,
+      "stat": ["log"]
+    },
+    "resist_ment": {
+      "score": 4,
+      "stat": ["vol"]
+    },
+    "resist_phy": {
+      "score": 1,
+      "stat": ["con"]
+    },
+    "submersion": 1,
+    "traitement": 6,
+    "vol": 4,
+    "vol_mod": 0
+  },
+  "tags": ["13 ans", "technorigger", "humain"],
+  "tech": {
+    "micro_et_camera": {
+      "concealment": 6,
+      "legal": true,
+      "licenced": false,
+      "name": "Micro + Caméra",
+      "price": 100
+    }
+  },
+  "weapons": {
+    "bras_mécanique": {
+      "ammo": 250,
+      "concealment": 2,
+      "description": " Adaptée pour la monture.",
+      "legal": true,
+      "licenced": false,
+      "name": "Bras mécanique",
+      "price": 1000,
+      "type": "outil"
+    },
+    "clef_cyber_fictionnelle": {
+      "actions": {
+        "activer": {
+          "description": "+1 charges toutes les 15min. Un domm. irréductible, même si vous ratez.",
+          "gauge": 4,
+          "major": 0,
+          "minor": 1
+        },
+        "attaquer": {
+          "damage": 3,
+          "damage_type": "Elec",
+          "description": "",
+          "major": 1,
+          "minor": 0,
+          "score": 0
+        }
+      },
+      "ammo": 4,
+      "concealment": 4,
+      "description": "Une réplique de l'arme emblématique de la série Technotronix. Le revêtement électrique rechargeable permet d'électrifier la cible. Le nanogénérateur à électricité statique permet de toucher la cible même si on rate son coup.",
+      "legal": true,
+      "licenced": false,
+      "manufacturer": "",
+      "name": "Clef anglaise robotique cyber-fictionnelle",
+      "price": 725,
+      "type": "clef anglaise"
+    },
+    "crockett": {
+      "actions": {
+        "désassembler": {
+          "description": "Dissimulation +2 lorsque démontée.",
+          "major": 2,
+          "minor": 0
+        },
+        "guncam": {
+          "description": "Vous ignorez les désavantages pour votre prochain tir à distance.",
+          "major": 0,
+          "minor": 1
+        },
+        "recharger": {
+          "ammo": 250,
+          "major": 1,
+          "minor": 0
+        },
+        "tir": {
+          "ammo_consumption": 1,
+          "damage": 5,
+          "damage_type": "P",
+          "major": 1,
+          "minor": 0,
+          "ranges": {
+            "contact": -2,
+            "far": 1,
+            "medium": 2,
+            "near": 0,
+            "short": 1
+          }
+        },
+        "tir_rafale": {
+          "ammo_consumption": 4,
+          "damage": 7,
+          "damage_type": "P",
+          "description": "Vous pouvez viser plusieurs cibles proches.",
+          "major": 1,
+          "minor": 0,
+          "ranges": {
+            "contact": -3,
+            "far": 0,
+            "medium": 1,
+            "near": -1,
+            "short": 0
+          }
+        },
+        "tir_semi_auto": {
+          "ammo_consumption": 2,
+          "damage": 6,
+          "damage_type": "P",
+          "major": 1,
+          "minor": 0,
+          "ranges": {
+            "contact": -3,
+            "far": 1,
+            "medium": 2,
+            "near": -1,
+            "short": 1
+          }
+        }
+      },
+      "ammo": 250,
+      "concealment": 0,
+      "damage": 5,
+      "damage_type": "P",
+      "description": "Fusil d assaut polyvalent. La guncam permet de calculer la trajectoire des balles. Adaptée pour la monture. Le canon a été allongé pour une meilleure précision à distance.",
+      "legal": false,
+      "licenced": true,
+      "manufacturer": "Cavalier Arms",
+      "name": "Crockett",
+      "price": 11000,
+      "range_labels": {
+        "r0": "contact",
+        "r50": "near",
+        "r500": "medium",
+        "r750": "far"
+      },
+      "ranges": {
+        "contact": -2,
+        "far": 1,
+        "medium": 2,
+        "near": 0,
+        "short": 1
+      },
+      "type": "fusil d'assaut"
+    },
+    "grappin": {
+      "actions": {
+        "recharger": {
+          "ammo": 20,
+          "major": 1,
+          "minor": 0
+        },
+        "tir": {
+          "ammo_consumption": 1,
+          "damage": 0,
+          "damage_type": "",
+          "major": 1,
+          "minor": 0,
+          "ranges": {
+            "contact": -2,
+            "far": -99,
+            "medium": -99,
+            "near": 0,
+            "short": -99
+          }
+        }
+      },
+      "ammo": 20,
+      "concealment": 2,
+      "damage": 0,
+      "damage_type": "",
+      "description": " Adaptée pour la monture.",
+      "legal": true,
+      "licenced": false,
+      "manufacturer": "",
+      "name": "Grappin",
+      "price": 500,
+      "range_labels": {
+        "r0": "contact",
+        "r20": "near"
+      },
+      "ranges": {
+        "contact": -2,
+        "far": -99,
+        "medium": -99,
+        "near": 0,
+        "short": -99
+      },
+      "type": "outil"
+    },
+    "pulsar": {
+      "actions": {
+        "recharger": {
+          "ammo": 30,
+          "major": 1,
+          "minor": 0
+        },
+        "tir": {
+          "ammo_consumption": 1,
+          "damage": 4,
+          "damage_type": "Elec",
+          "major": 1,
+          "minor": 0,
+          "ranges": {
+            "contact": 0,
+            "far": -99,
+            "medium": -99,
+            "near": 0,
+            "short": -99
+          }
+        },
+        "tir_semi_auto": {
+          "ammo_consumption": 2,
+          "damage": 5,
+          "damage_type": "Elec",
+          "major": 1,
+          "minor": 0,
+          "ranges": {
+            "contact": -1,
+            "far": -100,
+            "medium": -100,
+            "near": -1,
+            "short": -100
+          }
+        }
+      },
+      "ammo": 30,
+      "concealment": 3,
+      "damage": 4,
+      "damage_type": "Elec",
+      "description": " Adaptée pour la monture.",
+      "legal": true,
+      "licenced": false,
+      "manufacturer": "Yamaha",
+      "name": "Pulsar",
+      "price": 350,
+      "range_labels": {
+        "r0": "contact",
+        "r20": "near"
+      },
+      "ranges": {
+        "contact": 0,
+        "far": -99,
+        "medium": -99,
+        "near": 0,
+        "short": -99
+      },
+      "type": "taser"
+    }
+  }
+}

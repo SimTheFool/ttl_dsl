@@ -1,0 +1,41 @@
+.card {
+    overflow-y: visible;
+    position: relative;
+    height: auto;
+    border: 1.5px solid black;
+    border-radius: 0px !important;
+    box-shadow: 3px 3px 4px -2px #878787;
+}
+
+.card > div {
+    position: unset;
+    padding: var(--space-1);
+}
+
+.cardTitle {
+    transform: translateY(-85%) translateX(-10px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    background-color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(5px * var(--scaling));
+}
+
+
+.cardNote {
+    transform: translateY(-85%) translateX(10px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(3px * var(--scaling));
+}
+

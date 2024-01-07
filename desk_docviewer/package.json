@@ -1,0 +1,27 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@radix-ui/themes": "^1.0.0",
+    "@types/node": "20.4.9",
+    "@types/react": "18.2.20",
+    "@types/react-dom": "18.2.7",
+    "masonry-layout": "^4.2.2",
+    "next": "13.4.13",
+    "normalize.css": "^8.0.1",
+    "ramda": "^0.29.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.10.1",
+    "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@types/masonry-layout": "^4.2.5"
+  }
+}

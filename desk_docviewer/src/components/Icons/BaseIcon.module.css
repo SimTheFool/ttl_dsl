@@ -1,0 +1,10 @@
+.baseIcon {
+    --icon-size: 15px;
+    width: calc(var(--icon-size) * var(--scaling));
+    height: calc(var(--icon-size) * var(--scaling));
+}
+
+.baseIcon > svg {
+    width: 100%;
+    height: 100%;
+}

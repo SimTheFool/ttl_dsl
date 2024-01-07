@@ -1,0 +1,19 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+dependsOn:
+  - "lib_core"
+
+tasks:
+  gen:
+    command: "wasm-pack build --target nodejs --release --no-pack --out-dir src/ts_bindgen"
+    inputs:
+      - "src/**/*"
+      - "Cargo.toml"
+  test:
+    command: "yarn vitest run"
+    deps:
+      - ~:gen
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "package.json"

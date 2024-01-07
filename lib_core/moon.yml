@@ -1,0 +1,9 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+tasks:
+  test:
+    command: "cargo test"
+    inputs:
+      - "src/**/*"
+      - "tests/**/*"
+      - "Cargo.toml"

@@ -28,27 +28,31 @@ impl InterpreterBuilder {
         Self {
             resolver: None,
             config_provider: None,
-            formatter: None,
-            logger: None,
+            formatter: Some(Formatter::JsonFormatter(JsJsonFormatter::new())),
+            logger: Some(Logger::ConsoleLogger(JSConsoleLogger)),
         }
     }
 
-    pub fn with_custom_resolver(mut self, resolver: JsCustomResolver) -> Self {
+    #[wasm_bindgen(js_name = withResolverCustom)]
+    pub fn with_resolver_custom(mut self, resolver: JsCustomResolver) -> Self {
         self.resolver = Some(Resolver::JsResolver(resolver));
         self
     }
 
-    pub fn with_custom_config_provider(mut self, config_provider: JsCustomConfig) -> Self {
+    #[wasm_bindgen(js_name = withConfProviderCustom)]
+    pub fn with_config_provider_custom(mut self, config_provider: JsCustomConfig) -> Self {
         self.config_provider = Some(ConfigProvider::JsConfigProvider(config_provider));
         self
     }
 
-    pub fn with_json_formatter(mut self) -> Self {
+    #[wasm_bindgen(js_name = withFormatterJson)]
+    pub fn with_formatter_json(mut self) -> Self {
         self.formatter = Some(Formatter::JsonFormatter(JsJsonFormatter::new()));
         self
     }
 
-    pub fn with_console_logger(mut self) -> Self {
+    #[wasm_bindgen(js_name = withLoggerConsole)]
+    pub fn with_logger_console(mut self) -> Self {
         self.logger = Some(Logger::ConsoleLogger(JSConsoleLogger));
         self
     }
@@ -84,7 +88,7 @@ impl InterpreterBuilder {
         formatter: Formatter,
         logger: Logger,
     ) -> Result<Interpreter, JsValue> {
-        let logger = logger.get();
+        let logger = logger.get_owned();
         logger::set_static_logger(Box::new(logger));
         logger::set_static_logger_level(logger::LevelFilter::Trace);
 
@@ -102,7 +106,6 @@ pub struct Interpreter {
     config_provider: ConfigProvider,
     formatter: Formatter,
 }
-
 #[wasm_bindgen]
 impl Interpreter {
     pub fn assemble_from_str(&self, input: &str) -> Result<JsValue, JsValue> {

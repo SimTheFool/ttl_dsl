@@ -67,10 +67,8 @@ describe("mocked resolver interpreter", () => {
 
   it("should pass", async () => {
     let interpreter = new InterpreterBuilder()
-      .with_custom_resolver(mockedResolver)
-      .with_custom_config_provider(mockedConfig)
-      .with_json_formatter()
-      .with_console_logger()
+      .withResolverCustom(mockedResolver)
+      .withConfProviderCustom(mockedConfig)
       .build();
     let result = interpreter.assemble_from_str(INDEX);
 

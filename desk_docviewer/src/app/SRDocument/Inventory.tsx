@@ -11,17 +11,14 @@ import { getCharWeights } from "@/utils/getWeights";
 import { Box } from "@radix-ui/themes";
 import { characters } from "@/mock/characters";
 import { Character } from "@/mock/type";
-import { PdfBreak, PdfContainer } from "../../PdfContainer";
 import { Line } from "@/components/Line";
+import { PdfContainer, PdfBreak } from "@/components/PdfContainer";
 
 type Props = {
-  params: {
-    name: string;
-  };
+  char: Character;
 };
 
-export default async function Page({ params: { name } }: Props) {
-  const char = characters[name];
+export default async function Inventory({ char }: Props) {
   const charWeights = getCharWeights(char);
   const pageWeight =
     charWeights.drones +

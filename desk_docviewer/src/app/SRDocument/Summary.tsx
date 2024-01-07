@@ -1,26 +1,23 @@
-import { Effects } from "@/app/_Effects";
-import { Identities } from "@/app/_Indentities";
-import { Monitors } from "@/app/_Monitors";
-import { Resources } from "@/app/_Resources";
-import { Skills } from "@/app/_Skills";
-import { Stats } from "@/app/_Stats";
 import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { TitleSection } from "@/components/TitleSection";
 import { Box, Grid } from "@radix-ui/themes";
-import { PdfContainer } from "../../PdfContainer";
 import { characters } from "@/mock/characters";
 import { Character } from "@/mock/type";
 import Image from "next/image";
+import { PdfContainer } from "@/components/PdfContainer";
+import { Stats } from "./_Stats";
+import { Effects } from "./_Effects";
+import { Identities } from "./_Indentities";
+import { Monitors } from "./_Monitors";
+import { Resources } from "./_Resources";
+import { Skills } from "./_Skills";
 
 type Props = {
-  params: {
-    name: string;
-  };
+  char: Character;
 };
 
-export default function Home({ params: { name } }: Props) {
-  const char = characters[name];
+export default function Summmary({ char }: Props) {
   //const portrait = portraits[name];
 
   return (

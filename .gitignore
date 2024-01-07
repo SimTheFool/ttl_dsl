@@ -1,5 +1,14 @@
-.cargo/.target
-node_modules
 # moon
 .moon/cache
 .moon/docker
+
+
+# rust
+.cargo/.target
+
+# ts
+.next
+next-env.d.ts
+node_modules
+
+

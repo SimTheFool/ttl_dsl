@@ -6,7 +6,6 @@ import { Sprite } from "@/components/items/Sprite";
 import { Box } from "@radix-ui/themes";
 import { characters } from "@/mock/characters";
 import { Character } from "@/mock/type";
-import { PdfBreak, PdfContainer } from "../../PdfContainer";
 import { SpellAction } from "@/components/actions/SpellAction";
 import { ReactNode } from "react";
 import { RitualAction } from "@/components/actions/RitualAction";
@@ -14,15 +13,13 @@ import { Spirit } from "@/components/items/Spirit";
 import { OtherCompanion } from "@/components/items/OtherCompanion";
 import { getCharWeights } from "@/utils/getWeights";
 import { Line, LineBlack } from "@/components/Line";
+import { PdfBreak, PdfContainer } from "@/components/PdfContainer";
 
 type Props = {
-  params: {
-    name: string;
-  };
+  char: Character;
 };
 
-export default function Home({ params: { name } }: Props) {
-  const char = characters[name];
+export default function Powers({ char }: Props) {
   const charWeight = getCharWeights(char);
   const pageWeight = charWeight.powers + charWeight.companions;
 

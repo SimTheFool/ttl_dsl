@@ -1,14 +1,13 @@
-import { PdfContainer } from "../../PdfContainer";
 import Image from "next/image";
 import { Box } from "@radix-ui/themes";
+import { PdfContainer } from "@/components/PdfContainer";
+import { Character } from "@/mock/type";
 
 type Props = {
-  params: {
-    name: string;
-  };
+  char: Character;
 };
 
-export default function Home({ params: { name } }: Props) {
+export default function Last({ char }: Props) {
   //const portrait = portraits[name];
 
   return (

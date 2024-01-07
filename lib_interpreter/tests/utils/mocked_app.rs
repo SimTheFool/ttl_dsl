@@ -1,8 +1,9 @@
 use lib_interpreter::{
     commands::AssembleFromStr,
     domain::resolution::ResolvedResource,
-    ports::{ConfigProviderPort, ResolverPort},
+    ports::{ConfigProviderPort, FormatterPort, ResolverPort},
     result::{AppError, AppResult},
+    statics::logger::{set_static_logger, set_static_logger_level},
 };
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
@@ -21,6 +22,9 @@ impl MockedApp {
         let resolver = Rc::new(RefCell::new(MockedResolverAdapter::new()));
         let config = Rc::new(RefCell::new(MockedConfigProviderAdapter::new()));
         let formatter = Rc::new(RefCell::new(NoFormatterAdapter::new()));
+
+        set_static_logger(Box::new(SimpleLogger));
+        set_static_logger_level(log::LevelFilter::Trace);
 
         let app = MockedApp {
             resolver: resolver.clone(),
@@ -42,6 +46,19 @@ impl MockedApp {
 
         assemble_from_str.execute(file_str)
     }
+}
+
+struct SimpleLogger;
+impl log::Log for SimpleLogger {
+    fn enabled(&self, metadata: &log::Metadata) -> bool {
+        metadata.level() <= log::Level::Info
+    }
+    fn log(&self, record: &log::Record) {
+        if self.enabled(record.metadata()) {
+            println!("{} - {}", record.level(), record.args());
+        }
+    }
+    fn flush(&self) {}
 }
 
 pub struct MockedResolverAdapter<'a> {
@@ -100,7 +117,7 @@ impl NoFormatterAdapter {
     }
 }
 
-impl lib_interpreter::ports::FormatterPort for NoFormatterAdapter {
+impl FormatterPort for NoFormatterAdapter {
     type Format = Vec<ResolvedResource>;
 
     fn format(&self, resources: Vec<ResolvedResource>) -> AppResult<Self::Format> {

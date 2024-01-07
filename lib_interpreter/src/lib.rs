@@ -1,7 +1,7 @@
 pub mod commands;
 pub mod domain;
 pub mod ports;
-pub mod prefab;
+pub mod statics;
 
 mod utils;
 pub use utils::*;

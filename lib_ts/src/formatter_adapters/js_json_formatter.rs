@@ -26,9 +26,6 @@ impl FormatterPort for JsJsonFormatter {
         let js_json = json
             .serialize(&serializer)
             .map_err(|err| AppError::String(format!("Failed to serialize json: {:?}", err)))?;
-        /* let js_json = serde_wasm_bindgen::to_value(&json).map_err(|err| {
-            AppError::String(format!("Failed to convert json to JsValue: {:?}", err))
-        })?; */
 
         Ok(js_json)
     }

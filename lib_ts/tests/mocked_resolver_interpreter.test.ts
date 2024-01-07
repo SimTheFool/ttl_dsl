@@ -70,6 +70,7 @@ describe("mocked resolver interpreter", () => {
       .with_custom_resolver(mockedResolver)
       .with_custom_config_provider(mockedConfig)
       .with_json_formatter()
+      .with_console_logger()
       .build();
     let result = interpreter.assemble_from_str(INDEX);
 

@@ -1,12 +1,16 @@
-use crate::{formatter_adapters::JsJsonFormatter, utils::into_app_result};
+use crate::{
+    formatter_adapters::JsJsonFormatter, logger_adapters::JSConsoleLogger, utils::into_app_result,
+};
 use config_provider_adapter::{ConfigProvider, JsCustomConfig};
 use formatter_adapters::Formatter;
-use lib_interpreter::commands::AssembleFromStr;
+use lib_interpreter::{commands::AssembleFromStr, statics::logger};
+use logger_adapters::Logger;
 use resolver_adapters::{JsCustomResolver, Resolver};
 use wasm_bindgen::prelude::*;
 
 mod config_provider_adapter;
 mod formatter_adapters;
+mod logger_adapters;
 mod resolver_adapters;
 mod utils;
 
@@ -15,6 +19,7 @@ pub struct InterpreterBuilder {
     resolver: Option<Resolver>,
     config_provider: Option<ConfigProvider>,
     formatter: Option<Formatter>,
+    logger: Option<Logger>,
 }
 #[wasm_bindgen]
 impl InterpreterBuilder {
@@ -24,6 +29,7 @@ impl InterpreterBuilder {
             resolver: None,
             config_provider: None,
             formatter: None,
+            logger: None,
         }
     }
 
@@ -42,23 +48,51 @@ impl InterpreterBuilder {
         self
     }
 
+    pub fn with_console_logger(mut self) -> Self {
+        self.logger = Some(Logger::ConsoleLogger(JSConsoleLogger));
+        self
+    }
+
     pub fn build(self) -> Result<Interpreter, JsValue> {
-        match (self.resolver, self.config_provider, self.formatter) {
-            (Some(resolver), Some(config), Some(formatter)) => Ok(Interpreter {
-                resolver,
-                config_provider: config,
-                formatter,
-            }),
-            (None, _, _) => Err(JsValue::from_str(
+        match (
+            self.resolver,
+            self.config_provider,
+            self.formatter,
+            self.logger,
+        ) {
+            (Some(resolver), Some(config), Some(formatter), Some(logger)) => {
+                Self::init_interpreter(resolver, config, formatter, logger)
+            }
+            (None, _, _, _) => Err(JsValue::from_str(
                 "Cannot build interpreter: resolver is not set",
             )),
-            (_, None, _) => Err(JsValue::from_str(
+            (_, None, _, _) => Err(JsValue::from_str(
                 "Cannot build interpreter: config provider is not set",
             )),
-            (_, _, None) => Err(JsValue::from_str(
+            (_, _, None, _) => Err(JsValue::from_str(
                 "Cannot build interpreter: formatter is not set",
             )),
+            (_, _, _, None) => Err(JsValue::from_str(
+                "Cannot build interpreter: logger is not set",
+            )),
         }
+    }
+
+    fn init_interpreter(
+        resolver: Resolver,
+        config_provider: ConfigProvider,
+        formatter: Formatter,
+        logger: Logger,
+    ) -> Result<Interpreter, JsValue> {
+        let logger = logger.get();
+        logger::set_static_logger(Box::new(logger));
+        logger::set_static_logger_level(logger::LevelFilter::Trace);
+
+        Ok(Interpreter {
+            resolver,
+            config_provider,
+            formatter,
+        })
     }
 }
 

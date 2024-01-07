@@ -4,6 +4,7 @@ use crate::domain::resolution::{RawTransformation, ResourceContextBuilder};
 use crate::domain::transformation::apply_transforms;
 use crate::domain::visitor::AstVisitor;
 use crate::ports::{ConfigProviderPort, FormatterPort, ResolverPort};
+use crate::statics::logger::info;
 use crate::utils::result::AppResult;
 
 pub struct AssembleFromStr<'a, R: ResolverPort, C: ConfigProviderPort, F: FormatterPort> {
@@ -14,6 +15,8 @@ pub struct AssembleFromStr<'a, R: ResolverPort, C: ConfigProviderPort, F: Format
 
 impl<R: ResolverPort, C: ConfigProviderPort, F: FormatterPort> AssembleFromStr<'_, R, C, F> {
     pub fn execute(&self, file_str: &str) -> AppResult<F::Format> {
+        info!("Assembling from string");
+
         let ast::File {
             value, transforms, ..
         } = ast::File::try_from(file_str)?;

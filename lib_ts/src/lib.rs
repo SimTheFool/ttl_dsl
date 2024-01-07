@@ -45,18 +45,6 @@ impl InterpreterBuilder {
         self
     }
 
-    #[wasm_bindgen(js_name = withFormatterJson)]
-    pub fn with_formatter_json(mut self) -> Self {
-        self.formatter = Some(Formatter::JsonFormatter(JsJsonFormatter::new()));
-        self
-    }
-
-    #[wasm_bindgen(js_name = withLoggerConsole)]
-    pub fn with_logger_console(mut self) -> Self {
-        self.logger = Some(Logger::ConsoleLogger(JSConsoleLogger));
-        self
-    }
-
     pub fn build(self) -> Result<Interpreter, JsValue> {
         match (
             self.resolver,

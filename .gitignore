@@ -1,4 +1,4 @@
-/target
+.cargo/.target
 node_modules
 # moon
 .moon/cache

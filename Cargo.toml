@@ -4,6 +4,3 @@ members = [
     "client_node",
 ]
 resolver = "2"
-
-
-

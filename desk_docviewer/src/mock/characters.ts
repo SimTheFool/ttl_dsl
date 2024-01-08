@@ -1,5 +1,5 @@
 import shrimp from "./shrimp.json";
-import type { Character } from "./type.ts";
+import type { Character } from "./type";
 
 export const characters = {
   shrimp,

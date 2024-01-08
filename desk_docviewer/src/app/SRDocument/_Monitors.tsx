@@ -1,4 +1,4 @@
-import { MasonryGrid } from "@/components/MasonryGrid";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { Monitor } from "@/components/Monitor";
 import { Character } from "@/mock/type";
 import { Grid, Container, Box } from "@radix-ui/themes";
@@ -11,7 +11,7 @@ export const Monitors = ({ char }: MonitorsProps) => {
   return (
     <>
       <Box pt={"2"}>
-        <MasonryGrid columns={2}>
+        <MasonryGridNoSSR columns={2}>
           <Monitor
             columns={4}
             hit={char.stats.hit_phy}
@@ -23,7 +23,7 @@ export const Monitors = ({ char }: MonitorsProps) => {
             title={"Dom. Etourdissant"}
           />
           <Monitor columns={6} hit={char.stats.hit_over} title={"Surplus"} />
-        </MasonryGrid>
+        </MasonryGridNoSSR>
       </Box>
     </>
   );

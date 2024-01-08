@@ -3,7 +3,7 @@ import { PdfBreak } from "../../components/PdfContainer";
 import Inventory from "./Inventory";
 import Last from "./Last";
 import Powers from "./Powers";
-import Summmary from "./Summary";
+import Summary from "./Summary";
 
 type Props = {};
 
@@ -13,7 +13,7 @@ const char = characters.shrimp;
 export default function Home({}: Props) {
   return (
     <>
-      <Summmary char={char} />
+      <Summary char={char} />
 
       <PdfBreak />
 

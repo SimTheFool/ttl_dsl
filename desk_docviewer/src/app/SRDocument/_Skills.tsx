@@ -1,6 +1,5 @@
 import { Card } from "@/components/Card";
-import { FlexList } from "@/components/FlexList";
-import { MasonryGrid } from "@/components/MasonryGrid";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { Section } from "@/components/Section";
 import { Space } from "@/components/Space";
 import { TextReplaced } from "@/components/Text";
@@ -21,7 +20,7 @@ export const Skills = ({ char }: SkillsProps) => {
   let skills: [string, Skill][] = Object.entries(char.skills) as any;
   return (
     <Section>
-      <MasonryGrid compact columns={2}>
+      <MasonryGridNoSSR compact columns={2}>
         <TitleSection>Compétences</TitleSection>
         {skills.map(([name, value]) => (
           <Container key={name}>
@@ -49,7 +48,7 @@ export const Skills = ({ char }: SkillsProps) => {
             ))}
           </Card>
         </Container>
-      </MasonryGrid>
+      </MasonryGridNoSSR>
     </Section>
   );
 };

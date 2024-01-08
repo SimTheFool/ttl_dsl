@@ -1,4 +1,3 @@
-import { MasonryGrid } from "@/components/MasonryGrid";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
 import { Drone } from "@/components/items/Drone";
@@ -13,6 +12,7 @@ import { characters } from "@/mock/characters";
 import { Character } from "@/mock/type";
 import { Line } from "@/components/Line";
 import { PdfContainer, PdfBreak } from "@/components/PdfContainer";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 
 type Props = {
   char: Character;
@@ -61,7 +61,7 @@ const AllInOne = ({ char }: { char: Character }) => {
 
 const BigObjects = ({ char }: { char: Character }) => {
   return (
-    <MasonryGrid columns={3}>
+    <MasonryGridNoSSR columns={3}>
       <Box>
         <TitleSection>Inventaire</TitleSection>
         <Space />
@@ -94,7 +94,7 @@ const BigObjects = ({ char }: { char: Character }) => {
           </Box>
         );
       })}
-    </MasonryGrid>
+    </MasonryGridNoSSR>
   );
 };
 
@@ -105,7 +105,7 @@ const LittleObjects = ({ char }: { char: Character }) => {
         <TitleSection>Consommables et outils</TitleSection>
         <Space />
       </Box>
-      <MasonryGrid columns={4}>
+      <MasonryGridNoSSR columns={4}>
         {Object.entries(char.other || {}).map(([name, item]) => {
           return (
             <Box pb={"4"} pr={"1"} key={name}>
@@ -113,7 +113,7 @@ const LittleObjects = ({ char }: { char: Character }) => {
             </Box>
           );
         })}
-      </MasonryGrid>
+      </MasonryGridNoSSR>
       <Box px={"2"}>
         <Box>
           <TitleSection>Stockage de données</TitleSection>

@@ -1,4 +1,3 @@
-import { MasonryGrid } from "@/components/MasonryGrid";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
 import { SimpleAction } from "@/components/actions/SimpleAction";
@@ -14,6 +13,7 @@ import { OtherCompanion } from "@/components/items/OtherCompanion";
 import { getCharWeights } from "@/utils/getWeights";
 import { Line, LineBlack } from "@/components/Line";
 import { PdfBreak, PdfContainer } from "@/components/PdfContainer";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 
 type Props = {
   char: Character;
@@ -45,7 +45,7 @@ export default function Powers({ char }: Props) {
 
 const ActionOnly = ({ char }: { char: Character }) => {
   return (
-    <MasonryGrid columns={3}>
+    <MasonryGridNoSSR columns={3}>
       <Box>
         <TitleSection>Pouvoirs</TitleSection>
         <Space />
@@ -72,13 +72,13 @@ const ActionOnly = ({ char }: { char: Character }) => {
           </Container>
         );
       })}
-    </MasonryGrid>
+    </MasonryGridNoSSR>
   );
 };
 
 const CompanionOnly = ({ char }: { char: Character }) => {
   return (
-    <MasonryGrid columns={1}>
+    <MasonryGridNoSSR columns={1}>
       <Box>
         <TitleSection>Compagnons</TitleSection>
         <Space />
@@ -116,13 +116,13 @@ const CompanionOnly = ({ char }: { char: Character }) => {
           </Container>
         );
       })}
-    </MasonryGrid>
+    </MasonryGridNoSSR>
   );
 };
 
 const AllInOne = ({ char }: { char: Character }) => {
   return (
-    <MasonryGrid columns={3}>
+    <MasonryGridNoSSR columns={3}>
       <Box>
         <TitleSection>Pouvoirs et compagnons</TitleSection>
         <Space />
@@ -170,7 +170,7 @@ const AllInOne = ({ char }: { char: Character }) => {
           </Container>
         );
       })}
-    </MasonryGrid>
+    </MasonryGridNoSSR>
   );
 };
 

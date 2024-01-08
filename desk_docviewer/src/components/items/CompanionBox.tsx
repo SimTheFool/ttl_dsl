@@ -3,7 +3,6 @@ import { Box, Flex } from "@radix-ui/themes";
 import { ReactNode } from "react";
 import { Companion as CompanionType } from "@/mock/type";
 import { Card } from "../Card";
-import { MasonryGrid } from "../MasonryGrid";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";
 import { TextReplaced } from "../Text";
@@ -12,6 +11,7 @@ import { SimpleAction } from "../actions/SimpleAction";
 import styles from "./ItemCard.module.css";
 import { Slot } from "./Slot";
 import { Effect } from "../actions/Effect";
+import { MasonryGridNoSSR } from "../MasonryGridNoSSR";
 
 type CompanionBoxProps = {
   name: string;
@@ -69,13 +69,13 @@ export const CompanionBox = ({
           </ParagraphStandard>
         </Card>
       </Flex>
-      <MasonryGrid compact columns={1}>
+      <MasonryGridNoSSR compact columns={1}>
         {bottomChildren.map((child, i) => (
           <Box key={i} className={i == 0 ? "" : styles.bottom}>
             {child}
           </Box>
         ))}
-      </MasonryGrid>
+      </MasonryGridNoSSR>
       <Space />
     </Box>
   );
@@ -110,7 +110,7 @@ export const ErgoCompanionBox = ({
   const bottomChildren = [skills, ...effects, ...actions];
 
   return (
-    <MasonryGrid compact columns={3}>
+    <MasonryGridNoSSR compact columns={3}>
       <Flex p={"1"}>
         <Card title={type}>
           <TitleMin title={<TextReplaced>{capitalize(name)}</TextReplaced>} />
@@ -140,6 +140,6 @@ export const ErgoCompanionBox = ({
           {child}
         </Box>
       ))}
-    </MasonryGrid>
+    </MasonryGridNoSSR>
   );
 };

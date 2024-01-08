@@ -2,5 +2,6 @@
 members = [
     "lib_core",
     "client_node",
+    "desk_docviewer"
 ]
 resolver = "2"

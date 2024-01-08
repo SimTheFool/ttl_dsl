@@ -11,11 +11,11 @@ type MasonryGridProps = {
   compact?: boolean;
 };
 
-export const MasonryGrid = ({
+export default function MasonryGrid({
   children,
   columns,
   compact = false,
-}: MasonryGridProps) => {
+}: MasonryGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const columnWidth = 100 / columns;
 
@@ -64,4 +64,4 @@ export const MasonryGrid = ({
       })}
     </Box>
   );
-};
+}

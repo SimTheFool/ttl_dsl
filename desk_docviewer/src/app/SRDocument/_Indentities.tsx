@@ -7,7 +7,7 @@ import { Character, Identity as CharIdentity } from "@/mock/type";
 import { capitalize } from "@/utils/capitalize";
 import { TitleSection } from "@/components/TitleSection";
 import { Space } from "@/components/Space";
-import { MasonryGrid } from "@/components/MasonryGrid";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 
 type IdentitiesProps = {
   char: Character;
@@ -61,7 +61,7 @@ const Identity = ({
           </Card>
         </Container>
       )}
-      <MasonryGrid compact columns={2}>
+      <MasonryGridNoSSR compact columns={2}>
         {quality && (
           <Container>
             <Card title={"nuyens"}>
@@ -97,7 +97,7 @@ const Identity = ({
             </Container>
           );
         })}
-      </MasonryGrid>
+      </MasonryGridNoSSR>
     </>
   );
 };

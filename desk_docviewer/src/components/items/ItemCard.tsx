@@ -7,12 +7,11 @@ import { Space } from "../Space";
 import { TitleMin } from "../TitleMin";
 import { TextReplaced } from "../Text";
 import { Box, Flex } from "@radix-ui/themes";
-import { MasonryGrid } from "../MasonryGrid";
 import styles from "./ItemCard.module.css";
 import React from "react";
 import { Slot } from "./Slot";
-import { PiHandThin } from "react-icons/pi";
 import { Hand } from "../Icons/Hand";
+import { MasonryGridNoSSR } from "../MasonryGridNoSSR";
 
 type ItemCardProps = {
   children?: {
@@ -104,13 +103,13 @@ export const ItemCard = ({
           </ParagraphStandard>
         </Card>
       </Flex>
-      <MasonryGrid compact columns={1}>
+      <MasonryGridNoSSR compact columns={1}>
         {bottomChildrenWithSlots.map((child, i) => (
           <Box key={i} className={i == 0 ? "" : styles.bottom}>
             {child}
           </Box>
         ))}
-      </MasonryGrid>
+      </MasonryGridNoSSR>
     </Box>
   );
 };

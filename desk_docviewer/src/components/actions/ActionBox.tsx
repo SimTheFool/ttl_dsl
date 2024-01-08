@@ -56,7 +56,7 @@ export const ActionBox = ({
         <Damage />
       </>
     ),
-  ].filter((x) => x);
+  ].filter((x) => x) as React.JSX.Element[];
 
   return (
     <Card title={type}>
@@ -74,7 +74,11 @@ export const ActionBox = ({
         <Box pl={"1"}>
           {maintained && <Maintained />}
           {resourcesChildren?.length > 0 &&
-            resourcesChildren.map((r) => <Box pb={"1"}>{r}</Box>)}
+            resourcesChildren.map((r, index) => (
+              <Box pb={"1"} key={index}>
+                {r}
+              </Box>
+            ))}
         </Box>
       </Flex>
     </Card>

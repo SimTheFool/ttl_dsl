@@ -8,6 +8,7 @@ import { capitalize } from "@/utils/capitalize";
 import { TitleSection } from "@/components/TitleSection";
 import { Space } from "@/components/Space";
 import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
+import { Fragment } from "react";
 
 type IdentitiesProps = {
   char: Character;
@@ -17,9 +18,9 @@ export const Identities = ({ char }: IdentitiesProps) => {
   return (
     <Section title={<TitleSection>Identités</TitleSection>}>
       {char.identities?.map((i) => (
-        <>
-          <Identity key={i.name} identity={i} />
-        </>
+        <Fragment key={i.name}>
+          <Identity identity={i} />
+        </Fragment>
       ))}
     </Section>
   );

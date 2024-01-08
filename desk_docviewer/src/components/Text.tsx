@@ -19,7 +19,7 @@ export const TextReplaced = ({ children }: TextProps) => {
     const rendered = iconId ? (
       <Icon type={iconId as any} key={i} />
     ) : formula ? (
-      <Formula text={formula} />
+      <Formula text={formula} key={i} />
     ) : (
       part.replace(/_/g, " ")
     );

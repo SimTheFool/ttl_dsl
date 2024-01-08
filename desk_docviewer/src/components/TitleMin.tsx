@@ -1,4 +1,5 @@
 import { Box, Heading, Text } from "@radix-ui/themes";
+import React from "react";
 
 type MinTitleProps = {
   title?: React.ReactNode;
@@ -11,6 +12,7 @@ export const TitleMin = ({
   subtitle,
   inline = false,
 }: MinTitleProps) => {
+  const subtitleArray = React.Children.toArray(subtitle);
   return (
     <Box
       style={{
@@ -36,7 +38,9 @@ export const TitleMin = ({
           lineHeight: 1,
         }}
       >
-        {subtitle}
+        {subtitleArray.map((x, i) => (
+          <React.Fragment key={i}>{x}</React.Fragment>
+        ))}
       </Text>
     </Box>
   );

@@ -20,7 +20,7 @@ export const SpellAction = ({
       {{
         content: Object.entries(descriptions || {}).map(
           ([key, description]) => (
-            <ParagraphStandard>
+            <ParagraphStandard key={key}>
               {key === "base" ? (
                 <TextReplaced>{description}</TextReplaced>
               ) : (

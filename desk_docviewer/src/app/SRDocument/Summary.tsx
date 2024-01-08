@@ -102,8 +102,9 @@ export default function Summmary({ char }: Props) {
             />
           )} */}
           <Section title={<TitleSection>Notes</TitleSection>}>
-            {Array.from({ length: 15 }).map(() => (
+            {Array.from({ length: 15 }).map((_, index) => (
               <Box
+                key={index}
                 style={{
                   width: "100%",
                   height: "calc(25px * var(--scaling)",

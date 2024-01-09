@@ -1,23 +1,22 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use tauri::{LogicalSize, Size};
+use constants::{ASSETS as VIEWS_PATH, VIEWER_WINDOW};
+use tauri::{CustomMenuItem, LogicalSize, Manager, Menu, MenuItem, Size};
 
-const VIEWER_WINDOW: &str = "Viewer";
-
-//#[iftree::include_file_tree("paths = '/src/app/*/page.tsx'")]
-//#[derive(Debug)]
-//pub struct HtmlView {
-//    relative_path: &'static str,
-//}
+mod constants;
 
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
+            let default_view_path = VIEWS_PATH[0].get_path().map_err(|e| anyhow::anyhow!(e))?;
+
+            let menu = Menu::new().add_item(CustomMenuItem::new("print", "Print"));
             let viewer_win = tauri::WindowBuilder::new(
                 app,
                 VIEWER_WINDOW,
-                tauri::WindowUrl::App("/SRDocument".into()),
+                tauri::WindowUrl::App(default_view_path.into()),
             )
+            .menu(menu)
             .build()?;
 
             viewer_win.set_size(Size::Logical(LogicalSize {
@@ -27,9 +26,12 @@ fn main() {
             viewer_win.set_resizable(true)?;
             viewer_win.set_title(VIEWER_WINDOW)?;
 
-            //println!("ASSETS: {:#?}", ASSETS);
-
-            //assert_eq!(ASSETS.len(), 3);
+            let _viewer_win = viewer_win.clone();
+            viewer_win.on_menu_event(move |event| {
+                if event.menu_item_id() == "print" {
+                    _viewer_win.clone().print().unwrap();
+                }
+            });
 
             Ok(())
         })

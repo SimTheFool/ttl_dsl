@@ -6,7 +6,7 @@ import {
   Outfit,
   Tech,
   Weapon,
-} from "@/mock/type";
+} from "@/app/mock/type";
 
 export const getCharWeights = (char: Character) => {
   const powers =

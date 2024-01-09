@@ -1,6 +1,6 @@
 import { Box } from "@radix-ui/themes";
 import { GiGooeyImpact } from "react-icons/gi";
-import { Spell } from "@/mock/type";
+import { Spell } from "@/app/mock/type";
 import { BaseIcon } from "./BaseIcon";
 
 type DamageProps = {};

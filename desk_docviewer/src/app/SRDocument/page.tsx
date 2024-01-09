@@ -1,4 +1,4 @@
-import { characters } from "@/mock/characters";
+import { characters } from "@/app/mock/characters";
 import { PdfBreak } from "../../components/PdfContainer";
 import Inventory from "./Inventory";
 import Last from "./Last";

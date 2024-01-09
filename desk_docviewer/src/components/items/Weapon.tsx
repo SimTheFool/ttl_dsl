@@ -1,10 +1,10 @@
-import { RangeLabels } from "@/mock/type";
+import { RangeLabels } from "@/app/mock/type";
 import { Ruler } from "../Ruler";
 import { SimpleAction } from "../actions/SimpleAction";
 import { LoadAction } from "../actions/LoadAction";
 import { ShotAction } from "../actions/ShotAction";
 import { ItemCard } from "./ItemCard";
-import { Weapon as WeaponType } from "@/mock/type";
+import { Weapon as WeaponType } from "@/app/mock/type";
 
 type WeaponProps = { weapon: WeaponType; name: string };
 

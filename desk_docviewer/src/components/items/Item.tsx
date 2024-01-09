@@ -1,5 +1,5 @@
 import { Flex } from "@radix-ui/themes";
-import { BaseItem } from "@/mock/type";
+import { BaseItem } from "@/app/mock/type";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { ItemCard } from "./ItemCard";
 

@@ -1,6 +1,6 @@
 import { capitalize } from "@/utils/capitalize";
 import { Box } from "@radix-ui/themes";
-import { Ritual } from "@/mock/type";
+import { Ritual } from "@/app/mock/type";
 import { SpellNature } from "../Icons/SpellNature";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";

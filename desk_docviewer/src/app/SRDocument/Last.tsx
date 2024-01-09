@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Box } from "@radix-ui/themes";
 import { PdfContainer } from "@/components/PdfContainer";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 
 type Props = {
   char: Character;

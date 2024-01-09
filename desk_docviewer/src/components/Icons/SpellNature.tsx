@@ -1,6 +1,6 @@
 import { Box } from "@radix-ui/themes";
 import { PiWaveSquare } from "react-icons/pi";
-import { Spell } from "@/mock/type";
+import { Spell } from "@/app/mock/type";
 import { BaseIcon } from "./BaseIcon";
 import { PiWaveSine } from "react-icons/pi";
 

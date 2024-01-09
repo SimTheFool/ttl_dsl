@@ -1,4 +1,4 @@
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 import { Monitor } from "../Monitor";
 import { StatTable } from "../StatTable";
 import { ItemCard } from "./ItemCard";

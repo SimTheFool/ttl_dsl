@@ -6,7 +6,7 @@ import { Space } from "../Space";
 import { TextReplaced } from "../Text";
 import { TitleMin } from "../TitleMin";
 import React from "react";
-import { BaseAction } from "@/mock/type";
+import { BaseAction } from "@/app/mock/type";
 import { Maintained } from "../Icons/Maintained";
 import { SpellDistance } from "../Icons/SpellDistance";
 import { SpellNature } from "../Icons/SpellNature";

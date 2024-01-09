@@ -1,7 +1,7 @@
 import { capitalize } from "@/utils/capitalize";
 import { Box, Flex } from "@radix-ui/themes";
 import { ReactNode } from "react";
-import { Companion as CompanionType } from "@/mock/type";
+import { Companion as CompanionType } from "@/app/mock/type";
 import { Card } from "../Card";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";

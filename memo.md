@@ -1,7 +1,7 @@
 ### Frontend
 
-- Tester la génération pdf en fonction du format
 - Créer une deuxième window avec le tooling pour ouvrir le print
+- Tester la génération pdf en fonction du format
 
 ### Bien séparer les vues shadowrun des autres
 

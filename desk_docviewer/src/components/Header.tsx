@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text } from "@radix-ui/themes";
 import { ReactNode } from "react";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 
 type HeaderProps = {
   char: Character;

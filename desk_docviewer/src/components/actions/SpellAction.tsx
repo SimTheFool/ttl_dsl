@@ -1,5 +1,5 @@
 import { capitalize } from "@/utils/capitalize";
-import { Spell as SpellType } from "@/mock/type";
+import { Spell as SpellType } from "@/app/mock/type";
 import { MajorAction, MinorAction } from "../Icons/Actions";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";

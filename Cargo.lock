@@ -66,6 +66,7 @@ checksum = "c9d19de80eff169429ac1e9f48fffb163916b448a44e8e046186232046d9e1f9"
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "iftree",
  "serde",
  "serde_json",
  "tauri",
@@ -1346,6 +1347,21 @@ checksum = "634d9b1461af396cad843f47fdba5597a4f9e6ddd4bfb6ff5d85028c25cb12f6"
 dependencies = [
  "unicode-bidi",
  "unicode-normalization",
+]
+
+[[package]]
+name = "iftree"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f87fc41803b3d095ddb0289abdd8d41daae5932d4b8c55d0500facfcc2eec817"
+dependencies = [
+ "ignore",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn 1.0.109",
+ "toml 0.7.8",
+ "unicode-xid",
 ]
 
 [[package]]
@@ -3321,6 +3337,12 @@ name = "unicode-segmentation"
 version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dd624098567895118886609431a7c3b8f516e41d30e0643f03d94592a147e36"
+
+[[package]]
+name = "unicode-xid"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
 
 [[package]]
 name = "url"

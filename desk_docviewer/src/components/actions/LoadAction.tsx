@@ -3,7 +3,7 @@ import { MajorAction } from "../Icons/Actions";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";
 import { TitleMin } from "../TitleMin";
-import { LoadAction as LoadActionType } from "@/mock/type";
+import { LoadAction as LoadActionType } from "@/app/mock/type";
 import { Card } from "../Card";
 import { Bullet } from "../Icons/Bullet";
 import { Gauge } from "../Gauge";

@@ -1,4 +1,4 @@
-import { Tech as TechType } from "@/mock/type";
+import { Tech as TechType } from "@/app/mock/type";
 import { StatTable } from "../StatTable";
 import { ItemCard } from "./ItemCard";
 

@@ -1,4 +1,4 @@
-import { Sprite as SpriteType } from "@/mock/type";
+import { Sprite as SpriteType } from "@/app/mock/type";
 import { InlineMajorAction, InlineMinorAction } from "../Icons/Actions";
 import { StatTable } from "../StatTable";
 import { CompanionBox, ErgoCompanionBox } from "./CompanionBox";

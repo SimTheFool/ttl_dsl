@@ -1,6 +1,6 @@
 import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { Monitor } from "@/components/Monitor";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 import { Grid, Container, Box } from "@radix-ui/themes";
 
 type MonitorsProps = {

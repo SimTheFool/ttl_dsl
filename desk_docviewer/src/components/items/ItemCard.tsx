@@ -1,5 +1,5 @@
 import { capitalize } from "@/utils/capitalize";
-import { BaseItem } from "@/mock/type";
+import { BaseItem } from "@/app/mock/type";
 import { Card } from "../Card";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Price } from "../Price";

@@ -1,4 +1,4 @@
-import { OtherCompanion as OtherCompanionType } from "@/mock/type";
+import { OtherCompanion as OtherCompanionType } from "@/app/mock/type";
 import { StatTable } from "../StatTable";
 import { CompanionBox, ErgoCompanionBox } from "./CompanionBox";
 import { InlineMajorAction, InlineMinorAction } from "../Icons/Actions";

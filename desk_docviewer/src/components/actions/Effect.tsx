@@ -1,4 +1,4 @@
-import { Effect as EffectType } from "@/mock/type";
+import { Effect as EffectType } from "@/app/mock/type";
 import { Card } from "../Card";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";

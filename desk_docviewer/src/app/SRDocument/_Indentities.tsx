@@ -3,7 +3,7 @@ import { Section } from "@/components/Section";
 import { ParagraphStandard } from "@/components/ParagraphStandard";
 import { TitleMin } from "@/components/TitleMin";
 import { Box, Flex } from "@radix-ui/themes";
-import { Character, Identity as CharIdentity } from "@/mock/type";
+import { Character, Identity as CharIdentity } from "@/app/mock/type";
 import { capitalize } from "@/utils/capitalize";
 import { TitleSection } from "@/components/TitleSection";
 import { Space } from "@/components/Space";

@@ -4,7 +4,7 @@ import { Section } from "@/components/Section";
 import { StatTable } from "@/components/StatTable";
 import { TextIndice } from "@/components/TextIndice";
 import { TitleSection } from "@/components/TitleSection";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 import { Box, Table } from "@radix-ui/themes";
 
 type StatsProps = {

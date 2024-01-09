@@ -4,7 +4,7 @@ import { Section } from "@/components/Section";
 import { Space } from "@/components/Space";
 import { TextReplaced } from "@/components/Text";
 import { TitleSection } from "@/components/TitleSection";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 import { capitalize } from "@/utils/capitalize";
 import { uncapitalize } from "@/utils/uncapitalize";
 import { Box, Flex, Text } from "@radix-ui/themes";

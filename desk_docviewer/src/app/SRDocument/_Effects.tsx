@@ -2,7 +2,7 @@ import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { Section } from "@/components/Section";
 import { TitleSection } from "@/components/TitleSection";
 import { Effect } from "@/components/actions/Effect";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 import { Box } from "@radix-ui/themes";
 
 type EffectsProps = {

@@ -1,5 +1,5 @@
 import { PiDiamondLight } from "react-icons/pi";
-import { BaseAction1 } from "@/mock/type";
+import { BaseAction1 } from "@/app/mock/type";
 import { Gauge } from "../Gauge";
 import { MajorAction, MinorAction } from "../Icons/Actions";
 import { ParagraphStandard } from "../ParagraphStandard";

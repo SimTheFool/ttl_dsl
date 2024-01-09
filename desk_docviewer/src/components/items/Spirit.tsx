@@ -1,4 +1,4 @@
-import { Spirit as SpiritType } from "@/mock/type";
+import { Spirit as SpiritType } from "@/app/mock/type";
 import { StatTable } from "../StatTable";
 import { CompanionBox, ErgoCompanionBox } from "./CompanionBox";
 import { InlineMajorAction, InlineMinorAction } from "../Icons/Actions";

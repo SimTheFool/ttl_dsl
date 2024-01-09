@@ -1,5 +1,5 @@
 import { Box, Flex } from "@radix-ui/themes";
-import { RangeLabels, ShotAction as ShotActionType } from "@/mock/type";
+import { RangeLabels, ShotAction as ShotActionType } from "@/app/mock/type";
 import { Card } from "../Card";
 import { MajorAction, MinorAction } from "../Icons/Actions";
 import { Bullet } from "../Icons/Bullet";

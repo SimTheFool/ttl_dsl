@@ -5,7 +5,7 @@ import {
 } from "@/components/Icons/Actions";
 import { Edge, EdgeLight } from "@/components/Icons/Edge";
 import { TitleMin } from "@/components/TitleMin";
-import { Character } from "@/mock/type";
+import { Character } from "@/app/mock/type";
 import { Flex, Box } from "@radix-ui/themes";
 
 type ResourcesProps = {

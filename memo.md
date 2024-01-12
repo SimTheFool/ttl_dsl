@@ -1,7 +1,6 @@
 ### Frontend
 
-- Gérer la taille du pdf
-- Tenter de faire une fenêtre enfant
+- tenter de générer un pdf depuis une commande rust
 
 ### Bien séparer les vues shadowrun des autres
 

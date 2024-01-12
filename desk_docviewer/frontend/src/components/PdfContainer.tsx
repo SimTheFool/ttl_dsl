@@ -24,8 +24,6 @@ export const PdfContainer = ({
       }}
     >
       <Box
-        pt={"8"}
-        px={"2"}
         style={{
           height: "100%",
           width: "100%",
@@ -52,7 +50,7 @@ export const PdfBreak = () => {
   return (
     <div
       style={{
-        breakAfter: "always",
+        pageBreakAfter: "always",
       }}
     />
   );

@@ -29,7 +29,7 @@ fn main() {
             let _viewer_win = viewer_win.clone();
             viewer_win.on_menu_event(move |event| {
                 if event.menu_item_id() == "print" {
-                    _viewer_win.clone().print().unwrap();
+                    _viewer_win.print().unwrap();
                 }
             });
 

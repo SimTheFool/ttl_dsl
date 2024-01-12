@@ -29,7 +29,7 @@ export default async function Inventory({ char }: Props) {
 
   if (pageWeight < 30) {
     return (
-      <PdfContainer footer={"INVENTAIRE"}>
+      <PdfContainer border footer={"INVENTAIRE"}>
         <AllInOne char={char} />
       </PdfContainer>
     );
@@ -37,11 +37,11 @@ export default async function Inventory({ char }: Props) {
 
   return (
     <>
-      <PdfContainer footer={"INVENTAIRE"}>
+      <PdfContainer border footer={"INVENTAIRE"}>
         <BigObjects char={char} />
       </PdfContainer>
       <PdfBreak />
-      <PdfContainer footer={"CONSOMMABLES"}>
+      <PdfContainer border footer={"CONSOMMABLES"}>
         <LittleObjects char={char} />
       </PdfContainer>
     </>

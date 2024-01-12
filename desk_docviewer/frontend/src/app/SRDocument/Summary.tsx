@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { TitleSection } from "@/components/TitleSection";
 import { Box, Grid } from "@radix-ui/themes";
-import { characters } from "@/mock/characters";
+import { characters, portraits } from "@/mock/characters";
 import { Character } from "@/mock/type";
 import Image from "next/image";
 import { PdfContainer } from "@/components/PdfContainer";
@@ -18,10 +18,10 @@ type Props = {
 };
 
 export default function Summmary({ char }: Props) {
-  //const portrait = portraits[name];
+  const portrait = portraits["shrimp"];
 
   return (
-    <PdfContainer>
+    <PdfContainer border>
       <Box
         style={{
           display: "flex",
@@ -85,7 +85,7 @@ export default function Summmary({ char }: Props) {
             position: "relative",
           }}
         >
-          {/* {portrait && (
+          {portrait && (
             <Image
               src={portrait}
               alt="character image"
@@ -100,7 +100,7 @@ export default function Summmary({ char }: Props) {
                 marginLeft: "auto",
               }}
             />
-          )} */}
+          )}
           <Section title={<TitleSection>Notes</TitleSection>}>
             {Array.from({ length: 15 }).map((_, index) => (
               <Box

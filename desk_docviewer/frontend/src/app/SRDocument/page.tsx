@@ -8,7 +8,6 @@ import Summary from "./Summary";
 type Props = {};
 
 const char = characters.shrimp;
-//const portrait = portraits[name];
 
 export default function Home({}: Props) {
   return (

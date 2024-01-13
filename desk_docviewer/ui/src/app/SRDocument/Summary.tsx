@@ -21,7 +21,7 @@ export default function Summmary({ char }: Props) {
   const portrait = portraits["shrimp"];
 
   return (
-    <PdfContainer border>
+    <PdfContainer>
       <Box
         style={{
           display: "flex",

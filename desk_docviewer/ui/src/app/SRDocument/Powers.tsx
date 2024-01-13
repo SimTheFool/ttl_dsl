@@ -25,18 +25,18 @@ export default function Powers({ char }: Props) {
 
   if (pageWeight < 20)
     return (
-      <PdfContainer border footer={"POUVOIRS"}>
+      <PdfContainer footer={"POUVOIRS"}>
         <AllInOne char={char} />
       </PdfContainer>
     );
 
   return (
     <>
-      <PdfContainer border footer={"POUVOIRS"}>
+      <PdfContainer footer={"POUVOIRS"}>
         <ActionOnly char={char} />
       </PdfContainer>
       <PdfBreak />
-      <PdfContainer border footer={"COMPAGNONS"}>
+      <PdfContainer footer={"COMPAGNONS"}>
         <CompanionOnly char={char} />
       </PdfContainer>
     </>

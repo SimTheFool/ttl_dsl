@@ -11,7 +11,7 @@ const portrait = portraits["shrimp"];
 
 export default function Last({ char }: Props) {
   return (
-    <PdfContainer border>
+    <PdfContainer>
       <Box
         style={{
           width: "100%",

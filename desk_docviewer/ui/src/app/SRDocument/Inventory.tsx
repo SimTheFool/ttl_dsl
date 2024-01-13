@@ -1,3 +1,6 @@
+import { Line } from "@/components/Line";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
+import { PdfContainer } from "@/components/PdfContainer";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
 import { Drone } from "@/components/items/Drone";
@@ -6,19 +9,15 @@ import { Outfit } from "@/components/items/Outfit";
 import { Slot } from "@/components/items/Slot";
 import { Tech } from "@/components/items/Tech";
 import { Weapon } from "@/components/items/Weapon";
+import { Character } from "@/mock/type";
 import { getCharWeights } from "@/utils/getWeights";
 import { Box } from "@radix-ui/themes";
-import { characters } from "@/mock/characters";
-import { Character } from "@/mock/type";
-import { Line } from "@/components/Line";
-import { PdfContainer, PdfBreak } from "@/components/PdfContainer";
-import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 
 type Props = {
   char: Character;
 };
 
-export default async function Inventory({ char }: Props) {
+export default function Inventory({ char }: Props) {
   const charWeights = getCharWeights(char);
   const pageWeight =
     charWeights.drones +
@@ -40,7 +39,6 @@ export default async function Inventory({ char }: Props) {
       <PdfContainer footer={"INVENTAIRE"}>
         <BigObjects char={char} />
       </PdfContainer>
-      <PdfBreak />
       <PdfContainer footer={"CONSOMMABLES"}>
         <LittleObjects char={char} />
       </PdfContainer>

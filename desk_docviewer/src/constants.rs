@@ -20,7 +20,7 @@ macro_rules! compile_fs_views {
 
 #[iftree::include_file_tree(
     "
-paths = '/frontend/src/app/*/page.tsx'
+paths = '/ui/src/app/*/page.tsx'
 template.initializer = 'compile_fs_views'
 "
 )]

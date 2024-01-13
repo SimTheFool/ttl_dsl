@@ -1,19 +1,18 @@
+import { LineBlack } from "@/components/Line";
+import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
+import { PdfContainer } from "@/components/PdfContainer";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
-import { SimpleAction } from "@/components/actions/SimpleAction";
-import { Sprite } from "@/components/items/Sprite";
-import { Box } from "@radix-ui/themes";
-import { characters } from "@/mock/characters";
-import { Character } from "@/mock/type";
-import { SpellAction } from "@/components/actions/SpellAction";
-import { ReactNode } from "react";
 import { RitualAction } from "@/components/actions/RitualAction";
-import { Spirit } from "@/components/items/Spirit";
+import { SimpleAction } from "@/components/actions/SimpleAction";
+import { SpellAction } from "@/components/actions/SpellAction";
 import { OtherCompanion } from "@/components/items/OtherCompanion";
+import { Spirit } from "@/components/items/Spirit";
+import { Sprite } from "@/components/items/Sprite";
+import { Character } from "@/mock/type";
 import { getCharWeights } from "@/utils/getWeights";
-import { Line, LineBlack } from "@/components/Line";
-import { PdfBreak, PdfContainer } from "@/components/PdfContainer";
-import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
+import { Box } from "@radix-ui/themes";
+import { ReactNode } from "react";
 
 type Props = {
   char: Character;
@@ -35,7 +34,6 @@ export default function Powers({ char }: Props) {
       <PdfContainer footer={"POUVOIRS"}>
         <ActionOnly char={char} />
       </PdfContainer>
-      <PdfBreak />
       <PdfContainer footer={"COMPAGNONS"}>
         <CompanionOnly char={char} />
       </PdfContainer>

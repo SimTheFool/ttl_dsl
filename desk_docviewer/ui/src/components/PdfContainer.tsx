@@ -1,9 +1,8 @@
 "use client";
 
+import { getA4FormatFromWidth } from "@/utils/a4format";
 import { Box, Theme } from "@radix-ui/themes";
 import "./PdfContainer.css";
-import { getA4FormatFromWidth } from "@/utils/a4format";
-import { useEffect, useState } from "react";
 
 type A4FormatProps = {
   children: React.ReactNode;
@@ -16,13 +15,7 @@ export const PdfContainer = ({
   footer,
   border = false,
 }: A4FormatProps) => {
-  const [baseWidth, setBaseWidth] = useState<number>(750);
-  let sizes = getA4FormatFromWidth(baseWidth - 5);
-
-  useEffect(() => {
-    if (!window) return;
-    setBaseWidth(window.innerWidth);
-  }, []);
+  let sizes = getA4FormatFromWidth(690);
 
   return (
     <Theme
@@ -35,8 +28,7 @@ export const PdfContainer = ({
       }}
     >
       <Box
-        pt={"8"}
-        px={"2"}
+        pt={"5"}
         style={{
           height: "100%",
           width: "100%",
@@ -55,11 +47,12 @@ export const PdfContainer = ({
           </Box>
         )}
       </Box>
+      <PdfBreak />
     </Theme>
   );
 };
 
-export const PdfBreak = () => {
+const PdfBreak = () => {
   return (
     <div
       style={{

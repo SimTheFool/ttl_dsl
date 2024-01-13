@@ -14,3 +14,8 @@ html {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
+
+@page {
+    size: A4;
+    margin: 0mm 0mm 0mm 0mm !important;
+}

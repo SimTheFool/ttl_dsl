@@ -8,7 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@radix-ui/react-collapsible": "^1.0.3",
+    "@radix-ui/react-form": "^0.0.3",
     "@radix-ui/themes": "^1.0.0",
+    "@tauri-apps/api": "^1.5.3",
     "@types/node": "20.4.9",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
@@ -19,6 +22,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
+    "react-use": "^17.4.3",
     "typescript": "5.1.6"
   },
   "devDependencies": {

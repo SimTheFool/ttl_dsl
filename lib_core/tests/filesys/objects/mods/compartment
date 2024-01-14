@@ -1,0 +1,8 @@
+{
+    slots!
+    {
+        name: Cache
+        size: M
+        concealment: 3
+    }
+}

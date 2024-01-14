@@ -1,0 +1,12 @@
+@NAME Bras_mécanique
+
+{
+    <? ./utils/quantity_buy with cost: 1000>
+
+    name: Bras mécanique
+    manufacturer: null
+    description: ""
+
+    status: free
+    concealment: 2
+}

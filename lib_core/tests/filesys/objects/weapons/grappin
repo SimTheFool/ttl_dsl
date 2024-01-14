@@ -1,0 +1,46 @@
+@NAME Grappin
+
+{
+    <? ./utils/quantity_buy with cost: 350>
+
+    name: Grappin
+    manufacturer: null
+    description: ""
+
+    status: free
+    concealment: 2
+
+    ammo: 1
+    damage: 1
+    ranges:
+    {
+        contact:
+        {
+            label: 0
+            base: -2
+        }
+        near:
+        {
+            label: 20
+            base: 0
+        }
+        short:
+        {
+            base: 0
+        }
+        mid:
+        {
+            base: 0
+        }
+        far:
+        {
+            base: 0
+        }
+    }
+
+    actions:
+    {
+        <@ ./objects/weapons/actions/shot with ref: $ >
+        <@ ./actions/recharger with ref: $ >
+    }
+}

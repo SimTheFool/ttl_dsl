@@ -1,0 +1,25 @@
+@NAME Packmule
+
+{
+    <? ./objects/drones/base >
+    <? ./utils/quantity_buy with cost: 11000>
+    
+    name: Packmule
+    manufacturer: Ares
+    description: Grand arthropode mécanique
+    
+    status: free
+    concealment: 0
+    
+    stats:
+    {
+        hit: 8
+        maniability: 4
+        speed_step: 6
+        speed_max: 30
+        autopilot: 2
+        resistance: 8
+        armor: 10
+    }
+    
+}

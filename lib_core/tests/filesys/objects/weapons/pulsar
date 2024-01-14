@@ -1,0 +1,47 @@
+@NAME Pulsar
+
+{
+    <? ./utils/quantity_buy with cost: 350>
+
+    name: Pulsar
+    manufacturer: Yamaha
+    description: Taser.
+
+    status: free
+    concealment: 3
+
+    ammo: 4
+    damage: 4
+    ranges:
+    {
+        contact:
+        {
+            label: 0
+            base: 0
+        }
+        near:
+        {
+            label: 20
+            base: 0
+        }
+        short:
+        {
+            base: 0
+        }
+        mid:
+        {
+            base: 0
+        }
+        far:
+        {
+            base: 0
+        }
+    }
+
+    actions:
+    {
+        <@ ./objects/weapons/actions/shot with ref: $ >
+        <@ ./objects/weapons/actions/shot_semi with ref: $ >
+        <@ ./actions/recharger with ref: $ >
+    }
+}

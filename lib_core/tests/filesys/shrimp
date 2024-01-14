@@ -86,6 +86,13 @@
 
     inventory:
     {
+
+        <@ ./objects/drones/packmule
+            with <? ./objects/mods/monture >
+            with <? ./objects/mods/monture >
+            with <? ./objects/mods/compartment >
+        >
+
         <@ ./objects/drones/crawler
             with <? ./objects/mods/monture >
             with <? ./objects/mods/monture >
@@ -95,11 +102,87 @@
             with <? ./utils/quantity with q: 2 >
         >
 
-        <@ ./objects/guns/crockett
+        <@ ./objects/weapons/crockett
             with <? ./objects/accessories/guncam >
             with <? ./objects/mods/chasse_big >
             with <? ./objects/mods/canon_long >
             with <? ./objects/mods/disassembly_kit >
         >
+
+        <@ ./objects/weapons/pulsar
+            with <? ./objects/mods/chasse_medium >
+        >
+
+        <@ ./objects/weapons/grappin
+            with <? ./objects/mods/chasse_light >
+        >
+
+        <@ ./objects/weapons/bras_mecanique
+            with <? ./objects/mods/chasse >
+        >
+
+        clef_cyber_fictionnelle:
+        {
+            <? ./utils/quantity_buy with cost: 725>
+
+            name: Clef anglaise robotique cyber fictionnelle
+            manufacturer: null
+            description: Une réplique de l'arme emblématique de la série Technotronix. Le revêtement électrique rechargeable permet d'électrifier la cible. Le nanogénérateur à électricité statique permet de toucher la cible même si on rate son coup.
+
+            status: free
+            concealment: 4
+
+            ranges:
+            {
+                contact:
+                {
+                    base: 0
+                }
+                near:
+                {
+                    base: 0
+                }
+                short:
+                {
+                    base: 1
+                }
+                mid:
+                {
+                    
+                    base: 1
+                }
+                far:
+                {
+                    base: 0
+                }
+            }
+
+            actions:
+            {
+                attaquer:
+                {
+                    major: 1
+                    minor: 0
+                    damage: 3
+                    ranges:
+                    {
+                        contact: 0
+                        near: 0
+                        short: 0
+                        mid: 0
+                        far: 0
+                    }
+                }
+                activer:
+                {
+                    major: 0
+                    minor: 1
+                    gauge: 4
+                    description: "+1 charges toutes les 15min. 1 __DOM__ irréductible et le statut électrifié, même si vous ratez."
+                }
+            }
+        }
+
+        <@ ./objects/outfits/sac >
     }
 }

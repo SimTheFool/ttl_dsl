@@ -1,0 +1,14 @@
+@NAME Sac
+
+{
+    name: Sac
+
+    status: free
+    concealment: 0
+
+    slots!
+    {
+        name: Chasse
+        size: S
+    }
+}

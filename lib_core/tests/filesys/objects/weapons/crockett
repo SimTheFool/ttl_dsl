@@ -42,9 +42,9 @@
 
     actions:
     {
-        <@ ./objects/guns/actions/shot with ref: $ >
-        <@ ./objects/guns/actions/shot_semi with ref: $ >
-        <@ ./objects/guns/actions/shot_rafale with ref: $ >
+        <@ ./objects/weapons/actions/shot with ref: $ >
+        <@ ./objects/weapons/actions/shot_semi with ref: $ >
+        <@ ./objects/weapons/actions/shot_rafale with ref: $ >
         <@ ./actions/recharger with ref: $ >
     }
 }

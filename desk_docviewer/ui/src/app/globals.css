@@ -19,3 +19,12 @@ html {
     size: A4;
     margin: 0mm 0mm 0mm 0mm !important;
 }
+
+
+
+
+@media print {
+    .menu {
+        display: none !important;
+    }
+}

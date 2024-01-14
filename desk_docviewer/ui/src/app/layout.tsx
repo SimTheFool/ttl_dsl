@@ -15,11 +15,15 @@ import { LuSheet } from "react-icons/lu";
 import { useLocalStorage } from "react-use";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useRouter } from "next/navigation";
-import "./globals.css";
 import { RenderingContextProvider } from "@/components/controls/RenderingContext";
+import "./globals.css";
 
 const getTemplates = async (): Promise<string[]> => {
   return invoke("get_templates");
+};
+
+const print = async (): Promise<void> => {
+  return invoke("print");
 };
 
 export default function RootLayout({
@@ -29,7 +33,7 @@ export default function RootLayout({
 }) {
   const router = useRouter();
   const path = usePathname();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [templates, setTemplates] = React.useState<string[]>([]);
 
   const [resolutionDir, setResolutionDir] =
@@ -37,8 +41,8 @@ export default function RootLayout({
   const [dataFile, setDataFile] = useLocalStorage<string>("dataFile");
   const [template, setTemplate] = useLocalStorage<string>("template");
 
-  const isReadyToRender = resolutionDir && dataFile && template;
-  const isRendering = path === `/${template}`;
+  const isReadyToRender = !!(resolutionDir && dataFile && template);
+  const isRendering = path === template;
 
   useEffect(() => {
     getTemplates().then((t) => setTemplates(t));
@@ -111,6 +115,7 @@ export default function RootLayout({
                   style={{
                     marginRight: "8px",
                     maxHeight: "25px",
+                    cursor: isReadyToRender ? "pointer" : "default",
                   }}
                   onClick={(e) => {
                     template && router.push(template);
@@ -122,12 +127,13 @@ export default function RootLayout({
                 <button
                   type="button"
                   disabled={!isRendering}
-                  onSubmit={(e) => {
-                    e.preventDefault();
+                  onClick={(e) => {
+                    print();
                   }}
                   style={{
                     marginRight: "8px",
                     maxHeight: "25px",
+                    cursor: isRendering ? "pointer" : "default",
                   }}
                 >
                   <FaPrint />

@@ -10,7 +10,7 @@ type MenuProps = {
 export const Menu = ({ isOpen, setOpen, children }: MenuProps) => {
   return (
     <Collapsible.Root
-      className="CollapsibleRoot"
+      className="menu"
       open={isOpen}
       onOpenChange={setOpen}
       style={{
@@ -25,7 +25,6 @@ export const Menu = ({ isOpen, setOpen, children }: MenuProps) => {
     >
       <Collapsible.Trigger asChild>
         <button
-          className="IconButton"
           style={{
             height: "36px",
             width: "36px",

@@ -11,18 +11,10 @@ const renderingContext = createContext<RenderingContext>({});
 
 export const RenderingContextProvider = ({
   children,
-  resolutionDir,
-  dataFile,
-  template,
+  ...values
 }: RenderingContext & { children: React.ReactNode }) => {
   return (
-    <renderingContext.Provider
-      value={{
-        resolutionDir,
-        dataFile,
-        template,
-      }}
-    >
+    <renderingContext.Provider value={values}>
       {children}
     </renderingContext.Provider>
   );

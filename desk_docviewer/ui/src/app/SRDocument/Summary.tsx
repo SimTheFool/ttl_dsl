@@ -1,25 +1,24 @@
 import { Header } from "@/components/Header";
+import { PdfContainer } from "@/components/PdfContainer";
 import { Section } from "@/components/Section";
 import { TitleSection } from "@/components/TitleSection";
-import { Box, Grid } from "@radix-ui/themes";
-import { characters, portraits } from "@/mock/characters";
 import { Character } from "@/mock/type";
+import { Box, Grid } from "@radix-ui/themes";
 import Image from "next/image";
-import { PdfContainer } from "@/components/PdfContainer";
-import { Stats } from "./_Stats";
 import { Effects } from "./_Effects";
 import { Identities } from "./_Indentities";
 import { Monitors } from "./_Monitors";
 import { Resources } from "./_Resources";
 import { Skills } from "./_Skills";
+import { Stats } from "./_Stats";
+import { ImageWithPlaceholder } from "@/components/ImageWithPlaceholder";
 
 type Props = {
   char: Character;
+  images?: Record<string, string>;
 };
 
-export default function Summmary({ char }: Props) {
-  const portrait = portraits["shrimp"];
-
+export default function Summmary({ char, images }: Props) {
   return (
     <PdfContainer>
       <Box
@@ -85,22 +84,22 @@ export default function Summmary({ char }: Props) {
             position: "relative",
           }}
         >
-          {portrait && (
-            <Image
-              src={portrait}
-              alt="character image"
-              style={{
-                opacity: 0.7,
-                position: "absolute",
-                right: 0,
-                top: 0,
-                objectFit: "contain",
-                height: "100%",
-                width: "auto",
-                marginLeft: "auto",
-              }}
-            />
-          )}
+          <ImageWithPlaceholder
+            src={images?.portrait}
+            width={100}
+            height={200}
+            alt="portrait"
+            style={{
+              opacity: 0.7,
+              position: "absolute",
+              right: 0,
+              top: 0,
+              objectFit: "contain",
+              height: "100%",
+              width: "auto",
+              marginLeft: "auto",
+            }}
+          />
           <Section title={<TitleSection>Notes</TitleSection>}>
             {Array.from({ length: 15 }).map((_, index) => (
               <Box

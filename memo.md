@@ -1,2 +1,4 @@
-- vérifier le print
-- rajouter des controls au niveau du layout pour changer de document
+- select bugs: message d'erreur + composant disabled
+- bien simuler les pages au niveau du rendu
+- passer en async avec un loader
+- injecter les datas depuis le layout ?

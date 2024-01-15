@@ -13,7 +13,7 @@ import { FaFolder } from "react-icons/fa6";
 import { ImInsertTemplate } from "react-icons/im";
 import { LuSheet } from "react-icons/lu";
 import { useLocalStorage } from "react-use";
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
 import { useRouter } from "next/navigation";
 import { RenderingContextProvider } from "@/components/controls/RenderingContext";
 import "./globals.css";

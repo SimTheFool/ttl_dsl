@@ -3,13 +3,14 @@ import { Box } from "@radix-ui/themes";
 import { PdfContainer } from "@/components/PdfContainer";
 import { Character } from "@/mock/type";
 import { portraits } from "@/mock/characters";
+import { ImageWithPlaceholder } from "@/components/ImageWithPlaceholder";
 
 type Props = {
   char: Character;
+  images?: Record<string, string>;
 };
-const portrait = portraits["shrimp"];
 
-export default function Last({ char }: Props) {
+export default function Last({ char, images }: Props) {
   return (
     <PdfContainer>
       <Box
@@ -18,10 +19,12 @@ export default function Last({ char }: Props) {
           height: "100%",
         }}
       >
-        {portrait && (
-          <Image
-            src={portrait}
-            alt="character image"
+        {images?.portrait && (
+          <ImageWithPlaceholder
+            src={images?.portrait}
+            alt="portrait"
+            width={100}
+            height={200}
             style={{
               objectFit: "contain",
               height: "100%",

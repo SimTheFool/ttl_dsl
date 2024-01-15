@@ -41,6 +41,7 @@ export const SelectInput = ({
         <Form.Control asChild>
           <select
             required
+            value={value}
             style={{
               width: "100%",
             }}
@@ -48,7 +49,7 @@ export const SelectInput = ({
           >
             <option></option>
             {options.map((option) => (
-              <option selected={option === value} key={option} value={option}>
+              <option key={option} value={option}>
                 {option}
               </option>
             ))}

@@ -18,7 +18,7 @@ type Props = {
   images?: Record<string, string>;
 };
 
-export default function Summmary({ char, images }: Props) {
+export default function Summary({ char, images }: Props) {
   return (
     <PdfContainer>
       <Box

@@ -53,7 +53,6 @@ export const FileInput = ({
               cursor: "pointer",
             }}
             readOnly
-            title={value}
             value={value}
             onClick={async () => {
               let newValue = await openDialogTauri({

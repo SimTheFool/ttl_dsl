@@ -1,5 +1,4 @@
 "use client";
-
 import { getA4FormatFromWidth } from "@/utils/a4format";
 import { Box, Theme } from "@radix-ui/themes";
 import "./PdfContainer.css";
@@ -19,6 +18,7 @@ export const PdfContainer = ({
 
   return (
     <Theme
+      className="PdfContainer"
       style={{
         width: `${sizes.width}px`,
         height: `${sizes.height}px`,

@@ -17,6 +17,7 @@ import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
 import { useRouter } from "next/navigation";
 import { RenderingContextProvider } from "@/components/controls/RenderingContext";
 import "./globals.css";
+import { OnHydration } from "@/components/OnHydration";
 
 const getTemplates = async (): Promise<string[]> => {
   return invoke("get_templates");
@@ -109,35 +110,39 @@ export default function RootLayout({
                   display: "flex",
                 }}
               >
-                <button
-                  type="button"
-                  disabled={!isReadyToRender}
-                  style={{
-                    marginRight: "8px",
-                    maxHeight: "25px",
-                    cursor: isReadyToRender ? "pointer" : "default",
-                  }}
-                  onClick={(e) => {
-                    template && router.push(template);
-                  }}
-                >
-                  <FaEye />
-                </button>
+                <OnHydration>
+                  <button
+                    type="button"
+                    disabled={!isReadyToRender}
+                    style={{
+                      marginRight: "8px",
+                      maxHeight: "25px",
+                      cursor: isReadyToRender ? "pointer" : "default",
+                    }}
+                    onClick={(e) => {
+                      template && router.push(template);
+                    }}
+                  >
+                    <FaEye />
+                  </button>
+                </OnHydration>
 
-                <button
-                  type="button"
-                  disabled={!isRendering}
-                  onClick={(e) => {
-                    print();
-                  }}
-                  style={{
-                    marginRight: "8px",
-                    maxHeight: "25px",
-                    cursor: isRendering ? "pointer" : "default",
-                  }}
-                >
-                  <FaPrint />
-                </button>
+                <OnHydration>
+                  <button
+                    type="button"
+                    disabled={!isRendering}
+                    onClick={(e) => {
+                      print();
+                    }}
+                    style={{
+                      marginRight: "8px",
+                      maxHeight: "25px",
+                      cursor: isRendering ? "pointer" : "default",
+                    }}
+                  >
+                    <FaPrint />
+                  </button>
+                </OnHydration>
               </span>
 
               <span />

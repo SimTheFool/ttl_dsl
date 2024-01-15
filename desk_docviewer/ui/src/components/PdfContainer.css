@@ -1,3 +1,19 @@
 .radix-themes {
     --scaling: 1;
 }
+
+
+.PdfContainer {
+    background-color: white;
+    margin: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+@media print {
+    .PdfContainer {
+        background-color: unset;
+        box-shadow: unset;
+        margin: unset;
+    }
+}

@@ -1,7 +1,7 @@
 @NAME Invisi_Shield
 
 {
-    <? ./utils/quantity_buy with cost: 5400>
+    <? ./utils/buy with cost: 5400>
 
     name: Invisi Shield
     manufacturer: Securetech

@@ -1,7 +1,7 @@
 @NAME Charge_medikit
 
 {
-    <? ./utils/quantity_buy with cost: 20>
+    <? ./utils/buy with cost: 20>
 
     name: Charge medikit
     description: ""

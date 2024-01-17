@@ -2,7 +2,7 @@
 
 {
     <? ./objects/drones/base >
-    <? ./utils/quantity_buy with cost: 9500>
+    <? ./utils/buy with cost: 9500>
     
     name: Crawler
     manufacturer: Aztechnology

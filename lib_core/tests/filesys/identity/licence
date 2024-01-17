@@ -1,6 +1,5 @@
 {
-    <? ./utils/quality_buy with cost: 200>
-    quality: $quality
+    <? ./utils/buy with cost: 200>
     
     name: $name
     description: $description

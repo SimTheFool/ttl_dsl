@@ -80,8 +80,8 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/objects/weapons/actions/shot_semi");
     mock_file!("./filesys/objects/weapons/actions/shot_rafale");
 
-    mock_file!("./filesys/utils/quantity_buy");
-    mock_file!("./filesys/utils/quality_buy");
+    mock_file!("./filesys/utils/buy");
+    mock_file!("./filesys/utils/buy");
     mock_file!("./filesys/utils/quantity");
     mock_file!("./filesys/utils/quality");
     mock_file!("./filesys/utils/transfer_all_nuyens");

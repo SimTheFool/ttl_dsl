@@ -1,7 +1,7 @@
 @NAME Grappin
 
 {
-    <? ./utils/quantity_buy with cost: 350>
+    <? ./utils/buy with cost: 350>
 
     name: Grappin
     manufacturer: null

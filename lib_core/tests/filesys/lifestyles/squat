@@ -1,5 +1,5 @@
 {
     name: squatteur
 
-    <? ./utils/quantity_buy with cost: 100>
+    <? ./utils/buy with cost: 100>
 }

@@ -5,5 +5,5 @@
         size: S
     }
 
-    <? ./utils/quantity_buy with cost: 2500>
+    <? ./utils/buy with cost: 2500>
 }

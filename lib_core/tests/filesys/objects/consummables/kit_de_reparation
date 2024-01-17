@@ -1,7 +1,7 @@
 @NAME Kit_de_reparation
 
 {
-    <? ./utils/quantity_buy with cost: 500>
+    <? ./utils/buy with cost: 500>
 
     name: Kit de réparation
     description: ""

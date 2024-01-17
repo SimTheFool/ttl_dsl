@@ -1,7 +1,7 @@
 @NAME Crockett
 
 {
-    <? ./utils/quantity_buy with cost: 10250>
+    <? ./utils/buy with cost: 10250>
 
     name: Crockett
     manufacturer: Cavalier Arms

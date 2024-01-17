@@ -2,7 +2,7 @@
 
 {
     <? ./objects/drones/base >
-    <? ./utils/quantity_buy with cost: 11000>
+    <? ./utils/buy with cost: 11000>
     
     name: Packmule
     manufacturer: Ares

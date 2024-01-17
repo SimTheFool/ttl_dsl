@@ -27,12 +27,12 @@
         >
         <! ./identity/fake
             with name: "Laurence Guinvite"
-            with quality: 4
+            with <? ./utils/quality with q: 4 >
             with <? ./utils/transfer_all_nuyens >
             with <lifestyles! ./lifestyles/squat >
             with <licences! ./identity/licence
                 with name: "Concierge de chantier"
-                with quality: 4 
+                with <? ./utils/quality with q: 4 >
             >    
         >
     }
@@ -123,7 +123,7 @@
 
         clef_cyber_fictionnelle:
         {
-            <? ./utils/quantity_buy with cost: 725>
+            <? ./utils/buy with cost: 725>
 
             name: Clef anglaise robotique cyber fictionnelle
             manufacturer: null

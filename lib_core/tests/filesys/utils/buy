@@ -1,0 +1,10 @@
+{
+    price_unit: 0
+    price: 0
+    quantity: 1
+    quality: 1
+}
+@TRANSFORM BUY_FINAL
+> $.price += $cost * $.quality * $.quantity
+> $.price_unit += $cost * $.quality
+> nuyens -= $cost * $.quality * $.quantity

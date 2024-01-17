@@ -1,7 +1,7 @@
 @NAME Medikit
 
 {
-    <? ./utils/quality_buy with cost: 250>
+    <? ./utils/buy with cost: 250>
 
     name: Medikit
     description: Soigne les __DOM__ récents (<1h). Utilise la compétence --Biotech-- ou l'--indice-- de l'appareil.

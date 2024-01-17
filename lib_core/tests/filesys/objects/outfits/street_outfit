@@ -1,7 +1,7 @@
 @NAME Tenue_urbaine
 
 {
-    <? ./utils/quantity_buy with cost: 150>
+    <? ./utils/buy with cost: 150>
 
     name: Tenue urbaine
     description: Confère __A1__ pour résister aux entraves.

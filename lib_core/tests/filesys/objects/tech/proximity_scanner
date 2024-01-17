@@ -1,7 +1,7 @@
 @NAME Scanner_de_proximité
 
 {
-    <? ./utils/quantity_buy with cost: 200>
+    <? ./utils/buy with cost: 200>
 
     name: Scanner de proximité
     description: Scanne les appareils sans fil dans un rayon de 20m.

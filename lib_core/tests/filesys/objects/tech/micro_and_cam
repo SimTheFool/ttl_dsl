@@ -1,0 +1,10 @@
+@NAME Micro_et_caméra
+
+{
+    <? ./utils/quantity_buy with cost: 100>
+
+    name: Micro_et_caméra
+
+    status: free
+    concealment: 6
+}

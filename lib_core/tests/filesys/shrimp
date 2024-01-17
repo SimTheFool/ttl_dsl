@@ -84,7 +84,7 @@
         <@ ./traits/rhinite_chronique>
     }
 
-    inventory:
+    big_inventory:
     {
 
         <@ ./objects/drones/packmule
@@ -184,5 +184,33 @@
         }
 
         <@ ./objects/outfits/sac >
+
+        <@ ./objects/outfits/street_outfit
+            with <? ./objects/mods/secret_pocket >
+            with <? ./objects/mods/secret_pocket >
+        >
+
+        <@ ./objects/outfits/invisi_shield >
+
+        <@ ./objects/tech/micro_and_cam >
+    }
+
+    small_inventory:
+    {
+        <@ ./objects/tech/data_derivator >
+        
+        <@ ./objects/tech/proximity_scanner >
+
+        <@ ./objects/consummables/medikit
+            with <? ./utils/quality with q: 4 >
+        >
+
+        <@ ./objects/consummables/charge_medikit
+            with <? ./utils/quantity with q: 9 >
+        >
+
+        <@ ./objects/consummables/kit_de_reparation
+            with <? ./utils/quantity with q: 3 >
+        >
     }
 }

@@ -58,8 +58,19 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/objects/mods/canon_long");
     mock_file!("./filesys/objects/mods/disassembly_kit");
     mock_file!("./filesys/objects/mods/compartment");
+    mock_file!("./filesys/objects/mods/secret_pocket");
 
     mock_file!("./filesys/objects/outfits/sac");
+    mock_file!("./filesys/objects/outfits/street_outfit");
+    mock_file!("./filesys/objects/outfits/invisi_shield");
+
+    mock_file!("./filesys/objects/tech/micro_and_cam");
+    mock_file!("./filesys/objects/tech/data_derivator");
+    mock_file!("./filesys/objects/tech/proximity_scanner");
+
+    mock_file!("./filesys/objects/consummables/medikit");
+    mock_file!("./filesys/objects/consummables/charge_medikit");
+    mock_file!("./filesys/objects/consummables/kit_de_reparation");
 
     mock_file!("./filesys/objects/weapons/crockett");
     mock_file!("./filesys/objects/weapons/pulsar");
@@ -72,6 +83,7 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/utils/quantity_buy");
     mock_file!("./filesys/utils/quality_buy");
     mock_file!("./filesys/utils/quantity");
+    mock_file!("./filesys/utils/quality");
     mock_file!("./filesys/utils/transfer_all_nuyens");
 
     let shrimp_index = include_str!("./filesys/shrimp");
@@ -191,5 +203,5 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
     assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
     assert_resource_at!(resources : "nuyens" => Number 0.0);
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0 - 350.0 - 400.0 - 16000.0 - 350.0- 350.0 - 1000.0 - 725.0});
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0 - 350.0 - 400.0 - 16000.0 - 350.0 - 350.0 - 1000.0 - 725.0 - 150.0 - 200.0 - 200.0 - 5400.0 - 100.0 - 300.0 - 200.0 - 1000.0 - 180.0 - 1500.0});
 }

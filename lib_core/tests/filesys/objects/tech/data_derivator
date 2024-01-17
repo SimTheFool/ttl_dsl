@@ -1,0 +1,11 @@
+@NAME Dérivateur_de_données
+
+{
+    <? ./utils/quantity_buy with cost: 300>
+
+    name: Dérivateur de données
+    description: Copie les données transitant sur n'importe quel cable de données et de fournit une connexion sans fil à un système filaire.
+
+    status: free
+    concealment: 4
+}

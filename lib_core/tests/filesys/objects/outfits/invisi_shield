@@ -1,0 +1,12 @@
+@NAME Invisi_Shield
+
+{
+    <? ./utils/quantity_buy with cost: 5400>
+
+    name: Invisi Shield
+    manufacturer: Securetech
+    description: Revêtement protecteur camouflé. Si vous ne subissez qu'un __DOM__, vous n'en subissez pas.
+
+    status: free
+    concealment: 4
+}

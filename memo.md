@@ -1,1 +1,4 @@
-- passer en async avec un loader
+- finir filesystem
+- intégrer la données Shrimp et revoir l'interface
+- build et tester
+- faire github ci

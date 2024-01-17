@@ -1,0 +1,11 @@
+@NAME Charge_medikit
+
+{
+    <? ./utils/quantity_buy with cost: 20>
+
+    name: Charge medikit
+    description: ""
+
+    status: free
+    concealment: 5
+}

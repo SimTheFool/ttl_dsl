@@ -1,0 +1,19 @@
+@NAME Recharge_taser
+
+{
+    <? ./utils/buy with cost: 1>
+
+    name: Recharges taser
+
+    status: free
+    concealment: 0
+}
+
+
+@TRANSFORM MODS
+> $.concealment = if($.pack >=200, 0, $.concealment)
+> $.concealment = if($.pack <=200, 1, $.concealment)
+> $.concealment = if($.pack <=100, 2, $.concealment)
+> $.concealment = if($.pack <=50, 3, $.concealment)
+> $.concealment = if($.pack <=25, 4, $.concealment)
+> $.concealment = if($.pack <=10, 5, $.concealment)

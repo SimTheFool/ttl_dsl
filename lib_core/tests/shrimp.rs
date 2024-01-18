@@ -31,6 +31,7 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/traits/bricoleur_prevoyant");
     mock_file!("./filesys/traits/paralysie_du_combat");
     mock_file!("./filesys/traits/rhinite_chronique");
+    mock_file!("./filesys/traits/reseau_vivant");
 
     mock_file!("./filesys/skills/base");
     mock_file!("./filesys/skills/spec");
@@ -48,9 +49,11 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/objects/drones/crawler");
     mock_file!("./filesys/objects/drones/kanmushi");
     mock_file!("./filesys/objects/drones/packmule");
-    mock_file!("./filesys/objects/mods/monture");
+
+    mock_file!("./filesys/companions/sprite_machine");
 
     mock_file!("./filesys/objects/accessories/guncam");
+    mock_file!("./filesys/objects/mods/monture");
     mock_file!("./filesys/objects/mods/chasse_big");
     mock_file!("./filesys/objects/mods/chasse_medium");
     mock_file!("./filesys/objects/mods/chasse_light");
@@ -71,6 +74,10 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/objects/consummables/medikit");
     mock_file!("./filesys/objects/consummables/charge_medikit");
     mock_file!("./filesys/objects/consummables/kit_de_reparation");
+    mock_file!("./filesys/objects/consummables/patch_stim");
+    mock_file!("./filesys/objects/consummables/bullet_load");
+    mock_file!("./filesys/objects/consummables/taser_load");
+    mock_file!("./filesys/objects/consummables/rope_regular");
 
     mock_file!("./filesys/objects/weapons/crockett");
     mock_file!("./filesys/objects/weapons/pulsar");
@@ -84,6 +91,7 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/utils/buy");
     mock_file!("./filesys/utils/quantity");
     mock_file!("./filesys/utils/quality");
+    mock_file!("./filesys/utils/pack");
     mock_file!("./filesys/utils/transfer_all_nuyens");
 
     let shrimp_index = include_str!("./filesys/shrimp");
@@ -91,7 +99,7 @@ fn it_shoud_assemble_shrimp() {
     let resources = print_unwrap!(resources);
 
     /* Testing base stats */
-    assert_resource_at!(resources : "stats.con" => Number 1.0);
+    assert_resource_at!(resources : "stats.con" => Number 2.0);
     assert_resource_at!(resources : "stats.con_mod" => Number 0.0);
     assert_resource_at!(resources : "stats.agi" => Number 4.0);
     assert_resource_at!(resources : "stats.agi_mod" => Number 0.0);
@@ -109,7 +117,7 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "stats.cha_mod" => Number 0.0);
     assert_resource_at!(resources : "stats.ess" => Number 6.0);
     assert_resource_at!(resources : "stats.edge" => Number 4.0);
-    assert_resource_at!(resources : "stats.resist_phy" => Number 1.0);
+    assert_resource_at!(resources : "stats.resist_phy" => Number 2.0);
     assert_resource_at!(resources : "stats.resist_ment" => Number 4.0);
     assert_resource_at!(resources : "stats.def_phy" => Number 6.0);
     assert_resource_at!(resources : "stats.def_ment" => Number 8.0);
@@ -117,10 +125,10 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "stats.init_base" => Number 6.0);
     assert_resource_at!(resources : "stats.action_maj" => Number 1.0);
     assert_resource_at!(resources : "stats.action_min" => Number 2.0);
-    assert_resource_at!(resources : "stats.hit_phy" => Number 8.0);
+    assert_resource_at!(resources : "stats.hit_phy" => Number 9.0);
     assert_resource_at!(resources : "stats.hit_stun" => Number 10.0);
-    assert_resource_at!(resources : "stats.hit_over" => Number 1.0);
-    assert_resource_at!(resources : "stats.heal" => Number 5.0);
+    assert_resource_at!(resources : "stats.hit_over" => Number 2.0);
+    assert_resource_at!(resources : "stats.heal" => Number 6.0);
     assert_resource_at!(resources : "stats.res" => Number 7.0);
     assert_resource_at!(resources : "stats.submersion" => Number 1.0);
     assert_resource_at!(resources : "stats.resist_drain" => Number 3.0);
@@ -198,10 +206,12 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "inventory.Crockett.actions.guncam.major" => Number 0.0);
     assert_resource_at!(resources : "inventory.Crockett.actions.guncam.minor" => Number 1.0);
 
+    assert_resource_at!(resources : "inventory.Chargeur_crockett.concealment" => Number 1.0);
+
     /* Testing buy util */
     assert_resource_at!(resources : "inventory.Crockett.price" => Number 11350.0);
     assert_resource_at!(resources : "inventory.Crawler.price" => Number {9500.0 + 2500.0 + 2500.0});
     assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
     assert_resource_at!(resources : "nuyens" => Number 0.0);
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0 - 350.0 - 400.0 - 16000.0 - 350.0 - 350.0 - 1000.0 - 725.0 - 150.0 - 200.0 - 200.0 - 5400.0 - 100.0 - 300.0 - 200.0 - 1000.0 - 180.0 - 1500.0});
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0 - 350.0 - 400.0 - 16000.0 - 350.0 - 350.0 - 1000.0 - 725.0 - 150.0 - 200.0 - 200.0 - 5400.0 - 100.0 - 300.0 - 200.0 - 1000.0 - 180.0 - 1500.0 - 2400.0 - 500.0 - 60.0 - 25.0});
 }

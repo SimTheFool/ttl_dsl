@@ -1,4 +1,6 @@
-- finir filesystem
-- intégrer la données Shrimp et revoir l'interface
-- build et tester
+- s'occuper des compétences
+- faire les logs
+- parser la data
 - faire github ci
+
+- faire brigthorn

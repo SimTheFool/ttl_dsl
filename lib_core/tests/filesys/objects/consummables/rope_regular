@@ -1,0 +1,11 @@
+@NAME Corde_standard
+
+{
+    <? ./utils/buy with cost: 1>
+
+    name: Cordes standard
+    description: Corde de 60m qui peut soutenir 400 Kg.
+
+    status: free
+    concealment: 3
+}

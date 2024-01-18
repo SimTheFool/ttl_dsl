@@ -1,0 +1,19 @@
+@NAME Recharges_balles
+
+{
+    <? ./utils/buy with cost: 1>
+
+    name: Recharges balles
+
+    status: free
+    concealment: 0
+}
+
+
+@TRANSFORM MODS
+> $.concealment = if($.pack >=200, 1, $.concealment)
+> $.concealment = if($.pack <=200, 2, $.concealment)
+> $.concealment = if($.pack <=100, 3, $.concealment)
+> $.concealment = if($.pack <=50, 4, $.concealment)
+> $.concealment = if($.pack <=25, 5, $.concealment)
+> $.concealment = if($.pack <=10, 6, $.concealment)

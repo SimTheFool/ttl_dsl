@@ -1,0 +1,49 @@
+@NAME Sprite_machine
+
+{
+    name: Sprite machine
+    
+    stats_primary:
+    {
+      action_maj: 1
+      action_min: 4
+      hit: "8 + P / 2"
+    }
+
+    stats_secondary:
+    {
+      firewall: 0
+      corruption: 3
+      traitement: 2
+      attaque: 1
+    }
+
+    skills! Ingenierie
+    skills! Electronique
+    skills! Pilotage
+
+    actions:
+    {
+      investir_un_appareil:
+      {
+        major: 1
+        minor: 0
+        maintained: false
+        description: Le sprite occupe un appareil quelque soit le niveau d'accréditation.
+      }
+      diagnostique:
+      {
+        major: 1
+        minor: 0
+        maintained: true
+        description: Opère un monitoring de l'appareil investi. Vous avez __A1__ lorsque vous utilisez l'appareil.
+      }
+      stabilisation:
+      {
+        major: 1
+        minor: 0
+        maintained: true
+        description: Surveille les dysfonctionnments de l'appareil investi. Vous pouvez retirer jusqu'à Serv. echecs à vos tests avec cet appareil.
+      }
+    }
+}

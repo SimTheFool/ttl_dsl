@@ -1,10 +1,12 @@
 {
     price_unit: 0
     price: 0
+    pack: 1
     quantity: 1
     quality: 1
 }
+
 @TRANSFORM BUY_FINAL
-> $.price += $cost * $.quality * $.quantity
-> $.price_unit += $cost * $.quality
-> nuyens -= $cost * $.quality * $.quantity
+> $.price_unit += $cost * $.quality * $.pack
+> $.price += $cost * $.quality * $.quantity * $.pack
+> nuyens -= $cost * $.quality * $.quantity * $.pack

@@ -40,7 +40,7 @@
     stats:
     {
         <? ./stats/base
-            with con : 1
+            with con : 2
             with agi : 4
             with rea : 2
             with for : 1
@@ -82,6 +82,35 @@
         <@ ./traits/ami_des_sprites with type: "machine" >
         <@ ./traits/paralysie_du_combat>
         <@ ./traits/rhinite_chronique>
+        <@ ./traits/reseau_vivant>
+        Peur_du_pilotage_automatique:
+        {
+            description: __D3__ lorsque vous laissez vos machines en pilote automatique.
+        }
+    }
+
+    companions:
+    {
+        <@ ./companions/sprite_machine >
+    }
+
+    powers:
+    {
+        middleware:
+        {
+            major: 1
+            minor: 0
+            maintained: true
+            description: "Vous mobilisez un sprite pour créer un stream sensoriel interconnectant vos machines et appareils. Vous percevez alors votre environnement sous plusieurs perspectives et pilotez facilement plusieurs machines. Pour chaque Puiss. du sprite, rajoutez une 1h à l'effet ou +1 à vos tests de perception. A la fin de l'effet, le sprite est décompilé."
+        }
+        extraction_simsens:
+        {
+            description: "Vous décompilez votre sprite pour créer un fichier de données simsens. Pour chaque __SN__, ajoutez 1 à la qualité du fichier. Rajoutez __A1__ pour chaque ancienneté du sprite (3 jours / 10 jours / 20 jours)."
+        }
+        lecture_simsens:
+        {
+            description: "Vous pouvez lire un fichier de donnée simsens."
+        }
     }
 
     big_inventory:
@@ -211,6 +240,25 @@
 
         <@ ./objects/consummables/kit_de_reparation
             with <? ./utils/quantity with q: 3 >
+        >
+
+        <@ ./objects/consummables/patch_stim
+            with <? ./utils/quality with q: 4 >
+            with <? ./utils/quantity with q: 6 >
+        >
+
+        <Chargeur_crockett? ./objects/consummables/bullet_load
+            with <? ./utils/pack with q: 250 >
+            with <? ./utils/quantity with q: 2 >
+        >
+
+        <Chargeur_yamaha? ./objects/consummables/taser_load
+            with <? ./utils/pack with q: 30 >
+            with <? ./utils/quantity with q: 2 >
+        >
+
+        <@ ./objects/consummables/rope_regular
+            with <? ./utils/quantity with q: 25 >
         >
     }
 }

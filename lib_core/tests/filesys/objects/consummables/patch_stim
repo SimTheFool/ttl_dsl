@@ -1,0 +1,11 @@
+@NAME Patch_stim
+
+{
+    <? ./utils/buy with cost: 100>
+
+    name: Patch stim
+    description: Soigne X __DOM__ étourdissants, pendant X x 10min. La cible subit X + 1 __DOM__ étourdissants.
+
+    status: free
+    concealment: 6
+}

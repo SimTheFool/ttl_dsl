@@ -2,27 +2,15 @@
 
 import { useRenderingContext } from "@/components/controls/RenderingContext";
 import { characters } from "@/mock/characters";
-import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
+import { getData } from "@/utils/tauriAPI";
 import { useAsync } from "react-use";
 import Inventory from "./Inventory";
 import Last from "./Last";
 import Powers from "./Powers";
 import Summary from "./Summary";
+import { SRCharacter, parseCharacter } from "./character";
 
 const char = characters.shrimp;
-
-const getData = async (dataFile: string, resolutionDir: string) => {
-  const [json, images] = (await invoke("get_template_data", {
-    dataFile: dataFile,
-    resolutionDir: resolutionDir,
-  })) as [json: unknown, images: Record<string, string>];
-
-  const imagesWithAssetLinks = Object.fromEntries(
-    Object.entries(images).map(([key, value]) => [key, convertFileSrc(value)])
-  );
-
-  return [json, imagesWithAssetLinks] as const;
-};
 
 export default function Home() {
   const { dataFile, resolutionDir } = useRenderingContext();
@@ -31,11 +19,13 @@ export default function Home() {
     if (!dataFile || !resolutionDir) {
       return;
     }
-    return await getData(dataFile, resolutionDir);
+    return await getData<SRCharacter>(dataFile, resolutionDir, parseCharacter);
   }, [dataFile, resolutionDir]);
 
   const images = value?.[1];
   const json = value?.[0];
+
+  console.log("!!!!!!!!!!!", json);
 
   return (
     <>

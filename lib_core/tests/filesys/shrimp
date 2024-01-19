@@ -101,7 +101,7 @@
             major: 1
             minor: 0
             maintained: true
-            description: "Vous mobilisez un sprite pour créer un stream sensoriel interconnectant vos machines et appareils. Vous percevez alors votre environnement sous plusieurs perspectives et pilotez facilement plusieurs machines. Pour chaque Puiss. du sprite, rajoutez une 1h à l'effet ou +1 à vos tests de perception. A la fin de l'effet, le sprite est décompilé."
+            description: "Vous mobilisez un sprite pour créer un stream sensoriel interconnectant vos machines et appareils. Vous percevez alors votre environnement sous plusieurs perspectives et pilotez facilement plusieurs machines. Pour chaque Puiss. du sprite, rajoutez une 1h à l'effet ou +1d6 à vos tests de perception. A la fin de l'effet, le sprite est décompilé."
         }
         extraction_simsens:
         {
@@ -112,6 +112,9 @@
             description: "Vous pouvez lire un fichier de donnée simsens."
         }
     }
+
+    <actions_common? ./actions/actions_common >
+    
 
     big_inventory:
     {
@@ -207,7 +210,7 @@
                     major: 0
                     minor: 1
                     gauge: 4
-                    description: "+1 charges toutes les 15min. 1 __DOM__ irréductible et le statut électrifié, même si vous ratez."
+                    description: "+1 charges toutes les 15min. 1 __DOM__ irréductible et le statut Electrocuté, même si vous ratez."
                 }
             }
         }

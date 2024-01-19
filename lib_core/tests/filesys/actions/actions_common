@@ -1,0 +1,204 @@
+{
+    attaque_handicapante:
+    {
+        major: 1
+        minor: 0
+        description: "Vous attaquez mais n'infligez que les dégats de base de l'arme. Vos __SN__ permettent d'infliger un effet de statut déterminé avec le MJ."
+    }
+
+    attaque_cruelle:
+    {
+        major: 1
+        minor: 0
+        description: "Vos __SN__ permettent d'infliger un effet de statut déterminé avec le MJ. Vous subissez __D1__ sur votre attaque."
+    }
+
+    attaque_multiple:
+    {
+        major: 1
+        minor: 0
+        description: "Faites plusieurs attaques sur une ou plusieurs cibles, en répartissant votre test équitablement entre toutes. Vous pouvez subir __D3__ pour utilisez votre réserve entière sur chaque cible."
+    }
+
+    ajuster:
+    {
+        major: 0
+        minor: 1
+        description: "Gagner 1d6 pour votre attaque suivante"
+    }
+
+    lutter:
+    {
+        major: 1
+        minor: 0
+        description: "Faites un test d'Athlétisme pour maitriser un adversaire. En lutte, le défenseur se défend avec CON + FOR, et l'attaquant attaque avec Combat rapproché."
+    }
+
+    défense_totale:
+    {
+        major: 1
+        minor: 0
+        description: "Ajouter votre VOL à tous vos tests de défense jusqu'à votre prochain tour."
+    }
+
+    esquiver:
+    {
+        major: 0
+        minor: 1
+        description: "Ajouter votre Athlétisme à votre test de défense."
+    }
+
+    se_jeter_à_terre:
+    {
+        major: 0
+        minor: 1
+        description: "Vous obtenez 4d6 à votre test de défense, mais vous tombez à terre."
+    }
+
+    évitez_un_explosif:
+    {
+        major: 0
+        minor: 1
+        description: "Faites un test d'Athlétisme + REA. Vous vous déplacez d'1m par __SN__. Au delà de 2m, vous tombez à terre."
+    }
+
+    bloquer:
+    {
+        major: 0
+        minor: 1
+        description: "Ajoutez Combat rapproché à votre test de défense pour bloquer un coup."
+    }
+
+    risposter:
+    {
+        major: 0
+        minor: 1
+        description: "Subissez __D1__ sur votre test de défense. Si vous réussissez le test, vous rispostez et infligez __SN__ __DOM__ à votre attaquant."
+    }
+
+    protéger:
+    {
+        major: 0
+        minor: 1
+        description: "Vous pouvez vous déplacer de REA mètres pour prendre le coup à la place d'une cible."
+    }
+
+    intercepter:
+    {
+        major: 1
+        minor: 1
+        description: "Vous pouvez vous déplacer de REA mètres pour attaquer une cible à portée. Si vos __SN__ sont supérieurs à sa CON, elle est interrompue."
+    }
+
+    se_déplacer:
+    {
+        major: 0
+        minor: 1
+        description: "Vous vous déplacez de 10m, une fois par tour."
+    }
+
+    sprinter:
+    {
+        major: 1
+        minor: 0
+        description: "Faites un test d'Athlétisme. Vous pouvez vous déplacer de 15m + __SN__ et sauter les petits obstacles (<1m)."
+    }
+
+    escalader:
+    {
+        major: 1
+        minor: 0
+        description: "Faites un test d'Athlétisme. Vous pouvez grimper 1m par __SN__."
+    }
+
+    parcourir:
+    {
+        major: 2
+        minor: 0
+        description: "Vous pouvez vous déplacer et escalader de 15m + 2 x __SN__. Les obstacles (<1,5m) et les sauts (<2m) ne comptent pas."
+    }
+
+    charger_attaquer:
+    {
+        major: 1
+        minor: 1
+        description: "Faites votre déplacement (au moins 5 mètres) ainsi qu'un test d'attaque. Ajoutez le déplacement restant à vos __SN__, ou retirez une partie de vos __SN__ pour vous déplacer plus loin, puis attaquez."
+    }
+
+    charger_repousser:
+    {
+        major: 1
+        minor: 1
+        description: "Faites votre déplacement (au moins 5 mètres) ainsi qu'un test d'attaque. Ajoutez le déplacement restant à vos __SN__, ou retirez une partie de vos __SN__ pour vous déplacer plus loin, puis repoussez la cible de __SN__ (max FOR)."
+    }
+
+    se_coucher:
+    {
+        major: 0
+        minor: 1
+        description: null
+    }
+
+    se_relever:
+    {
+        major: 0
+        minor: 1
+        description: null
+    }
+
+    se_mettre_à_couvert:
+    {
+        major: 0
+        minor: 1
+        description: null
+    }
+
+    changer_de_mode:
+    {
+        major: 0
+        minor: 1
+        description: null
+    }
+
+    commander:
+    {
+        major: 0
+        minor: 1
+        description: "Envoyer un message ou un ordre à une machine, à un drônen ou à un sprite."
+    }
+
+    commander:
+    {
+        major: 1
+        minor: 0
+        description: "Manoeuvrez un véhicule ou un drône."
+    }
+
+    accélérer:
+    {
+        major: 0
+        minor: 1
+        description: "Accélérez un véhicule ou un drône. (une fois par tour)"
+    }
+
+    mettre_la_gomme:
+    {
+        major: 1
+        minor: 0
+        description: "Doublez l'accélération d'un véhicule ou d'un drône. (une fois par tour)"
+    }
+
+    feinte:
+    {
+        major: 0
+        minor: 1
+        description: "Faites un test d'Escroquerie pour distraire la cible. Tout le monde gagne __A1__ à ses action contre elle."
+    }
+
+    intimider:
+    {
+        major: 1
+        minor: 0
+        description: "Faites un test d'Influence. Vous infligez Effrayé à la cible."
+    }        
+}

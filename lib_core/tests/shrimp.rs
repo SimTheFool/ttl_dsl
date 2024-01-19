@@ -44,6 +44,7 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/identity/licence");
 
     mock_file!("./filesys/actions/recharger");
+    mock_file!("./filesys/actions/actions_common");
 
     mock_file!("./filesys/objects/drones/base");
     mock_file!("./filesys/objects/drones/crawler");

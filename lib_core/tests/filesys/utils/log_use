@@ -1,0 +1,3 @@
+@TRANSFORM LOGS
+> $ref.quantity -= 3
+> $ref.price -= $ref.price_unit * 3

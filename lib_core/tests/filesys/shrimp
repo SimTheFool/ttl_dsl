@@ -264,4 +264,7 @@
             with <? ./utils/quantity with q: 25 >
         >
     }
+
+
+    <? ./utils/log_use with ref: "small_inventory.Corde_standard" >
 }

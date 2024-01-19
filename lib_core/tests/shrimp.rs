@@ -22,6 +22,7 @@ fn it_shoud_assemble_shrimp() {
     config.borrow_mut().add_layer("FINAL_STATS_END");
     config.borrow_mut().add_layer("BUY_FINAL");
     config.borrow_mut().add_layer("BANK");
+    config.borrow_mut().add_layer("LOGS");
 
     mock_file!("./filesys/stats/base");
     mock_file!("./filesys/stats/techno");
@@ -88,7 +89,7 @@ fn it_shoud_assemble_shrimp() {
     mock_file!("./filesys/objects/weapons/actions/shot_semi");
     mock_file!("./filesys/objects/weapons/actions/shot_rafale");
 
-    mock_file!("./filesys/utils/buy");
+    mock_file!("./filesys/utils/log_use");
     mock_file!("./filesys/utils/buy");
     mock_file!("./filesys/utils/quantity");
     mock_file!("./filesys/utils/quality");
@@ -215,4 +216,8 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "inventory.Kanmushi.price" => Number {450.0 * 2.0});
     assert_resource_at!(resources : "nuyens" => Number 0.0);
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.nuyens" => Number {70000.0 - 9500.0 - 2500.0 - 2500.0 - 450.0 * 2.0 - 2500.0 * 4.0 - 100.0 - 4.0 * 200.0 - 10250.0 - 350.0 - 350.0 - 400.0 - 16000.0 - 350.0 - 350.0 - 1000.0 - 725.0 - 150.0 - 200.0 - 200.0 - 5400.0 - 100.0 - 300.0 - 200.0 - 1000.0 - 180.0 - 1500.0 - 2400.0 - 500.0 - 60.0 - 25.0});
+
+    /* Testing logs */
+    assert_resource_at!(resources : "small_inventory.Corde_standard.quantity" => Number 22.0);
+    assert_resource_at!(resources : "small_inventory.Corde_standard.price" => Number 22.0);
 }

@@ -38,6 +38,7 @@
     {
         major: 1
         minor: 0
+        reaction: true
         description: "Ajouter votre VOL à tous vos tests de défense jusqu'à votre prochain tour."
     }
 
@@ -45,6 +46,7 @@
     {
         major: 0
         minor: 1
+        reaction: true
         description: "Ajouter votre Athlétisme à votre test de défense."
     }
 
@@ -52,6 +54,7 @@
     {
         major: 0
         minor: 1
+        reaction: true
         description: "Vous obtenez 4d6 à votre test de défense, mais vous tombez à terre."
     }
 
@@ -59,6 +62,7 @@
     {
         major: 0
         minor: 1
+        reaction: true
         description: "Faites un test d'Athlétisme + REA. Vous vous déplacez d'1m par __SN__. Au delà de 2m, vous tombez à terre."
     }
 
@@ -66,6 +70,7 @@
     {
         major: 0
         minor: 1
+        reaction: true
         description: "Ajoutez Combat rapproché à votre test de défense pour bloquer un coup."
     }
 
@@ -73,6 +78,7 @@
     {
         major: 0
         minor: 1
+        reaction: true
         description: "Subissez __D1__ sur votre test de défense. Si vous réussissez le test, vous rispostez et infligez __SN__ __DOM__ à votre attaquant."
     }
 
@@ -80,6 +86,7 @@
     {
         major: 0
         minor: 1
+        reaction: true
         description: "Vous pouvez vous déplacer de REA mètres pour prendre le coup à la place d'une cible."
     }
 
@@ -87,6 +94,7 @@
     {
         major: 1
         minor: 1
+        reaction: true
         description: "Vous pouvez vous déplacer de REA mètres pour attaquer une cible à portée. Si vos __SN__ sont supérieurs à sa CON, elle est interrompue."
     }
 

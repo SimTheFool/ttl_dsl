@@ -5,8 +5,8 @@
     
     stats_primary:
     {
-      action_maj: 1
-      action_min: 4
+      major: 1
+      minor: 4
       hit: "8 + P / 2"
     }
 

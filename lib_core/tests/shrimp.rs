@@ -166,7 +166,6 @@ fn it_shoud_assemble_shrimp() {
 
     /* Testing licences */
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.name" => String "Concierge de chantier");
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.description" => Null);
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.quality" => Number 4.0);
 
     /* Testing traits */

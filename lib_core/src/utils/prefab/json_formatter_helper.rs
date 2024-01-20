@@ -70,16 +70,22 @@ pub fn get_json_value(resource: ResolvedResource) -> AppResult<JSONValue> {
                 .ok_or_else(|| AppError::Str("Failed to convert number to JSON number"))?,
         ),
     };
-    let metas: Vec<JSONValue> = metas
-        .into_iter()
-        .map(|ResolvedResource { value, .. }| JSONValue::String(value.to_string()))
-        .collect();
-    let json_resource = serde_json::json!({
-        "value": value,
-        "metas": metas
-    });
 
-    AppResult::Ok(json_resource)
+    match &metas.len() {
+        0 => AppResult::Ok(value),
+        _ => {
+            let metas: Vec<JSONValue> = metas
+                .into_iter()
+                .map(|ResolvedResource { value, .. }| JSONValue::String(value.to_string()))
+                .collect();
+            let json_resource = serde_json::json!({
+                "value": value,
+                "metas": metas
+            });
+
+            AppResult::Ok(json_resource)
+        }
+    }
 }
 
 #[cfg(test)]

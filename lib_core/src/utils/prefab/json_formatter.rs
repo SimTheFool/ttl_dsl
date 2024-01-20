@@ -41,6 +41,9 @@ mod test {
         let resources = vec![
             ResolvedResourceBuilder::default()
                 .identifier(Some("a.b".to_string()))
+                .metas(vec![ResolvedResourceBuilder::default()
+                    .build_as_number(1.0)
+                    .unwrap()])
                 .build_as_string("abc")
                 .unwrap(),
             ResolvedResourceBuilder::default()
@@ -58,12 +61,9 @@ mod test {
                     "a": {
                         "b": {
                             "value": "abc",
-                            "metas": []
+                            "metas": ["1"]
                         },
-                        "c": {
-                            "value": 22.0,
-                            "metas": []
-                        }
+                        "c": 22.0
                     }
                 }
             )

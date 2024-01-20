@@ -30,6 +30,12 @@ pub struct Number(
     #[pest_ast(outer(with(span_into_str), with(str::parse::<f64>), with(Result::unwrap)))] pub f64,
 );
 
+#[derive(Debug, PartialEq, FromPest)]
+#[pest_ast(rule(Rule::boolean))]
+pub struct Boolean(
+    #[pest_ast(outer(with(span_into_str), with(str::parse::<bool>), with(Result::unwrap)))] pub bool,
+);
+
 #[cfg(test)]
 mod tests {
     use crate::{domain::ast::parser::TTLParser, print_unwrap};

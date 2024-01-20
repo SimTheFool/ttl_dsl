@@ -162,7 +162,7 @@ fn it_shoud_assemble_shrimp() {
 
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.name" => String "Laurence Guinvite");
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.quality" => Number 4.0);
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.lifestyles.[a-zA-Z0-9]+.name" => String "squatteur");
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.lifestyle.name" => String "squatteur");
 
     /* Testing licences */
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.licences.[a-zA-Z0-9]+.name" => String "Concierge de chantier");

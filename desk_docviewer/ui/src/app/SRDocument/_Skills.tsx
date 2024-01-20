@@ -4,20 +4,18 @@ import { Section } from "@/components/Section";
 import { Space } from "@/components/Space";
 import { TextReplaced } from "@/components/Text";
 import { TitleSection } from "@/components/TitleSection";
-import { Character } from "@/mock/type";
 import { capitalize } from "@/utils/capitalize";
 import { uncapitalize } from "@/utils/uncapitalize";
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { ReactNode } from "react";
-
-type Skill = Character["skills"][keyof Character["skills"]];
+import { SRCharacter } from "./character";
 
 type SkillsProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export const Skills = ({ char }: SkillsProps) => {
-  let skills: [string, Skill][] = Object.entries(char.skills) as any;
+  let skills = Object.entries(char.skills);
   return (
     <Section>
       <MasonryGridNoSSR compact columns={2}>
@@ -28,12 +26,12 @@ export const Skills = ({ char }: SkillsProps) => {
               <Card>
                 <SkillText
                   name={<TextReplaced>{capitalize(name)}</TextReplaced>}
-                  score={value.base}
+                  score={value.score}
                 />
-                {value.specialisations?.map((name) => (
+                {Object.values(value.specializations || {}).map((name) => (
                   <MasterText score={2} label={name} key={name} />
                 ))}
-                {value.expertises?.map((name) => (
+                {Object.values(value.masterizations || {}).map((name) => (
                   <MasterText score={3} label={name} key={name} />
                 ))}
               </Card>
@@ -43,7 +41,7 @@ export const Skills = ({ char }: SkillsProps) => {
         <Container>
           <Card>
             <SkillText name={capitalize("connaissances")} />
-            {char.knowledges?.map((name) => (
+            {Object.values(char.knowledges || {}).map((name) => (
               <MasterText label={name} key={name} />
             ))}
           </Card>
@@ -110,7 +108,7 @@ const MasterText = ({ label, score }: { label: string; score?: number }) => {
           lineHeight: 1,
         }}
       >
-        - <Space inline />
+        <Space inline />
       </Text>
       {score && (
         <Box pr={"1"} asChild>

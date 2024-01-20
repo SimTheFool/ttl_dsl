@@ -10,7 +10,7 @@ import { TitleMin } from "../TitleMin";
 import { SimpleAction } from "../actions/SimpleAction";
 import styles from "./ItemCard.module.css";
 import { Slot } from "./Slot";
-import { Effect } from "../actions/Effect";
+import { Trait } from "../actions/Trait";
 import { MasonryGridNoSSR } from "../MasonryGridNoSSR";
 
 type CompanionBoxProps = {
@@ -35,7 +35,7 @@ export const CompanionBox = ({
   );
 
   const effects = Object.entries(companion.effects || {}).map(
-    ([name, effect]) => <Effect effect={effect} key={name} simple />
+    ([name, effect]) => <Trait trait={effect} key={name} simple />
   );
 
   const skills = companion.skills && (
@@ -93,7 +93,7 @@ export const ErgoCompanionBox = ({
   );
 
   const effects = Object.entries(companion.effects || {}).map(
-    ([name, effect]) => <Effect effect={effect} key={name} simple />
+    ([name, effect]) => <Trait trait={effect} key={name} simple />
   );
 
   const skills = companion.skills && (

@@ -1,6 +1,8 @@
 import { ZodType, z } from "zod";
 
 export type SRCharacter = z.infer<typeof characterParser>;
+export type SRIdnetity = z.infer<typeof identityParser>;
+export type SRTrait = z.infer<typeof traitParser>;
 
 const asLeaf = <T extends ZodType<any, any, any>>(v: T) =>
   z.object({
@@ -14,6 +16,7 @@ const asPseudoArray = <T extends ZodType<any, any, any>>(v: T) =>
 const identityParser = z.object({
   name: z.string().optional(),
   price: z.number().optional(),
+  nuyens: z.number().optional(),
   quality: z.number().optional(),
   contacts: asPseudoArray(
     z.object({
@@ -23,12 +26,13 @@ const identityParser = z.object({
       description: z.string(),
     })
   ).optional(),
-  lifestyles: asPseudoArray(
-    z.object({
+  lifestyle: z
+    .object({
       name: z.string(),
       description: z.string().optional(),
+      price: z.number(),
     })
-  ).optional(),
+    .optional(),
   licences: asPseudoArray(
     z.object({
       name: z.string(),
@@ -50,8 +54,8 @@ const traitParser = z.object({
 });
 
 const actionParser = z.object({
-  major: z.number(),
-  minor: z.number(),
+  major: z.number().optional(),
+  minor: z.number().optional(),
   maintained: z.boolean().optional(),
   reaction: z.boolean().optional(),
   description: z.string().optional(),
@@ -164,13 +168,17 @@ const statsParser = z.object({
   hit_over: z.number(),
   heal: asLeaf(z.number()),
 
-  res: z.number(),
-  submersion: z.number(),
   resist_drain: asLeaf(z.number()),
-  firewall: z.number(),
-  traitement: z.number(),
-  corruption: z.number(),
-  attaque: z.number(),
+
+  mag: z.number().optional(),
+  initiation: z.number().optional(),
+
+  res: z.number().optional(),
+  submersion: z.number().optional(),
+  firewall: z.number().optional(),
+  traitement: z.number().optional(),
+  corruption: z.number().optional(),
+  attaque: z.number().optional(),
 });
 
 const characterParser = z.object({

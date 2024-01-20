@@ -1,20 +1,19 @@
 import { Header } from "@/components/Header";
+import { ImageWithPlaceholder } from "@/components/ImageWithPlaceholder";
 import { PdfContainer } from "@/components/PdfContainer";
 import { Section } from "@/components/Section";
 import { TitleSection } from "@/components/TitleSection";
-import { Character } from "@/mock/type";
 import { Box, Grid } from "@radix-ui/themes";
-import Image from "next/image";
-import { Effects } from "./_Effects";
 import { Identities } from "./_Indentities";
 import { Monitors } from "./_Monitors";
 import { Resources } from "./_Resources";
 import { Skills } from "./_Skills";
 import { Stats } from "./_Stats";
-import { ImageWithPlaceholder } from "@/components/ImageWithPlaceholder";
+import { Traits } from "./_Traits";
+import { SRCharacter } from "./character";
 
 type Props = {
-  char: Character;
+  char: SRCharacter;
   images?: Record<string, string>;
 };
 
@@ -71,7 +70,7 @@ export default function Summary({ char, images }: Props) {
             borderTop: "2px solid var(--gray-10)",
           }}
         >
-          <Effects char={char} />
+          <Traits char={char} />
         </Box>
 
         <Box

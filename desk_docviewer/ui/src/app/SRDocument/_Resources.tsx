@@ -3,18 +3,17 @@ import {
   MinorAction,
   MinorActionLight,
 } from "@/components/Icons/Actions";
-import { Edge, EdgeLight } from "@/components/Icons/Edge";
+import { Edge } from "@/components/Icons/Edge";
 import { TitleMin } from "@/components/TitleMin";
-import { Character } from "@/mock/type";
-import { Flex, Box } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
+import { SRCharacter } from "./character";
 
 type ResourcesProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export const Resources = ({ char }: ResourcesProps) => {
   const minActionNb = Math.max(char.stats.action_min, 5);
-  const edgeNb = Math.max(char.stats.edge, char.stats.max_edge);
 
   return (
     <Flex>
@@ -38,9 +37,9 @@ export const Resources = ({ char }: ResourcesProps) => {
       </Box>
       <Box>
         <TitleMin title={"Atouts"} />
-        {Array.from({ length: edgeNb }).map((_, i) => (
+        {Array.from({ length: char.stats.edge }).map((_, i) => (
           <Box pr={"2"} display={"inline-block"} key={i}>
-            {i < char.stats.edge ? <Edge /> : <EdgeLight />}
+            <Edge />
           </Box>
         ))}
       </Box>

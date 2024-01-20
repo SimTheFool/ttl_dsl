@@ -18,6 +18,7 @@ impl TransformableList {
         let new_resource = match (old_resource, &value) {
             (None, Value::String(s)) => ResolvedResourceBuilder::default().build_as_string(s)?,
             (None, Value::Float(l)) => ResolvedResourceBuilder::default().build_as_number(*l)?,
+            (None, Value::Boolean(l)) => ResolvedResourceBuilder::default().build_as_bool(*l)?,
             (Some(rs), Value::String(s)) => ResolvedResource {
                 value: ResolvedResourceValue::String(s.clone()),
                 ..rs.clone()
@@ -28,6 +29,10 @@ impl TransformableList {
             },
             (Some(rs), Value::Int(n)) => ResolvedResource {
                 value: ResolvedResourceValue::Number(*n as f64),
+                ..rs.clone()
+            },
+            (Some(rs), Value::Boolean(b)) => ResolvedResource {
+                value: ResolvedResourceValue::Boolean(*b),
                 ..rs.clone()
             },
             (_, x) => panic!("Unhandled evaluated type {:#?}", x),
@@ -50,6 +55,9 @@ impl From<IndexMap<String, ResolvedResource>> for TransformableList {
                 }
                 ResolvedResourceValue::Number(l) => {
                     index_map.insert(key.to_string(), Value::Float(*l));
+                }
+                ResolvedResourceValue::Boolean(b) => {
+                    index_map.insert(key.to_string(), Value::Boolean(*b));
                 }
                 ResolvedResourceValue::Null => {
                     index_map.insert(key.to_string(), Value::Empty);

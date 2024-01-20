@@ -71,6 +71,7 @@ impl Resolvable for RawResource {
                 resolved_build.build_as_string(&resolved_string)?
             }
             RawResourceValue::Number(n) => resolved_build.build_as_number(n)?,
+            RawResourceValue::Boolean(b) => resolved_build.build_as_bool(b)?,
             RawResourceValue::Reference(var_name) => {
                 let var_value = variables.get(&var_name).map(|r| r.value.clone());
                 match var_value {

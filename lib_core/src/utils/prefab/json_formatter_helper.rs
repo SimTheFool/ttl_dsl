@@ -65,6 +65,7 @@ pub fn get_json_value(resource: ResolvedResource) -> AppResult<JSONValue> {
     let value = match value {
         ResolvedResourceValue::Null => JSONValue::Null,
         ResolvedResourceValue::String(value) => JSONValue::String(value),
+        ResolvedResourceValue::Boolean(value) => JSONValue::Bool(value),
         ResolvedResourceValue::Number(value) => JSONValue::Number(
             serde_json::Number::from_f64(value)
                 .ok_or_else(|| AppError::Str("Failed to convert number to JSON number"))?,

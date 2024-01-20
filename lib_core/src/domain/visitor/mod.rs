@@ -39,6 +39,7 @@ impl AstVisitor<'_> {
             ast::Value::Number(nb) => self.visit_number(nb, build)?,
             ast::Value::Reference(reference) => self.visit_reference(reference, build)?,
             ast::Value::Text(text) => self.visit_text(text, build)?,
+            ast::Value::Bool(boolean) => self.visit_bool(boolean, build)?,
             ast::Value::Object(ast::Object(elems)) => {
                 let result = elems
                     .into_par_iter()
@@ -249,5 +250,13 @@ impl AstVisitor<'_> {
         build: ResourceContextBuilder,
     ) -> AppResult<(ResourceList, TransformList)> {
         Ok((vec![build.build_as_reference(val.get_var_name())?], vec![]))
+    }
+
+    fn visit_bool(
+        &self,
+        val: ast::Boolean,
+        build: ResourceContextBuilder,
+    ) -> AppResult<(ResourceList, TransformList)> {
+        Ok((vec![build.build_as_bool(val.0)?], vec![]))
     }
 }

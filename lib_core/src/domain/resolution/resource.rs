@@ -8,6 +8,7 @@ pub enum RawResourceValue {
     String(String),
     Number(f64),
     Reference(String),
+    Boolean(bool),
 }
 
 #[derive(PartialEq, Debug, Clone, Builder)]
@@ -69,6 +70,11 @@ impl ResourceContextBuilder {
         self.build()
     }
 
+    pub fn build_as_bool(mut self, value: bool) -> AppResult<RawResource> {
+        self.value = Some(RawResourceValue::Boolean(value));
+        self.build()
+    }
+
     pub fn build_as_reference(mut self, value: &str) -> AppResult<RawResource> {
         self.value = Some(RawResourceValue::Reference(value.to_string()));
         self.build()
@@ -79,6 +85,7 @@ impl ResourceContextBuilder {
 pub enum ResolvedResourceValue {
     String(String),
     Number(f64),
+    Boolean(bool),
     Null,
 }
 impl ToString for ResolvedResourceValue {
@@ -86,6 +93,7 @@ impl ToString for ResolvedResourceValue {
         match self {
             ResolvedResourceValue::String(s) => s.clone(),
             ResolvedResourceValue::Number(n) => n.to_string(),
+            ResolvedResourceValue::Boolean(b) => b.to_string(),
             ResolvedResourceValue::Null => "".to_string(),
         }
     }
@@ -117,6 +125,11 @@ impl ResolvedResourceBuilder {
 
     pub fn build_as_null(mut self) -> AppResult<ResolvedResource> {
         self.value = Some(ResolvedResourceValue::Null);
+        self.build()
+    }
+
+    pub fn build_as_bool(mut self, value: bool) -> AppResult<ResolvedResource> {
+        self.value = Some(ResolvedResourceValue::Boolean(value));
         self.build()
     }
 }

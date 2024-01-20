@@ -9,6 +9,7 @@ TEXTCONTENT = @{!(NEWLINE | "$" | "@") ~ (!NEWLINE ~ ANY)+ }
 text = { TEXTCONTENT }
 STRINGCONTENT = @{ (!"\"" ~ ANY)* }
 string = { "\"" ~ STRINGCONTENT ~ "\"" }
+boolean = { "true" | "false" }
 
 object_element = { import | declaration }
 object = { "{" ~ object_element* ~ "}" }
@@ -21,7 +22,7 @@ declare_uniq_mark = @{"!"}
 declare_mark = { (declare_direct_mark | declare_uniq_mark) }
 declaration = {metas? ~ identifier ~ declare_mark ~ value}
 
-value = { number | object | reference | string | text }
+value = { boolean | number | object | reference | string | text }
 
 import_id = @{ ("." | "/" | ALPHAEXTENDED)+ }
 import_variable = {identifier ~ ":" ~ value }

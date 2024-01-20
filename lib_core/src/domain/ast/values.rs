@@ -2,6 +2,7 @@ use super::{
     objects::Object,
     parser::Rule,
     primitives::{Number, Ref, String, Text, Variable},
+    Boolean,
 };
 use pest_ast::FromPest;
 
@@ -13,6 +14,7 @@ pub enum Value {
     Number(Number),
     Object(Object),
     Reference(Ref),
+    Bool(Boolean),
 }
 
 #[derive(Debug, PartialEq, FromPest)]
@@ -68,7 +70,6 @@ mod tests {
     fn it_should_parse_declaration() {
         let str = r#"["meta1" 15] var01! 745"#;
         let mut pairs = TTLParser::parse(super::Rule::declaration, str).unwrap();
-        println!("{:#?}", pairs);
         let Declaration {
             metas,
             identifier,
@@ -132,5 +133,16 @@ mod tests {
         let Declaration { value, .. } = print_unwrap!(super::Declaration::from_pest(&mut pairs));
 
         as_variant!(value, Value::String);
+    }
+
+    #[test]
+    fn it_should_parse_boolean_declaration() {
+        let str = r#"somevar: false"#;
+
+        let mut pairs = print_unwrap!(TTLParser::parse(super::Rule::declaration, str));
+        let Declaration { value, .. } = print_unwrap!(super::Declaration::from_pest(&mut pairs));
+
+        let value = as_variant!(value, Value::Bool);
+        assert!(!value.0);
     }
 }

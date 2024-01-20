@@ -1,9 +1,9 @@
+import { SRCharacter } from "@/app/SRDocument/character";
 import { Box, Flex, Heading, Text } from "@radix-ui/themes";
 import { ReactNode } from "react";
-import { Character } from "@/mock/type";
 
 type HeaderProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export const Header = ({ char }: HeaderProps) => {
@@ -30,7 +30,7 @@ export const Header = ({ char }: HeaderProps) => {
               lineHeight: "1.65",
             }}
           >
-            {char.tags?.join(" - ")}
+            {Object.values(char.tags).join(" - ")}
           </Text>
         </HeadingBlock>
       </Heading>

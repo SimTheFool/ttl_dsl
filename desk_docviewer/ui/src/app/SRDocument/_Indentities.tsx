@@ -1,24 +1,34 @@
 import { Card } from "@/components/Card";
-import { Section } from "@/components/Section";
-import { ParagraphStandard } from "@/components/ParagraphStandard";
-import { TitleMin } from "@/components/TitleMin";
-import { Box, Flex } from "@radix-ui/themes";
-import { Character, Identity as CharIdentity } from "@/mock/type";
-import { capitalize } from "@/utils/capitalize";
-import { TitleSection } from "@/components/TitleSection";
-import { Space } from "@/components/Space";
 import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
+import { ParagraphStandard } from "@/components/ParagraphStandard";
+import { Section } from "@/components/Section";
+import { Space } from "@/components/Space";
+import { TitleMin } from "@/components/TitleMin";
+import { TitleSection } from "@/components/TitleSection";
+import { capitalize } from "@/utils/capitalize";
+import { Box, Flex } from "@radix-ui/themes";
 import { Fragment } from "react";
+import { SRCharacter, SRIdnetity as SRIdentity } from "./character";
 
 type IdentitiesProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export const Identities = ({ char }: IdentitiesProps) => {
+  let identities = Object.values(char.identities || {}).sort((a, b) => {
+    if (a.name && !b.name) {
+      return 1;
+    }
+    if (!a.name && b.name) {
+      return -1;
+    }
+    return 0;
+  });
   return (
     <Section title={<TitleSection>Identités</TitleSection>}>
-      {char.identities?.map((i) => (
-        <Fragment key={i.name}>
+      {identities.map((i, index) => (
+        <Fragment key={index}>
+          {i.name}
           <Identity identity={i} />
         </Fragment>
       ))}
@@ -27,42 +37,33 @@ export const Identities = ({ char }: IdentitiesProps) => {
 };
 
 const Identity = ({
-  identity: {
-    contacts,
-    description,
-    licences,
-    lifestyle,
-    name,
-    nuyens,
-    price,
-    quality,
-  },
+  identity: { contacts, licences, lifestyle, name, price, nuyens, quality },
 }: {
-  identity: CharIdentity;
+  identity: SRIdentity;
 }) => {
-  const qualityStr = quality ? `${quality} - ${price}¥` : null;
-  const lifestyleStr = lifestyle
-    ? `${lifestyle?.name} - ${lifestyle?.price}¥`
-    : null;
+  const qualityStr = quality ? `i${quality}` : null;
+  const lifestyleStr = lifestyle?.name || null;
+
+  console.log("life", lifestyle);
 
   return (
     <>
-      {(lifestyle || quality) && (
-        <Container>
-          <Card>
-            <Box>
+      <MasonryGridNoSSR compact columns={2}>
+        {(lifestyle || quality) && (
+          <Container>
+            <Card>
               <TitleMin
-                title={name && capitalize(name)}
-                subtitle={[qualityStr, lifestyleStr]
+                inline
+                subtitle={[lifestyleStr, qualityStr]
                   .filter((x) => x)
                   .join(" - ")}
               />
-              <ParagraphStandard>{description}</ParagraphStandard>
-            </Box>
-          </Card>
-        </Container>
-      )}
-      <MasonryGridNoSSR compact columns={2}>
+              {lifestyle?.description && (
+                <ParagraphStandard>{lifestyle.description}</ParagraphStandard>
+              )}
+            </Card>
+          </Container>
+        )}
         {quality && (
           <Container>
             <Card title={"nuyens"}>
@@ -75,21 +76,26 @@ const Identity = ({
             </Card>
           </Container>
         )}
-        {licences?.map((l) => (
+        {Object.values(licences || {}).map((l) => (
           <Container key={l.name}>
             <Card title={"licence"}>
-              <TitleMin title={l.name} subtitle={`${l.quality}-${l.price}¥`} />
-              <Space />
-              <ParagraphStandard>{l.description}</ParagraphStandard>
+              <TitleMin title={l.name} inline subtitle={`- i${l.quality}`} />
+              {l.description && (
+                <>
+                  <Space />
+                  <ParagraphStandard>{l.description}</ParagraphStandard>
+                </>
+              )}
             </Card>
           </Container>
         ))}
-        {contacts?.map((c) => {
+        {Object.values(contacts || {})?.map((c) => {
           return (
             <Container key={c.name}>
               <Card title={"contact"}>
                 <TitleMin
                   title={c.name}
+                  inline
                   subtitle={`L${c.loyalty}-R${c.connection}`}
                 />
                 <Space />

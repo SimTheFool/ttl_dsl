@@ -6,9 +6,10 @@ import { TextIndice } from "@/components/TextIndice";
 import { TitleSection } from "@/components/TitleSection";
 import { Character } from "@/mock/type";
 import { Box, Table } from "@radix-ui/themes";
+import { SRCharacter } from "./character";
 
 type StatsProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export const Stats = ({ char }: StatsProps) => {
@@ -86,8 +87,8 @@ export const Stats = ({ char }: StatsProps) => {
               ["Res.Drain"],
               [
                 <StatBlock
-                  n={stats.resist_drain?.score || 0}
-                  stat={stats.resist_drain?.stat}
+                  n={stats.resist_drain?.value || 0}
+                  stat={stats.resist_drain?.metas}
                 />,
               ],
             ]}
@@ -102,7 +103,10 @@ export const Stats = ({ char }: StatsProps) => {
               <>
                 <StatBlock n={stats.init_dice} dice={6} />
                 {"+"}
-                <StatBlock n={stats.init.score} stat={stats.init?.stat} />
+                <StatBlock
+                  n={stats.init_base.value}
+                  stat={stats.init_base.metas}
+                />
               </>,
             ],
           ]}
@@ -114,8 +118,8 @@ export const Stats = ({ char }: StatsProps) => {
             ["Gué.Nat"],
             [
               <StatBlock
-                n={stats.natural_heal.score}
-                stat={stats.natural_heal.stat}
+                n={stats.heal.value}
+                stat={stats.heal.metas}
                 dice={6}
               />,
             ],
@@ -128,8 +132,8 @@ export const Stats = ({ char }: StatsProps) => {
             ["Def.Phy"],
             [
               <StatBlock
-                n={stats.def_phy.score}
-                stat={stats.def_phy.stat}
+                n={stats.def_phy.value}
+                stat={stats.def_phy.metas}
                 dice={6}
               />,
             ],
@@ -142,8 +146,8 @@ export const Stats = ({ char }: StatsProps) => {
             ["Def.Ment"],
             [
               <StatBlock
-                n={stats.def_ment.score}
-                stat={stats.def_ment.stat}
+                n={stats.def_ment.value}
+                stat={stats.def_ment.metas}
                 dice={6}
               />,
             ],
@@ -156,8 +160,8 @@ export const Stats = ({ char }: StatsProps) => {
             ["Res.Phy"],
             [
               <StatBlock
-                n={stats.resist_phy.score}
-                stat={stats.resist_phy.stat}
+                n={stats.resist_phy.value}
+                stat={stats.resist_phy.metas}
                 dice={6}
               />,
             ],
@@ -170,8 +174,8 @@ export const Stats = ({ char }: StatsProps) => {
             ["Res.Ment"],
             [
               <StatBlock
-                n={stats.resist_ment.score}
-                stat={stats.resist_ment.stat}
+                n={stats.resist_ment.value}
+                stat={stats.resist_ment.metas}
                 dice={6}
               />,
             ],

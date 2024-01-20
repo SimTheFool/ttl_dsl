@@ -39,7 +39,11 @@ export const Icon = ({ type }: IconProps) => {
 
 const iconTextsList = {
   A1: <Advantage n={1} />,
+  A2: <Advantage n={2} />,
+  A3: <Advantage n={3} />,
   D1: <Advantage n={-1} />,
+  D2: <Advantage n={-2} />,
+  D3: <Advantage n={-3} />,
   SN: <Success />,
   DOM: <Damage />,
   RD: <DiceSix />,

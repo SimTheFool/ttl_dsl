@@ -1,10 +1,10 @@
 import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { Monitor } from "@/components/Monitor";
-import { Character } from "@/mock/type";
-import { Grid, Container, Box } from "@radix-ui/themes";
+import { Box } from "@radix-ui/themes";
+import { SRCharacter } from "./character";
 
 type MonitorsProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export const Monitors = ({ char }: MonitorsProps) => {

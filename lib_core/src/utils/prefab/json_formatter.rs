@@ -44,7 +44,7 @@ mod test {
                 .metas(vec![ResolvedResourceBuilder::default()
                     .build_as_number(1.0)
                     .unwrap()])
-                .build_as_string("abc")
+                .build_as_bool(true)
                 .unwrap(),
             ResolvedResourceBuilder::default()
                 .identifier(Some("a.c".to_string()))
@@ -60,7 +60,7 @@ mod test {
                 {
                     "a": {
                         "b": {
-                            "value": "abc",
+                            "value": true,
                             "metas": ["1"]
                         },
                         "c": 22.0

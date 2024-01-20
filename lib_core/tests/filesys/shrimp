@@ -29,7 +29,7 @@
             with name: "Laurence Guinvite"
             with <? ./utils/quality with q: 4 >
             with <? ./utils/transfer_all_nuyens >
-            with <lifestyles! ./lifestyles/squat >
+            with <lifestyle? ./lifestyles/squat >
             with <licences! ./identity/licence
                 with name: "Concierge de chantier"
                 with <? ./utils/quality with q: 4 >
@@ -67,7 +67,7 @@
         >
         <pilotage? ./skills/base
             with score: 6
-            with <? ./skills/spec with name: "Appareils aux sols" >
+            with <? ./skills/spec with name: "au sol" >
         >
         <technomancie? ./skills/base
             with score: 6

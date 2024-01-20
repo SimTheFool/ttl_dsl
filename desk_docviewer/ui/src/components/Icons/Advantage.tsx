@@ -12,7 +12,7 @@ export const Advantage = ({ n }: AdvantageProps) => {
       style={{
         display: "inline-block",
         position: "relative",
-        verticalAlign: "middle",
+        verticalAlign: "text-bottom",
       }}
     >
       <BaseIcon size={17}>

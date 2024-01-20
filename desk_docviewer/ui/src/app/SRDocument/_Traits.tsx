@@ -1,22 +1,23 @@
 import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { Section } from "@/components/Section";
 import { TitleSection } from "@/components/TitleSection";
-import { Effect } from "@/components/actions/Effect";
-import { Character } from "@/mock/type";
+
 import { Box } from "@radix-ui/themes";
+import { SRCharacter } from "./character";
+import { Trait } from "@/components/actions/Trait";
 
 type EffectsProps = {
-  char: Character;
+  char: SRCharacter;
 };
 
-export const Effects = ({ char }: EffectsProps) => {
+export const Traits = ({ char }: EffectsProps) => {
   return (
     <Section>
       <MasonryGridNoSSR compact columns={4}>
         <TitleSection>Effets</TitleSection>
-        {char.effects?.map((e, i) => (
+        {Object.entries(char.traits || {}).map(([name, trait], i) => (
           <Box key={i} pr={"2"} pb={"2"}>
-            <Effect effect={e} />
+            <Trait name={name} trait={trait} />
           </Box>
         ))}
       </MasonryGridNoSSR>

@@ -265,6 +265,5 @@
         >
     }
 
-
     <? ./utils/log_use with ref: "small_inventory.Corde_standard" >
 }

@@ -10,10 +10,14 @@
     
     status: free
     concealment: 0
-    
-    stats:
+
+    stats_primary:
     {
         hit: 8
+    }
+
+    stats_secondary:
+    {
         maniability: 4
         speed_step: 6
         speed_max: 30

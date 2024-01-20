@@ -180,7 +180,7 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "tags.[a-zA-Z0-9]+" => String "humain");
 
     /* Testing drones */
-    assert_resource_at!(resources : "inventory.Crawler.stats.hit" => Number 11.0);
+    assert_resource_at!(resources : "inventory.Crawler.stats_primary.hit" => Number 11.0);
     assert_resource_number!(resources : r#"inventory.Crawler.slots.[a-zA-Z0-9]+.name"# => 2);
 
     /* Testing crockett */

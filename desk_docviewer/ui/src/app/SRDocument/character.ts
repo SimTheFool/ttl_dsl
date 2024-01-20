@@ -55,6 +55,18 @@ const actionParser = z.object({
   maintained: z.boolean().optional(),
   reaction: z.boolean().optional(),
   description: z.string().optional(),
+  damage: z.number().optional(),
+  ammo: z.number().optional(),
+  gauge: z.number().optional(),
+  ranges: z
+    .object({
+      contact: z.number(),
+      near: z.number(),
+      short: z.number(),
+      mid: z.number(),
+      far: z.number(),
+    })
+    .optional(),
 });
 
 const companionParser = z.object({
@@ -63,7 +75,7 @@ const companionParser = z.object({
     .object({
       major: z.number(),
       minor: z.number(),
-      hit: z.string(),
+      hit: z.string().or(z.number()),
     })
     .optional(),
   stats_secondary: z.record(z.string(), z.number()).optional(),
@@ -71,13 +83,53 @@ const companionParser = z.object({
   actions: z.record(z.string(), actionParser).optional(),
 });
 
+const slotParser = z.object({
+  name: z.string().optional(),
+  size: z.enum(["S", "M", "L", "XL"]),
+  concealment: z.number().optional(),
+});
+
 const objectParser = z.object({
   name: z.string(),
   manufacturer: z.string().optional(),
   price: z.number(),
+  quantity: z.number().optional(),
+  quality: z.number().optional(),
   description: z.string().optional(),
   status: z.enum(["free", "licenced", "illegal"]),
   concealment: z.number().optional(),
+  stats_primary: z
+    .object({
+      hit: z.string().or(z.number()),
+    })
+    .optional(),
+  stats_secondary: z.record(z.string(), z.number()).optional(),
+  ranges: z
+    .object({
+      contact: z.object({
+        label: z.string().optional(),
+        base: z.number(),
+      }),
+      near: z.object({
+        label: z.string().optional(),
+        base: z.number(),
+      }),
+      short: z.object({
+        label: z.string().optional(),
+        base: z.number(),
+      }),
+      mid: z.object({
+        label: z.string().optional(),
+        base: z.number(),
+      }),
+      far: z.object({
+        label: z.string().optional(),
+        base: z.number(),
+      }),
+    })
+    .optional(),
+  actions: z.record(z.string(), actionParser).optional(),
+  slots: asPseudoArray(slotParser).optional(),
 });
 
 const statsParser = z.object({

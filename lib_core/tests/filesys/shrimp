@@ -87,12 +87,7 @@
         {
             description: __D3__ lorsque vous laissez vos machines en pilote automatique.
         }
-    }
-
-    companions:
-    {
-        <@ ./companions/sprite_machine >
-    }
+    }    
 
     powers:
     {
@@ -114,6 +109,11 @@
     }
 
     <actions_common? ./actions/actions_common >
+
+    companions:
+    {
+        <@ ./companions/sprite_machine >
+    }
     
 
     big_inventory:

@@ -15,6 +15,8 @@ export const getData = async <T>(
     Object.entries(images).map(([key, value]) => [key, convertFileSrc(value)])
   );
 
+  console.log("json", json);
+
   let parsedData: T;
   try {
     parsedData = parser(json);

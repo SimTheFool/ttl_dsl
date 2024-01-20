@@ -1,6 +1,6 @@
 use crate::domain::ast::{self};
-use crate::domain::resolution::Resolvable;
 use crate::domain::resolution::{RawTransformation, ResourceContextBuilder};
+use crate::domain::resolution::{Resolvable, ResolvedResourceValue};
 use crate::domain::transformation::apply_transforms;
 use crate::domain::visitor::AstVisitor;
 use crate::ports::{ConfigProviderPort, FormatterPort, ResolverPort};
@@ -50,6 +50,10 @@ impl<R: ResolverPort, C: ConfigProviderPort, F: FormatterPort> AssembleFromStr<'
             t => apply_transforms(resources.try_resolve()?, t.try_resolve()?, layers),
         }?;
 
+        let resources_map = resources_map
+            .into_iter()
+            .filter(|r| !matches!(r.value, ResolvedResourceValue::Null))
+            .collect::<Vec<_>>();
         let formatted = self.formatter.format(resources_map)?;
 
         Ok(formatted)

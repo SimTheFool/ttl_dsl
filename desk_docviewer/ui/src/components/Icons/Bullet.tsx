@@ -11,10 +11,10 @@ export const Bullet = ({}: BulletProps) => {
       }}
     >
       <Text
-        size={"1"}
         weight={"light"}
         style={{
           display: "inline-block",
+          fontSize: "10px",
         }}
       >
         <GiShotgun />

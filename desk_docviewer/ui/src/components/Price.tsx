@@ -9,8 +9,7 @@ export const Price = ({
 }) => {
   return (
     <>
-      {price}
-      <Space inline />¥{unit && "/u"}
+      {price}¥{unit && "/u"}
     </>
   );
 };

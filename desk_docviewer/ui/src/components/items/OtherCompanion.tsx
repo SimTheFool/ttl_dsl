@@ -32,12 +32,12 @@ export const OtherCompanion = ({
                 <>
                   {Array.from({ length: primary.major }).map((_, i) => (
                     <Box display={"inline-block"} key={i}>
-                      <InlineMajorAction size={22} />
+                      <InlineMajorAction size={14} />
                     </Box>
                   ))}
                   {Array.from({ length: primary.minor }).map((_, i) => (
                     <Box display={"inline-block"} key={i}>
-                      <InlineMinorAction size={18} />
+                      <InlineMinorAction size={12} />
                     </Box>
                   ))}
                 </>,

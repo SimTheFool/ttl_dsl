@@ -1,6 +1,5 @@
 import { Box } from "@radix-ui/themes";
 import { GiGooeyImpact } from "react-icons/gi";
-import { Spell } from "@/mock/type";
 import { BaseIcon } from "./BaseIcon";
 
 type DamageProps = {};
@@ -9,7 +8,7 @@ export const Damage = ({}: DamageProps) => {
     <Box
       style={{
         display: "inline",
-        verticalAlign: "middle",
+        verticalAlign: "text-bottom",
       }}
     >
       <BaseIcon size={12} inline>

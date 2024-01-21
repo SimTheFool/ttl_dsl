@@ -1,6 +1,8 @@
 @NAME Sac
 
 {
+    <? ./utils/buy with cost: 0>
+    
     name: Sac
 
     status: free
@@ -8,7 +10,6 @@
 
     slots!
     {
-        name: Chasse
-        size: S
+        size: XL
     }
 }

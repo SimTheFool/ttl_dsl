@@ -1,11 +1,14 @@
 "use client";
 
+import { OnHydration } from "@/components/OnHydration";
 import { FileInput } from "@/components/controls/FileInput";
 import { Menu } from "@/components/controls/Menu";
+import { RenderingContextProvider } from "@/components/controls/RenderingContext";
 import { SelectInput } from "@/components/controls/Select";
 import * as Form from "@radix-ui/react-form";
 import "@radix-ui/themes/styles.css";
-import { usePathname } from "next/navigation";
+import { invoke } from "@tauri-apps/api/tauri";
+import { usePathname, useRouter } from "next/navigation";
 import "normalize.css/normalize.css";
 import React, { useEffect } from "react";
 import { FaEye, FaPrint } from "react-icons/fa";
@@ -13,11 +16,7 @@ import { FaFolder } from "react-icons/fa6";
 import { ImInsertTemplate } from "react-icons/im";
 import { LuSheet } from "react-icons/lu";
 import { useLocalStorage } from "react-use";
-import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
-import { useRouter } from "next/navigation";
-import { RenderingContextProvider } from "@/components/controls/RenderingContext";
 import "./globals.css";
-import { OnHydration } from "@/components/OnHydration";
 
 const getTemplates = async (): Promise<string[]> => {
   return invoke("get_templates");

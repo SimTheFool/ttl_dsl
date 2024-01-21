@@ -18,7 +18,7 @@ export const Gauge = ({ length, icon }: GaugeProps) => {
       {length <= SWITCH && (
         <Flex wrap={"wrap"}>
           {Array.from({ length: group }, (_, i) => (
-            <Box pr={"2"} key={i}>
+            <Box pr={"1"} key={i}>
               {Array.from({ length: STEP }, (_, j) => (
                 <Box
                   key={[j, i].join(" ")}

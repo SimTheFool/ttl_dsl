@@ -36,7 +36,7 @@ export const StatTable = ({
               key={i}
               style={{
                 boxShadow: !!nonNullRows.length
-                  ? "var(--table-row-border-bottom);"
+                  ? "var(--table-row-border-bottom)"
                   : "none",
               }}
             >

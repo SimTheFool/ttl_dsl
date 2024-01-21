@@ -1,6 +1,5 @@
-- parser la data
-- retoucher l'UI
-- parser lees key pour virer les uderscore
+- S'occuper du null dans le json formatter
+- Gérer le gras ? Revoir les descriptions
 - faire github ci
 
 - faire brigthorn

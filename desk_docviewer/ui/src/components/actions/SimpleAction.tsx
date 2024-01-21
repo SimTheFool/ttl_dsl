@@ -20,11 +20,11 @@ type BaseActionProps = {
   name: string;
   action: SRAction;
   baseRanges?: {
-    contact: { score: number; label?: string };
-    near: { score: number; label?: string };
-    short: { score: number; label?: string };
-    mid: { score: number; label?: string };
-    far: { score: number; label?: string };
+    contact: { label?: number };
+    near: { label?: number };
+    short: { label?: number };
+    mid: { label?: number };
+    far: { label?: number };
   };
 };
 export const SimpleAction = ({
@@ -40,6 +40,7 @@ export const SimpleAction = ({
     ranges,
     reaction,
     maintained,
+    ammo_gauge,
   },
   baseRanges,
 }: BaseActionProps) => {
@@ -54,6 +55,38 @@ export const SimpleAction = ({
 
   const infoIcons = [reaction && <GiLibertyWing />].filter((x) => x);
 
+  const damageSubtitle = (
+    <>
+      {!!ammo && (
+        <span
+          style={{
+            fontWeight: "bold",
+          }}
+        >
+          {ammo}
+          <Bullet />
+        </span>
+      )}
+      {!!damage && (
+        <>
+          <span
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            {damage}
+          </span>
+          <Damage />
+        </>
+      )}
+    </>
+  );
+
+  const infosSubtitle = interleave(infoIcons, <Space inline />);
+
+  const firstSubtitle = !!ammo ? damageSubtitle : infosSubtitle;
+  const secondSubtitle = !!ammo && !!infoIcons.length ? infosSubtitle : null;
+
   return (
     <Card title={test}>
       <Flex justify={"between"}>
@@ -61,50 +94,25 @@ export const SimpleAction = ({
           <TitleMin
             title={<TextReplaced>{capitalize(name || "")}</TextReplaced>}
             inline
-            subtitle={interleave(infoIcons, <Space inline />)}
+            subtitle={firstSubtitle}
           />
-          {(!!ammo || !!damage) && (
-            <TitleMin
-              inline
-              subtitle={
-                <>
-                  {!!ammo && (
-                    <span
-                      style={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {ammo}
-                      <Bullet />
-                    </span>
-                  )}
-                  {!!damage && (
-                    <>
-                      <span
-                        style={{
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {damage}
-                      </span>
-                      <Damage />
-                    </>
-                  )}
-                </>
-              }
-            />
-          )}
-          <Space />
+          {secondSubtitle && <TitleMin inline subtitle={secondSubtitle} />}
+          {ammo_gauge && <Gauge length={ammo_gauge} icon={<Bullet />} />}
           {gauge && <Gauge length={gauge} icon={<PiDiamondLight />} />}
           {rulerGradeLabel && (
             <ParagraphStandard>
-              <Ruler grade={rulerGradeLabel} inter={rulerGradScore} />
+              {rulerGradScore && (
+                <Ruler grade={rulerGradeLabel} inter={rulerGradScore} />
+              )}
             </ParagraphStandard>
           )}
           {description && (
-            <ParagraphStandard>
-              <TextReplaced>{description}</TextReplaced>
-            </ParagraphStandard>
+            <>
+              <Space />
+              <ParagraphStandard>
+                <TextReplaced>{description}</TextReplaced>
+              </ParagraphStandard>
+            </>
           )}
         </Box>
 

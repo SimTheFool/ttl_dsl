@@ -5,6 +5,7 @@ export type SRIdnetity = z.infer<typeof identityParser>;
 export type SRTrait = z.infer<typeof traitParser>;
 export type SRAction = z.infer<typeof actionParser>;
 export type SRCompanion = z.infer<typeof companionParser>;
+export type SRObject = z.infer<typeof objectParser>;
 
 const asLeaf = <T extends ZodType<any, any, any>>(v: T) =>
   z.object({
@@ -65,6 +66,7 @@ const actionParser = z.object({
   damage: z.number().optional(),
   ammo: z.number().optional(),
   gauge: z.number().optional(),
+  ammo_gauge: z.number().optional(),
   ranges: z
     .object({
       contact: z.number(),
@@ -109,30 +111,30 @@ const objectParser = z.object({
   concealment: z.number().optional(),
   stats_primary: z
     .object({
-      hit: z.string().or(z.number()),
+      hit: z.number().optional(),
     })
     .optional(),
   stats_secondary: z.record(z.string(), z.number()).optional(),
   ranges: z
     .object({
       contact: z.object({
-        label: z.string().optional(),
+        label: z.number().optional(),
         base: z.number(),
       }),
       near: z.object({
-        label: z.string().optional(),
+        label: z.number().optional(),
         base: z.number(),
       }),
       short: z.object({
-        label: z.string().optional(),
+        label: z.number().optional(),
         base: z.number(),
       }),
       mid: z.object({
-        label: z.string().optional(),
+        label: z.number().optional(),
         base: z.number(),
       }),
       far: z.object({
-        label: z.string().optional(),
+        label: z.number().optional(),
         base: z.number(),
       }),
     })
@@ -197,6 +199,8 @@ const characterParser = z.object({
   powers: z.record(z.string(), actionParser).optional(),
   actions_common: z.record(z.string(), actionParser).optional(),
   companions: z.record(z.string(), companionParser).optional(),
+  small_inventory: z.record(z.string(), objectParser).optional(),
+  big_inventory: z.record(z.string(), objectParser).optional(),
 });
 
 export const parseCharacter: (data: unknown) => SRCharacter =

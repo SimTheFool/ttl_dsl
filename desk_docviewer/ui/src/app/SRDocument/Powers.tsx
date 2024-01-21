@@ -95,6 +95,7 @@ const CommonActionOnly = ({ char }: { char: SRCharacter }) => {
             style={{
               maxWidth: "33%",
             }}
+            key={name}
           >
             <Container key={name}>
               <SimpleAction name={name} action={action} />

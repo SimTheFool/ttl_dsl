@@ -3,50 +3,58 @@ import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { PdfContainer } from "@/components/PdfContainer";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
-import { Drone } from "@/components/items/Drone";
-import { Item } from "@/components/items/Item";
-import { Outfit } from "@/components/items/Outfit";
+import { Object } from "@/components/items/Object";
 import { Slot } from "@/components/items/Slot";
-import { Tech } from "@/components/items/Tech";
-import { Weapon } from "@/components/items/Weapon";
-import { getCharWeights } from "@/utils/getWeights";
-import { Box } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
 import { SRCharacter } from "./character";
+import { ParagraphStandard } from "@/components/ParagraphStandard";
 
 type Props = {
   char: SRCharacter;
 };
 
-export default function Inventory({ char }: Props) {
-  const charWeights = getCharWeights(char);
-  const pageWeight =
-    charWeights.drones +
-    charWeights.weapons +
-    charWeights.outfits +
-    charWeights.tech +
-    charWeights.other;
+const getObjectWeight = (obj: any) => {
+  return (
+    window.Object.values(obj.actions || {}).length +
+    window.Object.values(obj.slots || {}).length
+  );
+};
 
-  if (pageWeight < 30) {
+export default function Inventory({ char }: Props) {
+  const smallWeight = window.Object.values(char.small_inventory || {}).reduce(
+    (w, obj) => {
+      return w + getObjectWeight(obj);
+    },
+    0
+  );
+
+  const bigWeight = window.Object.values(char.big_inventory || {}).reduce(
+    (w, obj) => {
+      return w + getObjectWeight(obj);
+    },
+    0
+  );
+
+  if (smallWeight > 20 || bigWeight > 20)
     return (
-      <PdfContainer>
-        <AllInOne char={char} />
-      </PdfContainer>
+      <>
+        <PdfContainer>
+          <BigObjects char={char} />
+        </PdfContainer>
+        <PdfContainer>
+          <LittleObjects char={char} />
+        </PdfContainer>
+      </>
     );
-  }
 
   return (
-    <>
-      <PdfContainer>
-        <BigObjects char={char} />
-      </PdfContainer>
-      <PdfContainer>
-        <LittleObjects char={char} />
-      </PdfContainer>
-    </>
+    <PdfContainer>
+      <AllInOne char={char} />
+    </PdfContainer>
   );
 }
 
-const AllInOne = ({ char }: { char: Character }) => {
+const AllInOne = ({ char }: { char: SRCharacter }) => {
   return (
     <>
       <BigObjects char={char} />
@@ -57,38 +65,17 @@ const AllInOne = ({ char }: { char: Character }) => {
   );
 };
 
-const BigObjects = ({ char }: { char: Character }) => {
+const BigObjects = ({ char }: { char: SRCharacter }) => {
   return (
     <MasonryGridNoSSR columns={3}>
       <Box>
         <TitleSection>Inventaire</TitleSection>
         <Space />
       </Box>
-      {Object.entries(char.drones || {}).map(([name, drone]) => {
+      {window.Object.entries(char.big_inventory || {}).map(([name, obj]) => {
         return (
           <Box pb={"2"} pr={"2"} key={name}>
-            <Drone item={drone} name={name} />
-          </Box>
-        );
-      })}
-      {Object.entries(char.weapons || {}).map(([name, weapon]) => {
-        return (
-          <Box pb={"2"} pr={"2"} key={name}>
-            <Weapon weapon={weapon} name={name} />
-          </Box>
-        );
-      })}
-      {Object.entries(char.outfits || {}).map(([name, outfit]) => {
-        return (
-          <Box pb={"2"} pr={"2"} key={name}>
-            <Outfit outfit={outfit} name={name} />
-          </Box>
-        );
-      })}
-      {Object.entries(char.tech || {}).map(([name, tech]) => {
-        return (
-          <Box pb={"2"} pr={"2"} key={name}>
-            <Tech tech={tech} name={name} />
+            <Object object={obj} name={name} />
           </Box>
         );
       })}
@@ -96,21 +83,26 @@ const BigObjects = ({ char }: { char: Character }) => {
   );
 };
 
-const LittleObjects = ({ char }: { char: Character }) => {
+const LittleObjects = ({ char }: { char: SRCharacter }) => {
   return (
     <>
       <Box>
         <TitleSection>Consommables et outils</TitleSection>
         <Space />
       </Box>
-      <MasonryGridNoSSR columns={4}>
-        {Object.entries(char.other || {}).map(([name, item]) => {
-          return (
-            <Box pb={"4"} pr={"1"} key={name}>
-              <Item item={item} name={name} />
-            </Box>
-          );
-        })}
+      <MasonryGridNoSSR columns={3}>
+        {window.Object.entries(char.small_inventory || {}).map(
+          ([name, obj]) => {
+            return (
+              <Box pb={"2"} pr={"2"} key={name}>
+                <Object object={obj} name={name} />
+                <Flex pt={"1"}>
+                  <ParagraphStandard>Restant:</ParagraphStandard>
+                </Flex>
+              </Box>
+            );
+          }
+        )}
       </MasonryGridNoSSR>
       <Box px={"2"}>
         <Box>

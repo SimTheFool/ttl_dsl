@@ -69,7 +69,7 @@ const BigObjects = ({ char }: { char: SRCharacter }) => {
   return (
     <MasonryGridNoSSR columns={3}>
       <Box>
-        <TitleSection>Inventaire</TitleSection>
+        <TitleSection>Equipement</TitleSection>
         <Space />
       </Box>
       {window.Object.entries(char.big_inventory || {}).map(([name, obj]) => {
@@ -95,7 +95,7 @@ const LittleObjects = ({ char }: { char: SRCharacter }) => {
           ([name, obj]) => {
             return (
               <Box pb={"2"} pr={"2"} key={name}>
-                <Object object={obj} name={name} />
+                <Object object={obj} name={name} unit />
                 <Flex pt={"1"}>
                   <ParagraphStandard>Restant:</ParagraphStandard>
                 </Flex>

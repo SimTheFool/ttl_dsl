@@ -93,14 +93,17 @@
     {
         middleware:
         {
+            test: "Elec+RES"
             major: 1
             minor: 0
             maintained: true
-            description: "Vous mobilisez un sprite pour créer un stream sensoriel interconnectant vos machines et appareils. Vous percevez alors votre environnement sous plusieurs perspectives et pilotez facilement plusieurs machines. Pour chaque Puiss. du sprite, rajoutez une 1h à l'effet ou +1d6 à vos tests de perception. A la fin de l'effet, le sprite est décompilé."
+            description: "Mobilisez un sprite pour créer un stream sensoriel interconnectant vos appareils. Percevez alors votre environnement sous plusieurs perspectives et pilotez facilement plusieurs machines. Pour chaque --Puiss.-- du sprite, rajoutez une --1h-- à l'effet ou 1__RD__ à vos --tests de perception--. A la fin de l'effet, le sprite est décompilé."
         }
         extraction_simsens:
         {
-            description: "Vous décompilez votre sprite pour créer un fichier de données simsens. Pour chaque __SN__, ajoutez 1 à la qualité du fichier. Rajoutez __A1__ pour chaque ancienneté du sprite (3 jours / 10 jours / 20 jours)."
+            test: "Elec+RES"
+            duration: "3h"
+            description: "Décompilez un sprite pour créer des données simsens. Pour chaque __SN__, ajoutez --+1 qualité-- du fichier. Rajoutez __A1__ par palier d'ancienneté du sprite (3 jours / 10 jours / 20 jours)."
         }
         lecture_simsens:
         {
@@ -210,7 +213,7 @@
                     major: 0
                     minor: 1
                     gauge: 4
-                    description: "+1 charges toutes les 15min. 1 __DOM__ irréductible et le statut Electrocuté, même si vous ratez."
+                    description: "+1 charges toutes les 15min. 1 __DOM__ irréductible et le statut --Electrocuté--, même si vous ratez."
                 }
             }
         }

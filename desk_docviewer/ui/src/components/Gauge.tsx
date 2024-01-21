@@ -1,5 +1,6 @@
 import { Box, Flex } from "@radix-ui/themes";
 import React from "react";
+import { ParagraphStandard } from "./ParagraphStandard";
 
 type GaugeProps = {
   length: number;
@@ -16,7 +17,12 @@ export const Gauge = ({ length, icon }: GaugeProps) => {
   return (
     <>
       {length <= SWITCH && (
-        <Flex wrap={"wrap"}>
+        <Flex
+          wrap={"wrap"}
+          style={{
+            lineHeight: "0px",
+          }}
+        >
           {Array.from({ length: group }, (_, i) => (
             <Box pr={"1"} key={i}>
               {Array.from({ length: STEP }, (_, j) => (
@@ -46,11 +52,11 @@ export const Gauge = ({ length, icon }: GaugeProps) => {
       )}
       {length > SWITCH && (
         <Flex>
-          <Box>________________</Box>
-          <Box>
+          <Box>-------------------</Box>
+          <ParagraphStandard>
             /{length}
             {icon}
-          </Box>
+          </ParagraphStandard>
         </Flex>
       )}
     </>

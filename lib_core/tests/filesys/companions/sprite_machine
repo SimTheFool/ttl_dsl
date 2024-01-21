@@ -43,7 +43,7 @@
         major: 1
         minor: 0
         maintained: true
-        description: Surveille les dysfonctionnments de l'appareil investi. Vous pouvez retirer jusqu'à Serv. echecs à vos tests avec cet appareil.
+        description: Surveille les dysfonctionnments de l'appareil investi. Vous pouvez retirer jusqu'à --Serv.-- echecs à vos tests avec cet appareil.
       }
     }
 }

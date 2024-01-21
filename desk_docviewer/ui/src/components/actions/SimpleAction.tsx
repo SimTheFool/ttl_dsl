@@ -15,6 +15,7 @@ import { Ruler } from "../Ruler";
 import { Space } from "../Space";
 import { TextReplaced } from "../Text";
 import { TitleMin } from "../TitleMin";
+import { Duration } from "../Icons/Duration";
 
 type BaseActionProps = {
   name: string;
@@ -33,6 +34,7 @@ export const SimpleAction = ({
     test,
     major,
     minor,
+    duration,
     description,
     gauge,
     ammo,
@@ -97,15 +99,6 @@ export const SimpleAction = ({
             subtitle={firstSubtitle}
           />
           {secondSubtitle && <TitleMin inline subtitle={secondSubtitle} />}
-          {ammo_gauge && <Gauge length={ammo_gauge} icon={<Bullet />} />}
-          {gauge && <Gauge length={gauge} icon={<PiDiamondLight />} />}
-          {rulerGradeLabel && (
-            <ParagraphStandard>
-              {rulerGradScore && (
-                <Ruler grade={rulerGradeLabel} inter={rulerGradScore} />
-              )}
-            </ParagraphStandard>
-          )}
           {description && (
             <>
               <Space />
@@ -114,9 +107,24 @@ export const SimpleAction = ({
               </ParagraphStandard>
             </>
           )}
+          {ammo_gauge && (
+            <>
+              <Space />
+              <Gauge length={ammo_gauge} icon={<Bullet />} />
+            </>
+          )}
+          {gauge && <Gauge length={gauge} icon={<PiDiamondLight />} />}
+          {rulerGradeLabel && (
+            <ParagraphStandard>
+              {rulerGradScore && (
+                <Ruler grade={rulerGradeLabel} inter={rulerGradScore} />
+              )}
+            </ParagraphStandard>
+          )}
         </Box>
 
         <Box pl={"1"}>
+          {duration && <Duration n={duration} />}
           {maintained && <Maintained />}
           {!!major &&
             Array.from({ length: major }).map((_, i) => (

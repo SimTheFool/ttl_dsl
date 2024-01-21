@@ -60,9 +60,10 @@ const actionParser = z.object({
   test: z.string().optional(),
   major: z.number().optional(),
   minor: z.number().optional(),
+  duration: z.string().optional(),
   maintained: z.boolean().optional(),
   reaction: z.boolean().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   damage: z.number().optional(),
   ammo: z.number().optional(),
   gauge: z.number().optional(),
@@ -102,8 +103,9 @@ const slotParser = z.object({
 
 const objectParser = z.object({
   name: z.string(),
-  manufacturer: z.string().optional(),
+  manufacturer: z.string().nullable().optional(),
   price: z.number(),
+  price_unit: z.number(),
   quantity: z.number().optional(),
   quality: z.number().optional(),
   description: z.string().optional(),

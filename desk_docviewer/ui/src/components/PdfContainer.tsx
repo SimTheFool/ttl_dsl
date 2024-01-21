@@ -23,10 +23,10 @@ export const PdfContainer = ({ children, border = false }: A4FormatProps) => {
       }}
     >
       <Box
-        pt={"5"}
         style={{
-          height: "100%",
+          maxHeight: "100%",
           width: "100%",
+          height: "100%",
         }}
       >
         {children}

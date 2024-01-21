@@ -1,21 +1,21 @@
 import { Box } from "@radix-ui/themes";
-import { IoHandLeft } from "react-icons/io5";
+import { MdIncompleteCircle } from "react-icons/md";
 import { BaseIcon } from "./BaseIcon";
 
-type HandProps = {
-  n?: number;
+type MaintainedProps = {
+  n: string;
 };
-
-export const Hand = ({ n }: HandProps) => {
+export const Duration = ({ n }: MaintainedProps) => {
   return (
     <Box
       style={{
+        verticalAlign: "text-top",
         display: "block",
         position: "relative",
       }}
     >
-      <BaseIcon size={24}>
-        <IoHandLeft
+      <BaseIcon size={26} inline>
+        <MdIncompleteCircle
           style={{
             color: "var(--gray-10)",
           }}
@@ -24,12 +24,12 @@ export const Hand = ({ n }: HandProps) => {
       <Box
         style={{
           position: "absolute",
-          left: "40%",
-          top: "70%",
+          left: "50%",
+          top: "45%",
           zIndex: 1,
           color: "white",
           transform: "translate(-50%, -50%)",
-          fontSize: `calc(10px * var(--scaling))`,
+          fontSize: `calc(12px * var(--scaling))`,
           fontWeight: "bold",
         }}
       >

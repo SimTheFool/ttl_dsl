@@ -1,7 +1,6 @@
 import { Box } from "@radix-ui/themes";
-import { PiHourglassSimpleLowFill } from "react-icons/pi";
-import { BaseIcon } from "./BaseIcon";
 import { FaHourglass } from "react-icons/fa";
+import { BaseIcon } from "./BaseIcon";
 
 type MaintainedProps = {};
 export const Maintained = ({}: MaintainedProps) => {

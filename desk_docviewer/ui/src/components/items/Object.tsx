@@ -22,7 +22,12 @@ const statusTrad = {
   illegal: "illégal",
 };
 
-type ObjectProps = { object: SRObject; name: string; noHand?: boolean };
+type ObjectProps = {
+  object: SRObject;
+  name: string;
+  noHand?: boolean;
+  unit?: boolean;
+};
 
 export const Object = ({
   object: {
@@ -30,6 +35,7 @@ export const Object = ({
     quantity,
     manufacturer,
     price,
+    price_unit,
     status,
     concealment,
     description,
@@ -40,6 +46,7 @@ export const Object = ({
   },
   name,
   noHand = false,
+  unit = false,
 }: ObjectProps) => {
   const slotsParts = window.Object.values(slots || {})
     .sort((a, b) => {
@@ -58,8 +65,13 @@ export const Object = ({
       );
     });
 
-  const actionsParts = window.Object.entries(actions || {}).map(
-    ([name, action]) => {
+  const actionsParts = window.Object.entries(actions || {})
+    .sort(([, a], [, b]) => {
+      if (!a.ammo) return -1;
+      if (!b.ammo) return 1;
+      return a.ammo - b.ammo;
+    })
+    .map(([name, action]) => {
       return (
         <SimpleAction
           key={name}
@@ -68,8 +80,7 @@ export const Object = ({
           baseRanges={ranges}
         ></SimpleAction>
       );
-    }
-  );
+    });
 
   const bottomChildrenWithSlots = [...actionsParts, ...slotsParts];
   const bottomItemNb = bottomChildrenWithSlots.length;
@@ -83,7 +94,7 @@ export const Object = ({
   const title = interleave(titleParts, <Space inline />);
 
   const subtitleParts = [
-    <Price price={price} />,
+    <Price price={unit ? price_unit : price} unit={unit} />,
     quality && <Quality quality={quality} />,
     <>{statusTrad[status]}</>,
   ].filter((x) => x);
@@ -117,6 +128,7 @@ export const Object = ({
               <>
                 <Space />
                 <TextReplaced>{description}</TextReplaced>
+                <Space />
               </>
             )}
             {rulerGradeLabel && <Ruler grade={rulerGradeLabel} />}

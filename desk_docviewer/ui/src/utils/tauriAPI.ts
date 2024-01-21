@@ -14,7 +14,7 @@ export const getData = async <T>(
   const imagesWithAssetLinks = Object.fromEntries(
     Object.entries(images).map(([key, value]) => [key, convertFileSrc(value)])
   );
-
+  console.log("json is", json);
   let parsedData: T;
   try {
     parsedData = parser(json);

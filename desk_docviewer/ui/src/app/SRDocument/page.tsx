@@ -16,7 +16,13 @@ export default function Home() {
     if (!dataFile || !resolutionDir) {
       return;
     }
-    return await getData<SRCharacter>(dataFile, resolutionDir, parseCharacter);
+    return await getData<SRCharacter>(
+      dataFile,
+      resolutionDir,
+      parseCharacter
+    ).catch((e) => {
+      console.error(e);
+    });
   }, [dataFile, resolutionDir]);
 
   const images = value?.[1];

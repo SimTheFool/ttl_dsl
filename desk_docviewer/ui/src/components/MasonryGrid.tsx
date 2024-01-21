@@ -29,7 +29,6 @@ export default function MasonryGrid({
     const masonry = new Masonry(gridRef.current, {
       itemSelector: `.${itemId}`,
       columnWidth: `.${sizerId}`,
-      percentPosition: true,
     });
 
     return () => {

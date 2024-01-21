@@ -5,8 +5,7 @@ import { Section } from "@/components/Section";
 import { Space } from "@/components/Space";
 import { TitleMin } from "@/components/TitleMin";
 import { TitleSection } from "@/components/TitleSection";
-import { capitalize } from "@/utils/capitalize";
-import { Box, Flex } from "@radix-ui/themes";
+import { Box, Flex, Heading } from "@radix-ui/themes";
 import { Fragment } from "react";
 import { SRCharacter, SRIdnetity as SRIdentity } from "./character";
 
@@ -28,7 +27,10 @@ export const Identities = ({ char }: IdentitiesProps) => {
     <Section title={<TitleSection>Identités</TitleSection>}>
       {identities.map((i, index) => (
         <Fragment key={index}>
-          {i.name}
+          <Heading size={"2"} as={"h4"}>
+            {i.name}
+          </Heading>
+          <Space />
           <Identity identity={i} />
         </Fragment>
       ))}
@@ -77,7 +79,7 @@ const Identity = ({
         {Object.values(licences || {}).map((l) => (
           <Container key={l.name}>
             <Card title={"licence"}>
-              <TitleMin title={l.name} inline subtitle={`- i${l.quality}`} />
+              <TitleMin inline subtitle={`${l.name} - i${l.quality}`} />
               {l.description && (
                 <>
                   <Space />

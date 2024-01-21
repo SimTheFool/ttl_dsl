@@ -128,26 +128,29 @@ const CompanionOnly = ({ char }: { char: SRCharacter }) => {
 
 const PowersAndCompanions = ({ char }: { char: SRCharacter }) => {
   return (
-    <MasonryGridNoSSR columns={3}>
+    <>
       <Box>
         <TitleSection>Pouvoirs et compagnons</TitleSection>
         <Space />
       </Box>
-      {Object.entries(char.powers || {}).map(([name, power]) => {
-        return (
-          <Container key={name}>
-            <SimpleAction name={name} action={power} />
-          </Container>
-        );
-      })}
-      {Object.entries(char.companions || {}).map(([name, companion]) => {
-        return (
-          <Container key={name}>
-            <OtherCompanion name={name} companion={companion} />
-          </Container>
-        );
-      })}
-    </MasonryGridNoSSR>
+
+      <MasonryGridNoSSR columns={3}>
+        {Object.entries(char.powers || {}).map(([name, power]) => {
+          return (
+            <Container key={name}>
+              <SimpleAction name={name} action={power} />
+            </Container>
+          );
+        })}
+        {Object.entries(char.companions || {}).map(([name, companion]) => {
+          return (
+            <Container key={name}>
+              <OtherCompanion name={name} companion={companion} />
+            </Container>
+          );
+        })}
+      </MasonryGridNoSSR>
+    </>
   );
 };
 

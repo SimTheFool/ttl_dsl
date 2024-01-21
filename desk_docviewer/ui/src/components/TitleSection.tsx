@@ -7,7 +7,7 @@ type TitleSectionProps = {
 export const TitleSection = ({ children }: TitleSectionProps) => {
   return (
     <Heading
-      size={"4"}
+      size={"3"}
       as={"h2"}
       style={{
         display: "block",

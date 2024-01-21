@@ -28,7 +28,7 @@ export const CompanionBox = ({
 }: CompanionBoxProps) => {
   const actions = Object.entries(companion.actions || {}).map(
     ([name, action]) => (
-      <SimpleAction name={name.toUpperCase()} action={action} key={name} />
+      <SimpleAction name={capitalize(name)} action={action} key={name} />
     )
   );
 

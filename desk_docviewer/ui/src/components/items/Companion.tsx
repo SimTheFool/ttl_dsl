@@ -12,7 +12,7 @@ type OtherCompanionProps = {
   slot?: boolean;
 };
 
-export const OtherCompanion = ({
+export const Companion = ({
   name,
   companion: otherCompanion,
   ergo = false,

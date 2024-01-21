@@ -1,4 +1,3 @@
 - Nettoyer fichier superflu
 - faire github ci
-
 - faire brigthorn

@@ -3,10 +3,10 @@ import { PdfContainer } from "@/components/PdfContainer";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
 import { SimpleAction } from "@/components/actions/SimpleAction";
-import { OtherCompanion } from "@/components/items/OtherCompanion";
 import { Box, Flex } from "@radix-ui/themes";
 import { ReactNode, useMemo } from "react";
 import { SRCharacter } from "./character";
+import { Companion } from "@/components/items/Companion";
 
 type Props = {
   char: SRCharacter;
@@ -118,7 +118,7 @@ const CompanionOnly = ({ char }: { char: SRCharacter }) => {
       {Object.entries(char.companions || {}).map(([name, companion]) => {
         return (
           <Container key={name}>
-            <OtherCompanion name={name} companion={companion} ergo />
+            <Companion name={name} companion={companion} ergo />
           </Container>
         );
       })}
@@ -145,7 +145,7 @@ const PowersAndCompanions = ({ char }: { char: SRCharacter }) => {
         {Object.entries(char.companions || {}).map(([name, companion]) => {
           return (
             <Container key={name}>
-              <OtherCompanion name={name} companion={companion} />
+              <Companion name={name} companion={companion} />
             </Container>
           );
         })}

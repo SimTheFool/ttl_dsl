@@ -17,13 +17,8 @@ import { Damage } from "../Icons/Damage";
 type ActionBoxProps = {
   title?: string;
   infos?: {
-    range?: BaseAction["range"];
-    zone?: BaseAction["zone"];
-    nature?: BaseAction["nature"];
-    maintained?: BaseAction["maintained"];
-    damage?: BaseAction["damage"];
+    maintained?: boolean;
   };
-  type?: ReactNode;
   children: {
     resources?: ReactElement;
     content?: ReactNode;
@@ -32,9 +27,8 @@ type ActionBoxProps = {
 
 export const ActionBox = ({
   children: { content, resources },
-  infos: { range, zone, nature, maintained, damage } = {},
+  infos: { maintained } = {},
   title,
-  type,
 }: ActionBoxProps) => {
   const resourcesChildren = React.Children.toArray(
     resources?.props.children

@@ -9,12 +9,12 @@ import { Outfit } from "@/components/items/Outfit";
 import { Slot } from "@/components/items/Slot";
 import { Tech } from "@/components/items/Tech";
 import { Weapon } from "@/components/items/Weapon";
-import { Character } from "@/mock/type";
 import { getCharWeights } from "@/utils/getWeights";
 import { Box } from "@radix-ui/themes";
+import { SRCharacter } from "./character";
 
 type Props = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export default function Inventory({ char }: Props) {
@@ -28,7 +28,7 @@ export default function Inventory({ char }: Props) {
 
   if (pageWeight < 30) {
     return (
-      <PdfContainer footer={"INVENTAIRE"}>
+      <PdfContainer>
         <AllInOne char={char} />
       </PdfContainer>
     );
@@ -36,10 +36,10 @@ export default function Inventory({ char }: Props) {
 
   return (
     <>
-      <PdfContainer footer={"INVENTAIRE"}>
+      <PdfContainer>
         <BigObjects char={char} />
       </PdfContainer>
-      <PdfContainer footer={"CONSOMMABLES"}>
+      <PdfContainer>
         <LittleObjects char={char} />
       </PdfContainer>
     </>

@@ -1,53 +1,53 @@
-import { OtherCompanion as OtherCompanionType } from "@/mock/type";
 import { StatTable } from "../StatTable";
 import { CompanionBox, ErgoCompanionBox } from "./CompanionBox";
 import { InlineMajorAction, InlineMinorAction } from "../Icons/Actions";
 import { Monitor } from "../Monitor";
+import { SRCompanion } from "@/app/SRDocument/character";
+import { Box } from "@radix-ui/themes";
 
 type OtherCompanionProps = {
   name: string;
-  otherCompanion: OtherCompanionType;
+  companion: SRCompanion;
   ergo?: boolean;
+  slot?: boolean;
 };
 
 export const OtherCompanion = ({
   name,
-  otherCompanion,
+  companion: otherCompanion,
   ergo = false,
+  slot = true,
 }: OtherCompanionProps) => {
-  const stats = otherCompanion.stats;
+  const primary = otherCompanion.stats_primary;
   const Container = ergo ? ErgoCompanionBox : CompanionBox;
 
   return (
-    <Container companion={otherCompanion} name={name} type={"esprit"} noSlot>
-      {stats && (
+    <Container companion={otherCompanion} name={name} noSlot={!slot}>
+      {primary && (
         <>
           <StatTable
             compact
             items={[
-              ["con", "agi", "rea", "for"],
-              [stats.con, stats.agi, stats.rea, stats.for],
-            ]}
-          />
-          <StatTable
-            compact
-            items={[
-              ["vol", "log", "int", "cha"],
-              [stats.vol, stats.log, stats.int, stats.cha],
-            ]}
-          />
-          <StatTable
-            compact
-            items={[
               [
-                "Puiss.",
-                <InlineMajorAction size={10} />,
-                <InlineMinorAction size={12} />,
+                <>
+                  {Array.from({ length: primary.major }).map((_, i) => (
+                    <Box display={"inline-block"} key={i}>
+                      <InlineMajorAction size={22} />
+                    </Box>
+                  ))}
+                  {Array.from({ length: primary.minor }).map((_, i) => (
+                    <Box display={"inline-block"} key={i}>
+                      <InlineMinorAction size={18} />
+                    </Box>
+                  ))}
+                </>,
               ],
-              [`${stats.pui}`, `${stats.action_maj}`, `${stats.action_min}`],
+              [!!primary.hit_formula ? `${primary.hit_formula}` : null],
             ]}
           />
-          <Monitor columns={stats.hit} hit={stats.hit} alwaysCurable />
+          {primary.hit && (
+            <Monitor columns={primary.hit} hit={primary.hit} alwaysCurable />
+          )}
         </>
       )}
     </Container>

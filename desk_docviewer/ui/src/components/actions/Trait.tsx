@@ -9,7 +9,6 @@ import { capitalize } from "@/utils/capitalize";
 type TraitProps = {
   trait: SRTrait;
   name: string;
-  simple?: boolean;
 };
 
 export const Trait = ({ name, trait }: TraitProps) => {
@@ -19,7 +18,7 @@ export const Trait = ({ name, trait }: TraitProps) => {
         backgroundColor: "var(--gray-6)",
       }}
     >
-      <TitleMin title={capitalize(name)} />
+      <TitleMin title={<TextReplaced>{capitalize(name)}</TextReplaced>} />
       <Space />
       <ParagraphStandard>
         {<TextReplaced>{trait.description}</TextReplaced>}

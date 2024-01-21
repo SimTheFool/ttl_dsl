@@ -1,47 +1,50 @@
-import { LineBlack } from "@/components/Line";
 import { MasonryGridNoSSR } from "@/components/MasonryGridNoSSR";
 import { PdfContainer } from "@/components/PdfContainer";
 import { Space } from "@/components/Space";
 import { TitleSection } from "@/components/TitleSection";
-import { RitualAction } from "@/components/actions/RitualAction";
 import { SimpleAction } from "@/components/actions/SimpleAction";
-import { SpellAction } from "@/components/actions/SpellAction";
 import { OtherCompanion } from "@/components/items/OtherCompanion";
-import { Spirit } from "@/components/items/Spirit";
-import { Sprite } from "@/components/items/Sprite";
-import { Character } from "@/mock/type";
-import { getCharWeights } from "@/utils/getWeights";
-import { Box } from "@radix-ui/themes";
-import { ReactNode } from "react";
+import { Box, Flex } from "@radix-ui/themes";
+import { ReactNode, useMemo } from "react";
+import { SRCharacter } from "./character";
 
 type Props = {
-  char: Character;
+  char: SRCharacter;
 };
 
 export default function Powers({ char }: Props) {
-  const charWeight = getCharWeights(char);
-  const pageWeight = charWeight.powers + charWeight.companions;
+  const weight =
+    Object.keys(char.powers || {}).length +
+    Object.keys(char.companions || {}).length;
 
-  if (pageWeight < 20)
+  if (weight < 20)
     return (
-      <PdfContainer footer={"POUVOIRS"}>
-        <AllInOne char={char} />
-      </PdfContainer>
+      <>
+        <PdfContainer>
+          <PowersAndCompanions char={char} />
+        </PdfContainer>
+        <PdfContainer>
+          <CommonActionOnly char={char} />
+        </PdfContainer>
+      </>
     );
 
   return (
     <>
-      <PdfContainer footer={"POUVOIRS"}>
-        <ActionOnly char={char} />
+      <PdfContainer>
+        <PowersOnly char={char} />
       </PdfContainer>
-      <PdfContainer footer={"COMPAGNONS"}>
+      <PdfContainer>
         <CompanionOnly char={char} />
+      </PdfContainer>
+      <PdfContainer>
+        <CommonActionOnly char={char} />
       </PdfContainer>
     </>
   );
 }
 
-const ActionOnly = ({ char }: { char: Character }) => {
+const PowersOnly = ({ char }: { char: SRCharacter }) => {
   return (
     <MasonryGridNoSSR columns={3}>
       <Box>
@@ -49,24 +52,10 @@ const ActionOnly = ({ char }: { char: Character }) => {
         <Space />
       </Box>
 
-      {Object.entries(char.complex_forms || {}).map(([name, form]) => {
+      {Object.entries(char.powers || {}).map(([name, power]) => {
         return (
           <Container key={name}>
-            <SimpleAction name={name} action={form} type={form.type} />
-          </Container>
-        );
-      })}
-      {Object.entries(char.spells || {}).map(([name, spell]) => {
-        return (
-          <Container key={name}>
-            <SpellAction name={name} action={spell} />
-          </Container>
-        );
-      })}
-      {Object.entries(char.rituals || {}).map(([name, ritual]) => {
-        return (
-          <Container key={name}>
-            <RitualAction name={name} action={ritual} />
+            <SimpleAction name={name} action={power} />
           </Container>
         );
       })}
@@ -74,7 +63,50 @@ const ActionOnly = ({ char }: { char: Character }) => {
   );
 };
 
-const CompanionOnly = ({ char }: { char: Character }) => {
+const CommonActionOnly = ({ char }: { char: SRCharacter }) => {
+  const actions = useMemo(() => {
+    return Object.entries(char.actions_common || {}).sort(([, a], [, b]) => {
+      if (a.reaction && !b.reaction) return 1;
+      if (!a.reaction && b.reaction) return -1;
+      return 0;
+    });
+  }, [char.actions_common]);
+
+  return (
+    <Flex
+      style={{
+        flexWrap: "wrap",
+        flexDirection: "column",
+        maxHeight: "100%",
+      }}
+    >
+      <Box
+        style={{
+          maxWidth: "33%",
+        }}
+      >
+        <TitleSection>Actions Communes</TitleSection>
+        <Space />
+      </Box>
+
+      {actions.map(([name, action]) => {
+        return (
+          <Box
+            style={{
+              maxWidth: "33%",
+            }}
+          >
+            <Container key={name}>
+              <SimpleAction name={name} action={action} />
+            </Container>
+          </Box>
+        );
+      })}
+    </Flex>
+  );
+};
+
+const CompanionOnly = ({ char }: { char: SRCharacter }) => {
   return (
     <MasonryGridNoSSR columns={1}>
       <Box>
@@ -82,35 +114,10 @@ const CompanionOnly = ({ char }: { char: Character }) => {
         <Space />
       </Box>
 
-      {Object.entries(char.sprites || {}).map(([name, sprite]) => {
+      {Object.entries(char.companions || {}).map(([name, companion]) => {
         return (
           <Container key={name}>
-            <Sprite name={name} sprite={sprite} key={name} ergo />
-          </Container>
-        );
-      })}
-
-      <LineBlack />
-
-      {Object.entries(char.spirits || {}).map(([name, spirit]) => {
-        return (
-          <Container key={name}>
-            <Spirit name={name} spirit={spirit} key={name} ergo />
-          </Container>
-        );
-      })}
-
-      <LineBlack />
-
-      {Object.entries(char.other_companions || {}).map(([name, companion]) => {
-        return (
-          <Container key={name}>
-            <OtherCompanion
-              name={name}
-              otherCompanion={companion}
-              key={name}
-              ergo
-            />
+            <OtherCompanion name={name} companion={companion} ergo />
           </Container>
         );
       })}
@@ -118,53 +125,24 @@ const CompanionOnly = ({ char }: { char: Character }) => {
   );
 };
 
-const AllInOne = ({ char }: { char: Character }) => {
+const PowersAndCompanions = ({ char }: { char: SRCharacter }) => {
   return (
     <MasonryGridNoSSR columns={3}>
       <Box>
         <TitleSection>Pouvoirs et compagnons</TitleSection>
         <Space />
       </Box>
-      {Object.entries(char.sprites || {}).map(([name, sprite]) => {
+      {Object.entries(char.powers || {}).map(([name, power]) => {
         return (
           <Container key={name}>
-            <Sprite name={name} sprite={sprite} key={name} />
+            <SimpleAction name={name} action={power} />
           </Container>
         );
       })}
-      {Object.entries(char.spirits || {}).map(([name, spirit]) => {
+      {Object.entries(char.companions || {}).map(([name, companion]) => {
         return (
           <Container key={name}>
-            <Spirit name={name} spirit={spirit} key={name} />
-          </Container>
-        );
-      })}
-      {Object.entries(char.other_companions || {}).map(([name, companion]) => {
-        return (
-          <Container key={name}>
-            <OtherCompanion name={name} otherCompanion={companion} key={name} />
-          </Container>
-        );
-      })}
-
-      {Object.entries(char.complex_forms || {}).map(([name, form]) => {
-        return (
-          <Container key={name}>
-            <SimpleAction name={name} action={form} type={form.type} />
-          </Container>
-        );
-      })}
-      {Object.entries(char.spells || {}).map(([name, spell]) => {
-        return (
-          <Container key={name}>
-            <SpellAction name={name} action={spell} />
-          </Container>
-        );
-      })}
-      {Object.entries(char.rituals || {}).map(([name, ritual]) => {
-        return (
-          <Container key={name}>
-            <RitualAction name={name} action={ritual} />
+            <OtherCompanion name={name} companion={companion} />
           </Container>
         );
       })}

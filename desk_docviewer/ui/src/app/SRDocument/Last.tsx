@@ -1,16 +1,12 @@
-import Image from "next/image";
-import { Box } from "@radix-ui/themes";
-import { PdfContainer } from "@/components/PdfContainer";
-import { Character } from "@/mock/type";
-import { portraits } from "@/mock/characters";
 import { ImageWithPlaceholder } from "@/components/ImageWithPlaceholder";
+import { PdfContainer } from "@/components/PdfContainer";
+import { Box } from "@radix-ui/themes";
 
 type Props = {
-  char: Character;
   images?: Record<string, string>;
 };
 
-export default function Last({ char, images }: Props) {
+export default function Last({ images }: Props) {
   return (
     <PdfContainer>
       <Box

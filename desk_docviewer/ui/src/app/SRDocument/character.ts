@@ -3,6 +3,8 @@ import { ZodType, z } from "zod";
 export type SRCharacter = z.infer<typeof characterParser>;
 export type SRIdnetity = z.infer<typeof identityParser>;
 export type SRTrait = z.infer<typeof traitParser>;
+export type SRAction = z.infer<typeof actionParser>;
+export type SRCompanion = z.infer<typeof companionParser>;
 
 const asLeaf = <T extends ZodType<any, any, any>>(v: T) =>
   z.object({
@@ -54,6 +56,7 @@ const traitParser = z.object({
 });
 
 const actionParser = z.object({
+  test: z.string().optional(),
   major: z.number().optional(),
   minor: z.number().optional(),
   maintained: z.boolean().optional(),
@@ -79,11 +82,13 @@ const companionParser = z.object({
     .object({
       major: z.number(),
       minor: z.number(),
-      hit: z.string().or(z.number()),
+      hit: z.number().optional(),
+      hit_formula: z.string().optional(),
     })
     .optional(),
   stats_secondary: z.record(z.string(), z.number()).optional(),
   skills: asPseudoArray(z.string()).optional(),
+  traits: asPseudoArray(traitParser).optional(),
   actions: z.record(z.string(), actionParser).optional(),
 });
 

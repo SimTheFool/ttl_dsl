@@ -44,8 +44,6 @@ const Identity = ({
   const qualityStr = quality ? `i${quality}` : null;
   const lifestyleStr = lifestyle?.name || null;
 
-  console.log("life", lifestyle);
-
   return (
     <>
       <MasonryGridNoSSR compact columns={2}>

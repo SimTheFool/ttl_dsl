@@ -1,29 +1,27 @@
+import { SRCompanion } from "@/app/SRDocument/character";
 import { capitalize } from "@/utils/capitalize";
 import { Box, Flex } from "@radix-ui/themes";
 import { ReactNode } from "react";
-import { Companion as CompanionType } from "@/mock/type";
 import { Card } from "../Card";
+import { MasonryGridNoSSR } from "../MasonryGridNoSSR";
 import { ParagraphStandard } from "../ParagraphStandard";
 import { Space } from "../Space";
 import { TextReplaced } from "../Text";
 import { TitleMin } from "../TitleMin";
 import { SimpleAction } from "../actions/SimpleAction";
+import { Trait } from "../actions/Trait";
 import styles from "./ItemCard.module.css";
 import { Slot } from "./Slot";
-import { Trait } from "../actions/Trait";
-import { MasonryGridNoSSR } from "../MasonryGridNoSSR";
 
 type CompanionBoxProps = {
   name: string;
-  type?: string;
-  companion: CompanionType;
+  companion: SRCompanion;
   children?: ReactNode;
   noSlot?: boolean;
 };
 
 export const CompanionBox = ({
   name,
-  type,
   companion,
   children,
   noSlot = false,
@@ -34,14 +32,16 @@ export const CompanionBox = ({
     )
   );
 
-  const effects = Object.entries(companion.effects || {}).map(
-    ([name, effect]) => <Trait trait={effect} key={name} simple />
-  );
+  const traits = Object.entries(companion.traits || {}).map(([name, trait]) => (
+    <Trait trait={trait} key={name} name={name} />
+  ));
 
   const skills = companion.skills && (
     <Card style={{ backgroundColor: "var(--gray-6)" }}>
       <TitleMin title={<TextReplaced>{"Compétences"}</TextReplaced>} />
-      <ParagraphStandard>{companion.skills.join(" - ")}</ParagraphStandard>
+      <ParagraphStandard>
+        {Object.values(companion.skills).join(" - ")}
+      </ParagraphStandard>
     </Card>
   );
 
@@ -49,21 +49,14 @@ export const CompanionBox = ({
     <Slot size="M" note={"puissance - services - vie"}></Slot>
   );
 
-  const bottomChildren = [skills, ...effects, ...actions, invokSlot];
+  const bottomChildren = [skills, ...traits, ...actions, invokSlot];
 
   return (
     <Box>
       <Flex className={bottomChildren.length > 0 ? styles.noBorderBottom : ""}>
-        <Card title={type}>
+        <Card>
           <TitleMin title={<TextReplaced>{capitalize(name)}</TextReplaced>} />
           <ParagraphStandard>
-            {companion.description && (
-              <>
-                <Space />
-                <TextReplaced>{companion.description}</TextReplaced>
-              </>
-            )}
-            <Space />
             {children}
             <Space />
           </ParagraphStandard>
@@ -83,7 +76,6 @@ export const CompanionBox = ({
 
 export const ErgoCompanionBox = ({
   name,
-  type,
   companion,
   children,
   noSlot = false,
@@ -92,14 +84,16 @@ export const ErgoCompanionBox = ({
     ([name, action]) => <SimpleAction name={name} action={action} key={name} />
   );
 
-  const effects = Object.entries(companion.effects || {}).map(
-    ([name, effect]) => <Trait trait={effect} key={name} simple />
+  const effects = Object.entries(companion.traits || {}).map(
+    ([name, trait]) => <Trait trait={trait} name={name} key={name} />
   );
 
   const skills = companion.skills && (
     <Card style={{ backgroundColor: "var(--gray-6)" }}>
       <TitleMin title={<TextReplaced>{"Compétences"}</TextReplaced>} />
-      <ParagraphStandard>{companion.skills.join(" - ")}</ParagraphStandard>
+      <ParagraphStandard>
+        {Object.values(companion.skills).join(" - ")}
+      </ParagraphStandard>
     </Card>
   );
 
@@ -112,16 +106,9 @@ export const ErgoCompanionBox = ({
   return (
     <MasonryGridNoSSR compact columns={3}>
       <Flex p={"1"}>
-        <Card title={type}>
+        <Card>
           <TitleMin title={<TextReplaced>{capitalize(name)}</TextReplaced>} />
           <ParagraphStandard>
-            {companion.description && (
-              <>
-                <Space />
-                <TextReplaced>{companion.description}</TextReplaced>
-              </>
-            )}
-            <Space />
             {children}
             <Space />
           </ParagraphStandard>

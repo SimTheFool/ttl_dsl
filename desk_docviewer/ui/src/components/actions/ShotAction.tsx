@@ -32,8 +32,8 @@ export const ShotAction = ({
                   }}
                 >
                   {ammo_consumption}
+                  <Bullet />
                 </span>
-                <Bullet />
                 {damage != 0 && (
                   <>
                     <span

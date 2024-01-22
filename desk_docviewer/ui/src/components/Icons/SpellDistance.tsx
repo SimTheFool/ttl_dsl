@@ -1,11 +1,10 @@
 import { Box } from "@radix-ui/themes";
 import { PiEyeLight, PiHandWaving } from "react-icons/pi";
-import { Spell } from "@/mock/type";
 import { BaseIcon } from "./BaseIcon";
 import { IoIosBody } from "react-icons/io";
 
 type SpellDistanceProps = {
-  range: Spell["range"];
+  range: "contact" | "LDV" | "perso";
 };
 export const SpellDistance = ({ range }: SpellDistanceProps) => {
   return (

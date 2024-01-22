@@ -1,10 +1,9 @@
 import { Box } from "@radix-ui/themes";
 import { TfiArrowsHorizontal } from "react-icons/tfi";
-import { Spell } from "@/mock/type";
 import { BaseIcon } from "./BaseIcon";
 
 type SpellZoneProps = {
-  zone: Spell["zone"];
+  zone: boolean;
 };
 export const SpellZone = ({ zone }: SpellZoneProps) => {
   return (

@@ -12,3 +12,11 @@ export const OnHydration = ({ children }: OnHydrationProps) => {
 
   return <>{isHydrated ? children : null}</>;
 };
+
+export const useHydration = () => {
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+  return isHydrated;
+};

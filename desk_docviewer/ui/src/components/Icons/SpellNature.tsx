@@ -1,11 +1,9 @@
 import { Box } from "@radix-ui/themes";
-import { PiWaveSquare } from "react-icons/pi";
-import { Spell } from "@/mock/type";
+import { PiWaveSine, PiWaveSquare } from "react-icons/pi";
 import { BaseIcon } from "./BaseIcon";
-import { PiWaveSine } from "react-icons/pi";
 
 type SpellNatureProps = {
-  nature: Spell["nature"];
+  nature: "physique" | "mana" | "duale";
 };
 export const SpellNature = ({ nature }: SpellNatureProps) => {
   return (

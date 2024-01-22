@@ -1,4 +1,5 @@
 import * as Collapsible from "@radix-ui/react-collapsible";
+import { Box } from "@radix-ui/themes";
 import { FaCog } from "react-icons/fa";
 
 type MenuProps = {
@@ -14,7 +15,7 @@ export const Menu = ({ isOpen, setOpen, children }: MenuProps) => {
       open={isOpen}
       onOpenChange={setOpen}
       style={{
-        position: "sticky",
+        position: "fixed",
         top: 0,
         right: 0,
         zIndex: 99,
@@ -36,21 +37,23 @@ export const Menu = ({ isOpen, setOpen, children }: MenuProps) => {
         </button>
       </Collapsible.Trigger>
 
-      <Collapsible.Content
-        style={{
-          position: "absolute",
-          top: 0,
-          paddingRight: "16px",
-          width: "100%",
-          backgroundColor: "whitesmoke",
-          border: "1px solid lightgray",
-          height: isOpen ? "50px" : "0px",
-          display: "flex",
-          alignItems: "center",
-          alignContent: "center",
-        }}
-      >
-        {children}
+      <Collapsible.Content asChild>
+        <Box
+          style={{
+            position: "absolute",
+            top: 0,
+            paddingRight: "16px",
+            width: "100%",
+            backgroundColor: "whitesmoke",
+            border: "1px solid lightgray",
+            height: isOpen ? "50px" : "0px",
+            display: "flex",
+            alignItems: "center",
+            alignContent: "center",
+          }}
+        >
+          {children}
+        </Box>
       </Collapsible.Content>
     </Collapsible.Root>
   );

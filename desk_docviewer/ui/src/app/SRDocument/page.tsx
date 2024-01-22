@@ -1,43 +1,26 @@
 "use client";
 
-import { useRenderingContext } from "@/components/controls/RenderingContext";
-import { getData } from "@/utils/tauriAPI";
-import { useAsync } from "react-use";
+import { RenderData } from "@/utils/tauriAPI";
 import Inventory from "./Inventory";
 import Last from "./Last";
 import Powers from "./Powers";
 import Summary from "./Summary";
-import { SRCharacter, parseCharacter } from "./character";
+import { parseCharacter } from "./character";
 
-export default function Home() {
-  const { dataFile, resolutionDir } = useRenderingContext();
-
-  const { value } = useAsync(async () => {
-    if (!dataFile || !resolutionDir) {
-      return;
-    }
-    return await getData<SRCharacter>(
-      dataFile,
-      resolutionDir,
-      parseCharacter
-    ).catch((e) => {
-      console.error(e);
-    });
-  }, [dataFile, resolutionDir]);
-
-  const images = value?.[1];
-  const json = value?.[0];
-
-  if (!json) {
-    return null;
-  }
-
+export default function Page() {
   return (
     <>
-      <Summary char={json} images={images} />
-      <Inventory char={json} />
-      <Powers char={json} />
-      <Last images={images} />
+      <RenderData
+        Child={({ data, images }) => (
+          <>
+            <Summary char={data} images={images} />
+            <Inventory char={data} />
+            <Powers char={data} />
+            <Last images={images} />
+          </>
+        )}
+        parser={parseCharacter}
+      />
     </>
   );
 }

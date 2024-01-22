@@ -29,7 +29,7 @@ type ObjectProps = {
   unit?: boolean;
 };
 
-export const Object = ({
+export const Item = ({
   object: {
     slots,
     quantity,
@@ -48,7 +48,7 @@ export const Object = ({
   noHand = false,
   unit = false,
 }: ObjectProps) => {
-  const slotsParts = window.Object.values(slots || {})
+  const slotsParts = Object.values(slots || {})
     .sort((a, b) => {
       if (!a.name) return -1;
       if (!b.name) return 1;
@@ -65,7 +65,7 @@ export const Object = ({
       );
     });
 
-  const actionsParts = window.Object.entries(actions || {})
+  const actionsParts = Object.entries(actions || {})
     .sort(([, a], [, b]) => {
       if (!a.ammo) return -1;
       if (!b.ammo) return 1;

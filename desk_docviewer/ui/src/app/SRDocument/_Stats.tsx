@@ -1,11 +1,9 @@
-import { FlexList } from "@/components/FlexList";
 import { DiceSix } from "@/components/Icons/DiceSix";
 import { Section } from "@/components/Section";
 import { StatTable } from "@/components/StatTable";
 import { TextIndice } from "@/components/TextIndice";
 import { TitleSection } from "@/components/TitleSection";
-import { Character } from "@/mock/type";
-import { Box, Table } from "@radix-ui/themes";
+import { Box } from "@radix-ui/themes";
 import { SRCharacter } from "./character";
 
 type StatsProps = {

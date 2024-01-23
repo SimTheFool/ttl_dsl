@@ -15,10 +15,10 @@ jobs:
 
     - name: Echo test
       run: |
-        echo "something something"
-        echo "something else"
+        echo "something bbbb"
+        echo "something elbbbbbse"
 
     - name: Echo test 2
       run: |
-        echo "aaaaa aaaaa"
-        echo "aaaaa else"
+        echo "aaaaa aaiiiiaaa"
+        echo "aaaaa iiiiiiiiii"

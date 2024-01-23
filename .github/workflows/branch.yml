@@ -49,7 +49,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        projectPath: "/desk_docviewer/"
+        projectPath: "./desk_docviewer"
         tagName: 'v1.0.0'
         releaseName: 'DocViewer'
         releaseBody: 'See the assets to download and install this version.'

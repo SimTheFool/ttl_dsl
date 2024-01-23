@@ -15,6 +15,6 @@ jobs:
           fetch-depth: 0
 
     - uses: 'moonrepo/setup-toolchain@v0'
-    - run: 'curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh'
+    - run: 'yarn install'
 
     - run: 'moon ci :test'

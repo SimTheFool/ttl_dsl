@@ -4,8 +4,15 @@ dependsOn:
   - "lib_core"
 
 tasks:
+  install:
+    command: "command -v wasm-pack >/dev/null 2>&1 || { curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh; }"
+    platform: 'system'
+    deps:
+      - ~:install
   gen:
     command: "wasm-pack build --target nodejs --release --no-pack --out-dir src/ts_bindgen"
+    deps:
+      - ~:install
     inputs:
       - "src/**/*"
       - "Cargo.toml"

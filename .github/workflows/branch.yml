@@ -37,5 +37,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         projectPath: "/desk_docviewer/"
-        appName: "docviewer"
+        releaseName: 'DocViewer'
+        releaseBody: 'See the assets to download and install this version.'
+        releaseDraft: false
+        prerelease: false
+        
     - run: 'ls .cargo/target'

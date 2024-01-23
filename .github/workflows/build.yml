@@ -10,13 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-    - name: Echo test
-      run: |
+    - run: |
         echo "something bbbb"
         echo "something elbbbbbse"
+
+    - uses: 'moonrepo/setup-toolchain@v0'
+
+    - run: 'moon ci :test'
 
     - name: Echo test 2
       run: |

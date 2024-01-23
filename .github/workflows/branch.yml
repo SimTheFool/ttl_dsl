@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+          fetch-depth: 0
+
+    - uses: 'moonrepo/setup-toolchain@v0'
+    - run: 'yarn install'
+
+    - run: 'moon ci :test'
+
+  build_windows:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+          fetch-depth: 0
+
+    - uses: 'moonrepo/setup-toolchain@v0'
+    - run: 'yarn install'
+    
+    - run: 'moon ci :build'

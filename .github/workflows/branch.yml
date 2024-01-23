@@ -29,7 +29,20 @@ jobs:
       with:
           fetch-depth: 0
 
-    - uses: 'moonrepo/setup-toolchain@v0'
+    - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: '. -> .cargo/.target'
+
+    - name: Sync node version and setup cache
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+        cache: 'yarn'
+
     - run: 'yarn install'
     
     - uses: tauri-apps/tauri-action@v0

@@ -6,7 +6,7 @@
     "distDir": "./ui/out"
   },
   "package": {
-    "productName": "desk_docviewer",
+    "productName": "docviewer",
     "version": "0.1.0"
   },
   "tauri": {

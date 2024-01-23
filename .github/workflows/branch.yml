@@ -37,4 +37,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         projectPath: "/desk_docviewer/"
+        appName: "docviewer"
     - run: 'ls .cargo/target'

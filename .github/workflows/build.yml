@@ -1,0 +1,24 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Echo test
+      run: |
+        echo "something something"
+        echo "something else"
+
+    - name: Echo test 2
+      run: |
+        echo "aaaaa aaaaa"
+        echo "aaaaa else"

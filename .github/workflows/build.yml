@@ -20,7 +20,6 @@ jobs:
 
     - run: 'moon ci :test'
 
-    - name: Echo test 2
-      run: |
+    - run: |
         echo "aaaaa aaiiiiaaa"
         echo "aaaaa iiiiiiiiii"

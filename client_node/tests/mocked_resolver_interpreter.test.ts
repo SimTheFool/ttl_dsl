@@ -72,17 +72,17 @@ describe("mocked resolver interpreter", () => {
       .build();
     let result = interpreter.assemble_from_str(INDEX);
 
-    expect(result.stats.con.value).toBe(5);
-    expect(result.stats.vol.value).toBe(3);
+    expect(result.stats.con).toBe(5);
+    expect(result.stats.vol).toBe(3);
     expect(result.stats.resist_phy.metas.includes("con")).toBe(true);
     expect(result.stats.resist_phy.value).toBe(5);
     expect(result.stats.resist_ment.metas.includes("vol")).toBe(true);
     expect(result.stats.resist_ment.value).toBe(3);
-    expect(result.stats.hit.value).toBe(10);
+    expect(result.stats.hit).toBe(10);
     expect(result.stats.heal.value).toBe(8);
     expect(result.stats.resist_drain.metas.includes("vol")).toBe(true);
     expect(result.stats.resist_drain.value).toBe(1);
-    expect(result.stats.mag.value).toBe(4);
-    expect(result.stats.initiation.value).toBe(1);
+    expect(result.stats.mag).toBe(4);
+    expect(result.stats.initiation).toBe(1);
   });
 });

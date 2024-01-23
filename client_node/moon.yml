@@ -14,8 +14,10 @@ tasks:
     deps:
       - ~:install
     inputs:
-      - "src/**/*"
+      - "src/**/*.rs"
       - "Cargo.toml"
+    outputs:
+      - "src/ts_bindgen"
   test:
     command: "yarn vitest run"
     deps:

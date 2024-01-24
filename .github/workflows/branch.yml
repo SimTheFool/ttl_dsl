@@ -51,6 +51,6 @@ jobs:
       with:
         projectPath: "./desk_docviewer"
         artifactPaths:
-          - ".cargo\.target\release\bundle\msi\docviewer_0.1.0_x64_en-US.msi.zip"
+          - ".cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi.zip"
 
     - run: 'ls .cargo/target'

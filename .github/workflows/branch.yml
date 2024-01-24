@@ -51,9 +51,8 @@ jobs:
       with:
         projectPath: "./desk_docviewer"
 
-    - run: 'ls .cargo\.target\release\bundle\msi'
-
     - uses: actions/upload-artifact@v4
       with:
+        path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
         name: 'docviewer'
         retention-days: 15 days

@@ -46,7 +46,7 @@ jobs:
     - run: 'yarn install'
 
     - name: Log
-      run: ls -a
+      run: ls
 
     - name: Log 2
       run: cd .. && ls

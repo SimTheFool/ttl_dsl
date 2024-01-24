@@ -49,13 +49,12 @@ jobs:
       run: ls -a
 
     - name: Log 2
-      run: cd .. && ls -a
+      run: cd .. && ls
     
     - uses: tauri-apps/tauri-action@v0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         projectPath: "./desk_docviewer"
-        artifactPaths: "docviewer_0.1.0_x64_en-US.msi"
 
     - run: 'ls .cargo/target'

@@ -29,7 +29,6 @@
         "depends": []
       },
       "externalBin": [],
-      "icon": ["appicon.png"],
       "identifier": "docviewer",
       "longDescription": "",
       "macOS": {

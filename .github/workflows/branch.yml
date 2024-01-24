@@ -50,6 +50,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         projectPath: "./desk_docviewer"
-        artifactPaths: ".cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi.zip"
+        artifactPaths: "docviewer_0.1.0_x64_en-US.msi"
 
     - run: 'ls .cargo/target'

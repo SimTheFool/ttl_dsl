@@ -44,6 +44,12 @@ jobs:
         cache: 'yarn'
 
     - run: 'yarn install'
+
+    - name: Log
+      run: ls -a
+
+    - name: Log 2
+      run: cd .. && ls -a
     
     - uses: tauri-apps/tauri-action@v0.2
       env:

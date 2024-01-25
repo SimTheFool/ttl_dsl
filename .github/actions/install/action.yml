@@ -1,0 +1,11 @@
+name: Install workspaces
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v2
+      with:
+          fetch-depth: 0
+
+    - uses: 'moonrepo/setup-toolchain@v0'
+      run: 'yarn install'

@@ -1,0 +1,16 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install
+      uses: ./.github/actions/install
+
+    - run: 'moon ci :test'

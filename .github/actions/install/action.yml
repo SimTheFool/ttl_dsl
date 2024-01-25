@@ -9,3 +9,4 @@ runs:
 
     - uses: 'moonrepo/setup-toolchain@v0'
     - run: 'yarn install'
+      shell: bash

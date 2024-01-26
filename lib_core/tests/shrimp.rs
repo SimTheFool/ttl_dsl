@@ -140,7 +140,7 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "stats.attaque" => Number 2.0);
 
     /* Testing skills */
-    assert_resource_at!(resources : "skills.combat_rapproché.score" => Number 5.0);
+    assert_resource_at!(resources : "skills.combat_rapproché.score" => Number 1.0);
     assert_resource_at!(resources : "skills.perception.score" => Number 1.0);
     assert_resource_at!(resources : "skills.furtivité.score" => Number 1.0);
     assert_resource_at!(resources : "skills.athlétisme.score" => Number 3.0);

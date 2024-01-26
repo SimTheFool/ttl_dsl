@@ -15,3 +15,6 @@ projects:
   - "lib_core"
   - "client_node"
   - "desk_docviewer"
+
+vcs:
+  defaultBranch: "origin/main"

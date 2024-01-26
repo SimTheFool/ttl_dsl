@@ -1,5 +1,13 @@
 $schema: "https://moonrepo.dev/schemas/project.json"
 
 tasks:
+  install:
+    command: "cargo install tauri-cli"
   dev:
     command: "cargo tauri dev"
+    deps:
+      - ~:install
+  build:
+    command: "cargo tauri build"
+    deps:
+      - ~:install

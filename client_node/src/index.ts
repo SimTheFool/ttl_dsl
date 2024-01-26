@@ -1,1 +1,1 @@
-export * from "./ts_bindgen/lib_ts";
+export * from "./ts_bindgen/client_node";

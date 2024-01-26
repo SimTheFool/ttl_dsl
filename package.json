@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "workspaces": [
+    "client_node",
+    "desk_docviewer/ui"
+  ]
+}

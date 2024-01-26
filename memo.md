@@ -1,5 +1,6 @@
 - faire github ci
 - faire brigthorn
+test
 
 
 build_windows:

@@ -8,9 +8,14 @@ runs:
           fetch-depth: 0
 
     - uses: 'moonrepo/setup-toolchain@v0'
-
+    
     - name: Rust setup
       uses: dtolnay/rust-toolchain@stable
+
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: '. -> .cargo/.target'
 
     - run: 'yarn install'
       shell: bash

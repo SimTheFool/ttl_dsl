@@ -149,8 +149,6 @@ fn it_shoud_assemble_shrimp() {
     assert_resource_at!(resources : "skills.pilotage.score" => Number 6.0);
     assert_resource_at!(resources : "skills.technomancie.score" => Number 6.0);
 
-    assert!(false);
-
     /* Testing identities */
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.name" => String "D-Boss");
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.loyalty" => Number 4.0);

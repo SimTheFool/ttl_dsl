@@ -16,4 +16,5 @@ jobs:
     - name: Install
       uses: ./.github/actions/install
 
+    - run: 'echo "aaaa"'
     - run: 'moon ci :test'

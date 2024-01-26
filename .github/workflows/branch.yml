@@ -16,6 +16,6 @@ jobs:
     - name: Install
       uses: ./.github/actions/install
       with:
-        cache_key: a
+        cache_key: bbb
 
     - run: 'moon ci :test'

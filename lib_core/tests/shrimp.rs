@@ -151,7 +151,7 @@ fn it_shoud_assemble_shrimp() {
 
     /* Testing identities */
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.name" => String "D-Boss");
-    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.loyalty" => Number 7.0);
+    assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.loyalty" => Number 4.0);
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.connection" => Number 4.0);
     assert_resource_at!(resources : "identities.[a-zA-Z0-9]+.contacts.[a-zA-Z0-9]+.description" => String "Decker fan de complot");
 

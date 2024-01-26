@@ -1,6 +1,6 @@
 - faire github ci
 - faire brigthorn
-aaa
+
 build_windows:
     permissions:
       contents: write

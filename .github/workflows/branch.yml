@@ -25,7 +25,11 @@ jobs:
     - name: Install
       uses: ./.github/actions/install
 
-    - run: 'moon ci desk_docviewer:build'
+    - uses: tauri-apps/tauri-action@v0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        projectPath: "./desk_docviewer"
 
     - uses: actions/upload-artifact@v4
       with:

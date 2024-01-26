@@ -8,9 +8,7 @@ inputs:
 
 runs:
   using: composite
-  steps:
-    - uses: moonrepo/setup-toolchain@v0
-    
+  steps:    
     - name: Rust setup
       uses: dtolnay/rust-toolchain@stable
 
@@ -21,6 +19,14 @@ runs:
         prefix-key: 'ttl_dsl_rust'
         shared-key: 'shared_cache'
         key: '${{ inputs.cache_key }}'
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
+
+    - uses: moonrepo/setup-toolchain@v0
 
     - run: 'yarn install'
       shell: bash

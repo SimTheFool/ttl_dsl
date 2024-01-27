@@ -5,19 +5,13 @@
     "devPath": "http://localhost:3000",
     "distDir": "./ui/out"
   },
-  "package": {
-    "productName": "docviewer",
-    "version": "0.1.0"
-  },
   "tauri": {
     "allowlist": {
       "all": true,
       "protocol": {
         "asset": true,
         "all": true,
-        "assetScope": [
-          "**/*"
-        ]
+        "assetScope": ["**/*"]
       }
     },
     "security": {

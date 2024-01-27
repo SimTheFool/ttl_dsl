@@ -13,6 +13,11 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
+      - run: 'moon run :build --affected'
+
+      - run: 'cd ./.cargo/.target/release/bundle/msi && ls -la'
+        
+
       #- uses: tauri-apps/tauri-action@v0
       #  env:
       #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

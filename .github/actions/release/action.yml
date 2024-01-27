@@ -30,5 +30,11 @@ runs:
       shell: bash
     - run: 'git add .'
       shell: bash
-    - run: 'git commit -m "aaaa $version $VERSION bbb"'
+    - run: 'git commit -m "release: $VERSION"'
+      shell: bash
+    - run: 'git tag $VERSION'
+      shell: bash
+    - run: 'git push tag'
+      shell: bash
+    - run: 'git push'
       shell: bash

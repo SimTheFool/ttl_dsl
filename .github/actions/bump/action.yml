@@ -1,0 +1,26 @@
+name: Bump packages
+
+inputs:
+  type:
+    description: 'release type'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: baptiste0928/cargo-install@v2
+      with:
+        crate: cargo-release
+    - run: 'sudo apt install jq'
+      shell: bash
+
+    - run: 'moon run :bump -- ${{ inputs.type }}'
+      shell: bash
+    - run: "yarn version --no-git-tag-version --${{ inputs.type }}"
+      shell: bash
+
+    - run: |
+        VERSION=$(jq -r .version package.json)
+        echo "Version: $VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+      shell: bash

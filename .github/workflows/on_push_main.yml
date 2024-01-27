@@ -28,19 +28,30 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      - name: Release minor
-        uses: ./.github/actions/release
+      - name: Bump minor
+        uses: ./.github/actions/bump
         if: ${{ startsWith(github.event.head_commit.message, 'feat') }}
         with:
           type: minor
-          access_token: ${{secrets.PAT}}
 
-      - name: Release patch
-        uses: ./.github/actions/release
+      - name: Bump patch
+        uses: ./.github/actions/bump
         if: ${{ startsWith(github.event.head_commit.message, 'fix') }}
         with:
           type: patch
-          access_token: ${{secrets.PAT}}
+
+      - run: git config --global user.email "ci@ci.com"
+        shell: bash
+      - run: git config --global user.name "CI"
+        shell: bash
+      - run: 'git add .'
+        shell: bash
+      - run: 'git commit -m "release: aaaaa"'
+        shell: bash
+      - uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          branch: ${{ github.ref }}
 
   build_windows:
     runs-on: windows-latest

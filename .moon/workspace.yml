@@ -14,7 +14,7 @@ $schema: "https://moonrepo.dev/schemas/workspace.json"
 projects:
   - "lib_core"
   - "client_node"
-  - "desk_docviewer"
+  - "docviewer"
 
 vcs:
   defaultBranch: "origin/main"

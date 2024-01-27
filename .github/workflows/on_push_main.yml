@@ -42,7 +42,7 @@ jobs:
   #    env:
   #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #    with:
-  #      projectPath: "./desk_docviewer"
+  #      projectPath: "./docviewer"
 
   #  - uses: actions/upload-artifact@v4
   #    with:

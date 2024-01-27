@@ -3,7 +3,7 @@ $schema: "https://moonrepo.dev/schemas/project.json"
 tasks:
   dev:
     command: "cargo tauri dev"
-    option:
+    options:
       persistent: true
   build:
     command: "cargo tauri build"

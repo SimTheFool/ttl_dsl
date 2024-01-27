@@ -30,12 +30,14 @@ jobs:
         if: ${{ startsWith(github.event.head_commit.message, 'feat') }}
         with:
           type: minor
+          access_token: ${{secrets.PAT}}
 
       - name: Release patch
         uses: ./.github/actions/release
         if: ${{ startsWith(github.event.head_commit.message, 'fix') }}
         with:
           type: patch
+          access_token: ${{secrets.PAT}}
 
   build_windows:
     runs-on: windows-latest

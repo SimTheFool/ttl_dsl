@@ -21,8 +21,6 @@ jobs:
 
       - run: 'moon ci :build'
 
-      - run: 'cd ./.cargo/.target/release/bundle/msi && ls -R'
-
 
       #- uses: tauri-apps/tauri-action@v0
       #  env:
@@ -34,8 +32,8 @@ jobs:
       #    releaseDraft: true
       #    prerelease: false
 
-      #- uses: actions/upload-artifact@v4
-      #  with:
-      #    path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
-      #    name: 'docviewer'
-      #    retention-days: 15 days
+      - uses: actions/upload-artifact@v4
+        with:
+          path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
+          name: 'docviewer'
+          retention-days: 15 days

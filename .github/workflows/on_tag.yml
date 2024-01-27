@@ -1,0 +1,28 @@
+name: On tag
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/install
+
+      - run: "echo ${{github.ref_name}}"
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: "./docviewer"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
+          name: 'docviewer'
+          retention-days: 15 days

@@ -1,19 +1,13 @@
 $schema: "https://moonrepo.dev/schemas/project.json"
 
 tasks:
-  install:
-    command: "cargo install tauri-cli cargo-release"
   dev:
     command: "cargo tauri dev"
-    deps:
-      - ~:install
+    option:
+      persistent: true
   build:
     command: "cargo tauri build"
-    deps:
-      - ~:install
   bump:
     command: "cargo release version --execute"
-    deps:
-      - ~:install
     options:
       cache: false

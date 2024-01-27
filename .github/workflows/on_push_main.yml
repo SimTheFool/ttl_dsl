@@ -22,10 +22,12 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      - run: 'moon run :bump -- minor'
+      - run: 'cargo install cargo-release'
+
+      - run: 'moon ci :bump -- minor'
         if: ${{ ! startsWith(github.event.head_commit.message, 'feat') }}
 
-      - run: 'moon run :bump -- patch'
+      - run: 'moon ci :bump -- patch'
         if: ${{ ! startsWith(github.event.head_commit.message, 'fix') }}
 
   #build_windows:

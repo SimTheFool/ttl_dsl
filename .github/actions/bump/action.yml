@@ -5,6 +5,11 @@ inputs:
     description: 'release type'
     required: true
 
+outputs:
+  version:
+    description: "version number"
+    value: ${{ steps.versionner.outputs.version }}
+
 runs:
   using: composite
   steps:
@@ -19,8 +24,9 @@ runs:
     - run: "yarn version --no-git-tag-version --${{ inputs.type }}"
       shell: bash
 
-    - run: |
+    - id: versionner
+      run: |
         VERSION=$(jq -r .version package.json)
-        echo "Version: $VERSION"
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "version: $VERSION"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
       shell: bash

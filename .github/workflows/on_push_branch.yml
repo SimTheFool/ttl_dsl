@@ -15,12 +15,3 @@ jobs:
       uses: ./.github/actions/install
 
     - run: 'moon ci :test'
-
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install
-        uses: ./.github/actions/install
-
-      - run: 'moon ci :bump'

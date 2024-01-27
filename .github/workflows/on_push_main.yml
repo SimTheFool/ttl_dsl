@@ -16,22 +16,35 @@ jobs:
 
     - run: 'moon ci :test'
 
-  build_windows:
-    runs-on: windows-latest
+  release:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install
-      uses: ./.github/actions/install
+      - uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/install
 
-    - uses: tauri-apps/tauri-action@v0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        projectPath: "./desk_docviewer"
+      - run: 'moon ci :bump -- minor'
+        if: '!startsWith(github.event.head_commit.message, "feat")'
 
-    - uses: actions/upload-artifact@v4
-      with:
-        path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
-        name: 'docviewer'
-        retention-days: 15 days
+      - run: 'moon ci :bump -- patch'
+        if: '!startsWith(github.event.head_commit.message, "fix")'
+
+  #build_windows:
+  #  runs-on: windows-latest
+  #  steps:
+  #  - uses: actions/checkout@v4
+  #  
+  #  - name: Install
+  #    uses: ./.github/actions/install
+
+  #  - uses: tauri-apps/tauri-action@v0
+  #    env:
+  #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #    with:
+  #      projectPath: "./desk_docviewer"
+
+  #  - uses: actions/upload-artifact@v4
+  #    with:
+  #      path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
+  #      name: 'docviewer'
+  #      retention-days: 15 days

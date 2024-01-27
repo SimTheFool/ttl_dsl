@@ -19,3 +19,7 @@ runs:
       shell: bash
     - run: "jq -r .version package.json"
       shell: bash
+    - run: "git status"
+      shell: bash
+    - run: 'git commit -m "aaaa"'
+      shell: bash

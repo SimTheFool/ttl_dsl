@@ -38,3 +38,5 @@ uses: ./.github/actions/install
           branch: ${{ github.ref }}
           force: true
           tags: true
+
+ss

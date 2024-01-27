@@ -1,0 +1,16 @@
+name: Install workspaces
+
+inputs:
+  type:
+    description: 'release type'
+    required: true
+
+runs:
+  using: composite
+  steps:          
+    - run: 'cargo install cargo-release'
+    - run: 'sudo apt install jq'
+
+    - run: 'moon run :bump -- ${{ inputs.type }}'
+    - run: "yarn version -- ${{ inputs.type }}"
+    - run: "jq -r .version package.json"

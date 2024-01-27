@@ -23,7 +23,7 @@ runs:
         workspaces: '. -> .cargo/.target'
         prefix-key: 'ttl_dsl_rust'
         shared-key: 'shared_cache'
-        key: '${{ inputs.cache_key }}'
+        key: ${{ inputs.cache_key }}
 
     - uses: actions/setup-node@v4
       with:
@@ -31,8 +31,4 @@ runs:
         cache: 'yarn'
         cache-dependency-path: 'yarn.lock'
     - run: 'yarn install'
-      shell: bash
-
-
-    - run: 'moon ci :install'
       shell: bash

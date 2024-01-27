@@ -22,14 +22,17 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      - run: 'cargo install cargo-release'
-      - run: 'sudo apt install jq'
-
-      - run: 'moon run :bump -- minor'
+      - name: Release minor
+        uses: ./.github/actions/release
         if: ${{ ! startsWith(github.event.head_commit.message, 'feat') }}
+        with:
+          type: minor
 
-      - run: 'moon run :bump -- patch'
+      - name: Release patch
+        uses: ./.github/actions/release
         if: ${{ ! startsWith(github.event.head_commit.message, 'fix') }}
+        with:
+          type: patch
 
   #build_windows:
   #  runs-on: windows-latest

@@ -26,12 +26,12 @@ jobs:
 
       - name: Release minor
         uses: ./.github/actions/release
-        if: ${{ ! startsWith(github.event.head_commit.message, 'feat') }}
+        if: ${{ startsWith(github.event.head_commit.message, 'feat') }}
         with:
           type: minor
 
       - name: Release patch
         uses: ./.github/actions/release
-        if: ${{ ! startsWith(github.event.head_commit.message, 'fix') }}
+        if: ${{ startsWith(github.event.head_commit.message, 'fix') }}
         with:
           type: patch

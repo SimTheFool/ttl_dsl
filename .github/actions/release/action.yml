@@ -41,5 +41,5 @@ runs:
     #  shell: bash
     - run: 'echo https://SimTheFool:${{ inputs.access_token }}@github.com/SimTheFool/ttl_dsl.git'
       shell: bash
-    - run: 'https://USERNAME:${GH_TOKEN}@github.com/OWNER/REPO.git'
+    - run: 'https://SimTheFool:${{ inputs.access_token }}@github.com/SimTheFool/ttl_dsl.git'
       shell: bash

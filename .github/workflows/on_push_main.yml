@@ -24,10 +24,10 @@ jobs:
       
       - run: 'echo aaaaa'
 
-      - run: 'moon ci :bump -- minor'
+      - run: 'moon run :bump -- minor'
         if: ${{ ! startsWith(github.event.head_commit.message, 'feat') }}
 
-      - run: 'moon ci :bump -- patch'
+      - run: 'moon run :bump -- patch'
         if: ${{ ! startsWith(github.event.head_commit.message, 'fix') }}
 
   #build_windows:

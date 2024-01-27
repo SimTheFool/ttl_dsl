@@ -19,7 +19,7 @@ runs:
     - run: 'sudo apt install jq'
       shell: bash
 
-    - run: 'moon run :bump -- ${{ inputs.type }}'
+    - run: 'moon ci :bump -- ${{ inputs.type }}'
       shell: bash
     - run: "yarn version --no-git-tag-version --${{ inputs.type }}"
       shell: bash

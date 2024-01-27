@@ -17,11 +17,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: xxx_${{ github.ref_name }}
           projectPath: "./docviewer"
+          tagName: docviewer-v__VERSION__
+          releaseName: 'Docviewer v__VERSION__'
+          releaseDraft: true
+          prerelease: false
 
-      - uses: actions/upload-artifact@v4
-        with:
-          path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
-          name: 'docviewer'
-          retention-days: 15 days
+      #- uses: actions/upload-artifact@v4
+      #  with:
+      #    path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
+      #    name: 'docviewer'
+      #    retention-days: 15 days

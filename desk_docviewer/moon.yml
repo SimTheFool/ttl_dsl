@@ -12,7 +12,7 @@ tasks:
     deps:
       - ~:install
   bump:
-    command: "cd .. && cargo release version --execute"
+    command: "cargo release version --execute"
     deps:
       - ~:install
     options:

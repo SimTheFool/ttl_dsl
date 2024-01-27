@@ -21,8 +21,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/install
-      
-      - run: 'echo aaaaa'
 
       - run: 'moon run :bump -- minor'
         if: ${{ ! startsWith(github.event.head_commit.message, 'feat') }}

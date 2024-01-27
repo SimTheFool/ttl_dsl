@@ -1,2 +1,2 @@
-- faire github ci
+- faire github ci a
 - faire brigthorn

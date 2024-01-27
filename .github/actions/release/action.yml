@@ -39,7 +39,7 @@ runs:
     #  shell: bash
     #- run: 'git push origin $VERSION'
     #  shell: bash
-    - run: 'echo https://SimTheFool:${{ inputs.access_token }}@github.com/SimTheFool/ttl_dsl.git'
-      shell: bash
-    - run: 'git push https://${{ inputs.access_token }}@github.com/SimTheFool/ttl_dsl.git main'
-      shell: bash
+    - uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.access_token }}
+        branch: ${{ github.ref }}

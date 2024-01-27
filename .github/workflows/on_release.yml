@@ -1,13 +1,14 @@
-name: On tag
+name: On release
 
 on:
   push:
-    tags:
-      - '**'
+    branches:
+      - main
 
 jobs:
   build_windows:
     runs-on: windows-latest
+    if: ${{ startsWith(github.event.head_commit.message, 'release') }}
     steps:
       - uses: actions/checkout@v4
       - name: Install

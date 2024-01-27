@@ -13,6 +13,8 @@ runs:
       with:
           fetch-depth: 0
           
+    - uses: moonrepo/setup-toolchain@v0
+
     - name: Rust setup
       uses: dtolnay/rust-toolchain@stable
     - name: Rust cache
@@ -28,8 +30,9 @@ runs:
         node-version: 20
         cache: 'yarn'
         cache-dependency-path: 'yarn.lock'
-
-    - uses: moonrepo/setup-toolchain@v0
-
     - run: 'yarn install'
+      shell: bash
+
+
     - run: 'moon ci :install'
+      shell: bash

@@ -15,7 +15,6 @@ runs:
           
     - name: Rust setup
       uses: dtolnay/rust-toolchain@stable
-
     - name: Rust cache
       uses: swatinem/rust-cache@v2
       with:
@@ -33,4 +32,4 @@ runs:
     - uses: moonrepo/setup-toolchain@v0
 
     - run: 'yarn install'
-      shell: bash
+    - run: 'moon ci :install'

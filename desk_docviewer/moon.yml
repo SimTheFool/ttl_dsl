@@ -2,7 +2,7 @@ $schema: "https://moonrepo.dev/schemas/project.json"
 
 tasks:
   install:
-    command: "cargo install tauri-cli cargo-workspaces"
+    command: "cargo install tauri-cli cargo-release"
   dev:
     command: "cargo tauri dev"
     deps:
@@ -12,7 +12,7 @@ tasks:
     deps:
       - ~:install
   bump:
-    command: "cd .. && cargo workspaces version --no-git-commit -y --force desk_docviewer"
+    command: "cd .. && cargo release version --execute"
     deps:
       - ~:install
     options:

@@ -2,8 +2,8 @@ name: On release
 
 on:
   push:
-    tags:
-      - '**'
+    branches:
+      - main
 
 jobs:
   build_windows:

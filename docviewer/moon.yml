@@ -9,7 +9,6 @@ tasks:
     command: "cargo tauri build"
   bump:
     command: "cargo release version --execute --quiet --no-confirm"
+    platform: 'system'
     inputs:
       - "**/*"
-    options:
-      cache: false

@@ -28,3 +28,4 @@ jobs:
       #    path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
       #    name: 'docviewer'
       #    retention-days: 15 days
+      #

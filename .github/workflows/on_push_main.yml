@@ -50,6 +50,7 @@ jobs:
       - run: |
           git config --global user.email "ci@ci.com"
           git config --global user.name "CI"
+          git config --unset http.https://github.com/.extraheader
           git add .
           git commit -m "release: $VERSION"
           git tag $VERSION

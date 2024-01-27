@@ -34,7 +34,7 @@ runs:
       shell: bash
     - run: 'git tag $VERSION'
       shell: bash
-    - run: 'git push tag'
+    - run: 'git push origin $VERSION'
       shell: bash
     - run: 'git push'
       shell: bash

@@ -12,8 +12,8 @@ tasks:
     deps:
       - ~:install
   bump:
-    command:
-      - "cd .. && cargo workspaces version --no-git-commit -y --force desk_docviewer"
-    platform: 'system'
+    command: "cd .. && cargo workspaces version --no-git-commit -y --force desk_docviewer"
+    deps:
+      - ~:install
     options:
       cache: false

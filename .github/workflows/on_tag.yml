@@ -13,12 +13,11 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      - run: "echo ${{github.ref_name}}"
-
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tagName: xxx_${{ github.ref_name }}
           projectPath: "./docviewer"
 
       - uses: actions/upload-artifact@v4

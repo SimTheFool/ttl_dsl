@@ -26,10 +26,10 @@ jobs:
       - run: 'echo aaaaa'
 
       - run: 'moon ci :bump -- minor'
-        if: '!startsWith(github.event.head_commit.message, "feat")'
+        if: '!startsWith(github.event.head_commit.message, feat)'
 
       - run: 'moon ci :bump -- patch'
-        if: '!startsWith(github.event.head_commit.message, "fix")'
+        if: '!startsWith(github.event.head_commit.message, fix)'
 
   #build_windows:
   #  runs-on: windows-latest

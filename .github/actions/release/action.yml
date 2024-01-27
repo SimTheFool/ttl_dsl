@@ -28,5 +28,7 @@ runs:
       shell: bash
     - run: git config --global user.name "CI"
       shell: bash
+    - run: 'git add .'
+      shell: bash
     - run: 'git commit -m "aaaa"'
       shell: bash

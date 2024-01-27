@@ -18,6 +18,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    if: ${{ ! startsWith(github.event.head_commit.message, 'release') }}
     permissions:
       contents: write
     steps:
@@ -40,13 +41,10 @@ jobs:
           type: patch
 
       - run: git config --global user.email "ci@ci.com"
-        shell: bash
       - run: git config --global user.name "CI"
-        shell: bash
       - run: 'git add .'
-        shell: bash
       - run: 'git commit -m "release: bbbb"'
-        shell: bash
+      - run: 'git tag 0.0.0-alpha.0'
       - uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.PAT }}

@@ -13,7 +13,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      - run: 'moon run :build --affected'
+      - run: 'moon ci :build'
 
       - run: 'cd ./.cargo/.target/release/bundle/msi && ls -la'
 

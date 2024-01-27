@@ -30,31 +30,25 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      - name: Bump minor
-        id: bump-minor
-        uses: ./.github/actions/bump
-        if: ${{ startsWith(github.event.head_commit.message, 'feat') }}
-        with:
-          type: minor
+      - run: echo "TYPE=patch" >> $GITHUB_ENV
       - if: ${{ startsWith(github.event.head_commit.message, 'feat') }}
-        run: echo "VERSION=${{ steps.bump-minor.outputs.version }}" >> $GITHUB_ENV
-
-      - name: Bump patch
-        id: bump-patch
-        uses: ./.github/actions/bump
-        if: ${{ startsWith(github.event.head_commit.message, 'fix') }}
-        with:
-          type: patch
+        run: echo "TYPE=minor" >> $GITHUB_ENV
       - if: ${{ startsWith(github.event.head_commit.message, 'fix') }}
-        run: echo "VERSION=${{ steps.bump-patch.outputs.version }}" >> $GITHUB_ENV
+        run: echo "TYPE=patch" >> $GITHUB_ENV
+
+      - name: Bump
+        id: bump
+        uses: ./.github/actions/bump
+        with:
+          type: $TYPE
 
       - run: |
           git config --global user.email "ci@ci.com"
           git config --global user.name "CI"
           git config --unset http.https://github.com/.extraheader
           git add .
-          git commit -m "release: $VERSION"
-          git tag $VERSION
+          git commit -m "release: ${{ steps.bump.outputs.version }}"
+          git tag ${{ steps.bump.outputs.version }}
         
       - uses: ad-m/github-push-action@master
         with:

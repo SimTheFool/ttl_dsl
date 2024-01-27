@@ -8,6 +8,6 @@ tasks:
   build:
     command: "cargo tauri build"
   bump:
-    command: "cargo release version --execute"
+    command: "cargo release version --execute --quiet --no-confirm"
     options:
       cache: false

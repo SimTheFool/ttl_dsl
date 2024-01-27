@@ -21,7 +21,7 @@ runs:
     - run: |
         VERSION=$(jq -r .version package.json)
         echo "Version: $VERSION"
-        echo "::set-output name=version::$VERSION"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
       shell: bash
 
     - run: git config --global user.email "ci@ci.com"
@@ -30,5 +30,5 @@ runs:
       shell: bash
     - run: 'git add .'
       shell: bash
-    - run: 'git commit -m "aaaa"'
+    - run: 'git commit -m "aaaa $version $VERSION"'
       shell: bash

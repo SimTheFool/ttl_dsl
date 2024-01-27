@@ -4,11 +4,9 @@ inputs:
   type:
     description: 'release type'
     required: true
-
-outputs:
-  version:
-    description: "version number"
-    value: ${{ steps.versionner.outputs.version }}
+  token:
+    description: 'github token'
+    required: true
 
 runs:
   using: composite
@@ -24,9 +22,24 @@ runs:
     - run: "yarn version --no-git-tag-version --${{ inputs.type }}"
       shell: bash
 
-    - id: versionner
-      run: |
+    - run: |
         VERSION=$(jq -r .version package.json)
         echo "version: $VERSION"
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_ENV
       shell: bash
+
+    - run: |
+          git config --global user.email "ci@ci.com"
+          git config --global user.name "CI"
+          git config --unset http.https://github.com/.extraheader
+          git add .
+          git commit -m "release: $VERSION"
+          git tag $VERSION
+      shell: bash
+
+    - uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.token }}
+        branch: ${{ github.ref }}
+        force: true
+        tags: true

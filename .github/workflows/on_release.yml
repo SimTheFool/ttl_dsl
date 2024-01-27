@@ -17,6 +17,7 @@ jobs:
       - uses: baptiste0928/cargo-install@v2
         with:
           crate: tauri-cli
+          version: "1.5.9"
 
       - run: 'moon ci :build'
 

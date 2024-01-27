@@ -7,9 +7,10 @@ inputs:
 
 runs:
   using: composite
-  steps:          
-    - run: 'cargo install cargo-release'
-      shell: bash
+  steps:
+    - uses: baptiste0928/cargo-install@v2
+      with:
+        crate: cargo-release
     - run: 'sudo apt install jq'
       shell: bash
 
@@ -19,7 +20,10 @@ runs:
       shell: bash
     - run: "jq -r .version package.json"
       shell: bash
-    - run: "git status"
+      
+    - run: git config --global user.email "ci@ci.com"
+      shell: bash
+    - run: git config --global user.name "CI"
       shell: bash
     - run: 'git commit -m "aaaa"'
       shell: bash

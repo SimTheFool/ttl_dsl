@@ -32,9 +32,11 @@ runs:
       shell: bash
     - run: 'git commit -m "release: $VERSION"'
       shell: bash
-    - run: 'git tag $VERSION'
+    #- run: 'git tag $VERSION'
+    #  shell: bash
+    #- run: 'git push origin $VERSION'
+    #  shell: bash
+    - run: 'echo https://SimTheFool:${{ secrets.PAT }}@github.com/SimTheFool/ttl_dsl.git'
       shell: bash
-    - run: 'git push origin $VERSION'
-      shell: bash
-    - run: 'git push'
+    - run: 'https://USERNAME:${GH_TOKEN}@github.com/OWNER/REPO.git'
       shell: bash

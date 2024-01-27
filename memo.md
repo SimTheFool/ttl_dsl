@@ -1,3 +1,4 @@
 - faire l'auto update
 - reset les versions
+- passer la release au tag
 - faire brigthorn

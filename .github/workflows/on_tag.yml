@@ -16,7 +16,7 @@ jobs:
       - run: 'moon run :build --affected'
 
       - run: 'cd ./.cargo/.target/release/bundle/msi && ls -la'
-        
+
 
       #- uses: tauri-apps/tauri-action@v0
       #  env:
@@ -33,4 +33,3 @@ jobs:
       #    path: '.cargo/.target/release/bundle/msi/docviewer_0.1.0_x64_en-US.msi'
       #    name: 'docviewer'
       #    retention-days: 15 days
-      #

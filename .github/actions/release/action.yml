@@ -18,9 +18,12 @@ runs:
       shell: bash
     - run: "yarn version --no-git-tag-version --${{ inputs.type }}"
       shell: bash
-    - run: "jq -r .version package.json"
+    - run: |
+        VERSION=$(jq -r .version package.json)
+        echo "Version: $VERSION"
+        echo "::set-output name=version::$VERSION"
       shell: bash
-      
+
     - run: git config --global user.email "ci@ci.com"
       shell: bash
     - run: git config --global user.name "CI"

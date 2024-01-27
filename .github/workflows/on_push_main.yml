@@ -46,7 +46,7 @@ jobs:
         shell: bash
       - run: 'git add .'
         shell: bash
-      - run: 'git commit -m "release: aaaaa"'
+      - run: 'git commit -m "release: bbbb"'
         shell: bash
       - uses: ad-m/github-push-action@master
         with:

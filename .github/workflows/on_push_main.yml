@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/install
 
       - run: 'cargo install cargo-release'
-      - run: 'apt install jq'
+      - run: 'sudo apt install jq'
 
       - run: 'moon run :bump -- minor'
         if: ${{ ! startsWith(github.event.head_commit.message, 'feat') }}

@@ -9,8 +9,13 @@ runs:
   using: composite
   steps:          
     - run: 'cargo install cargo-release'
+      shell: bash
     - run: 'sudo apt install jq'
+      shell: bash
 
     - run: 'moon run :bump -- ${{ inputs.type }}'
+      shell: bash
     - run: "yarn version -- ${{ inputs.type }}"
+      shell: bash
     - run: "jq -r .version package.json"
+      shell: bash

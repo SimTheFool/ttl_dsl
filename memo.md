@@ -1,4 +1,5 @@
 - faire github ci abc
+- repasser la release sur le tag
 - faire brigthorn
 
 release:

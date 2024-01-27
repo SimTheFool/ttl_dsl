@@ -21,7 +21,7 @@ jobs:
 
       - run: 'moon ci :build'
 
-      - run: 'cd ./.cargo/.target/release/bundle/msi && ls -la'
+      - run: 'cd ./.cargo/.target/release/bundle/msi && ls -R'
 
 
       #- uses: tauri-apps/tauri-action@v0

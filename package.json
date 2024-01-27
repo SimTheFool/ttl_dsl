@@ -3,6 +3,5 @@
   "workspaces": [
     "client_node",
     "desk_docviewer/ui"
-  ],
-  "version": "0.1.0"
+  ]
 }

@@ -21,15 +21,12 @@ jobs:
 
       - run: 'moon ci :build --base ${{ github.sha }}^'
 
-      - run: echo "aaaaa"
-      - run: "printenv"
-
-      #- if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
-      #  run: echo "BUILD_WIN=OK" >> $GITHUB_VARS
+      - if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+        run: echo "BUILD=OK" >> $GITHUB_OUTPUT
 
   release:
     runs-on: ubuntu-latest
-    if: ${{ vars.BUILD_WIN == 'OK'}}
+    if: ${{ needs.build_windows.outputs.BUILD == 'OK'}}
     steps:
       - run: echo "aaaaa"
       - run: "printenv"

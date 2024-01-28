@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.17.11",
+  "version": "0.17.12",
   "workspaces": [
     "client_node",
     "docviewer/ui"

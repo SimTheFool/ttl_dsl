@@ -6,6 +6,25 @@ on:
       - '**'
 
 jobs:
+  job1:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      output1: ${{ steps.step1.outputs.test }}
+      output2: ${{ steps.step2.outputs.test }}
+    steps:
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
+      - id: step2
+        run: echo "test=world" >> "$GITHUB_OUTPUT"
+  job2:
+    runs-on: ubuntu-latest
+    needs: job1
+    steps:
+      - env:
+          OUTPUT1: ${{needs.job1.outputs.output1}}
+          OUTPUT2: ${{needs.job1.outputs.output2}}
+        run: echo "$OUTPUT1 $OUTPUT2"
   build_windows:
     runs-on: windows-latest
     if: ${{ startsWith(github.event.head_commit.message, 'release') }}
@@ -25,7 +44,8 @@ jobs:
 
       #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
       - id: verify
-        run: echo "BUILD=what" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "BUILD=what" >> "$GITHUB_OUTPUT"
 
       - run: "echo ${{ steps.verify.outputs.BUILD }}"
 

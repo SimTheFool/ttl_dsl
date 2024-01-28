@@ -9,6 +9,8 @@ jobs:
   build_windows:
     runs-on: windows-latest
     if: ${{ startsWith(github.event.head_commit.message, 'release') }}
+    outputs:
+      build: ${{ steps.verify.outputs.build }}
     steps:
       - uses: actions/checkout@v4
       - name: Install
@@ -22,11 +24,12 @@ jobs:
       - run: 'moon ci :build --base ${{ github.sha }}^'
 
       - if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
-        run: echo "BUILD=OK" >> $GITHUB_OUTPUT
+        id: verify
+        run: echo "build=OK" >> "$GITHUB_OUTPUT"
 
   release:
     runs-on: ubuntu-latest
-    if: ${{ needs.build_windows.outputs.BUILD == 'OK'}}
+    if: ${{ needs.build_windows.outputs.build == 'OK'}}
     steps:
       - run: echo "aaaaa"
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd

@@ -50,18 +50,17 @@ jobs:
 
       - run: 'ls ./.cargo/.target/release/bundle/msi'
 
-      - id: get_version
-        run: |
+      - run: |
           VERSION=$(cargo metadata --format-version=1 --no-deps | jq '.packages[] | select(.name == "docviewer") | .version')
-          echo "docviewer_version=$VERSION" >> $GITHUB_OUTPUT
+          echo "DOCVIEWER_VERSION=$VERSION" >> $GITHUB_ENV
 
-      - run: echo "aaaa ${{ steps.get_version.outputs.docviewer_version }}"
+      - run: echo "aaaa $DOCVIEWER_VERSION"
 
       - run: |
-          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.docviewer_version }}_x64_en-US.msi.zip)
-          echo "docviewer_msi_sig=$VERSION" >> $GITHUB_OUTPUT
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_$DOCVIEWER_VERSION_x64_en-US.msi.zip)
+          echo "DOCVIEWER_MSI_SIG=$VERSION" >> $GITHUB_ENV
 
-      - run: echo "bbbb ${{ env.docviewer_msi_sig }}"
+      - run: echo "bbbb $DOCVIEWER_MSI_SIG"
 
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
 

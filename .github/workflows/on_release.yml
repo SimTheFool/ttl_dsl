@@ -29,7 +29,6 @@ jobs:
     if: ${{ needs.build_windows.outputs.BUILD == 'OK'}}
     steps:
       - run: echo "aaaaa"
-      - run: "printenv"
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
 
       #- uses: actions/upload-artifact@v4

@@ -85,10 +85,11 @@ jobs:
       #    echo "DOCVIEWER_MSI_SIG=$SIG" >> $GITHUB_ENV
 
       - run: |
+          delimiter=$(openssl rand -hex 8)
           {
-            echo 'DOCVIEWER_MSI_SIG<<EOF'
+            echo 'DOCVIEWER_MSI_SIG<<$delimiter'
             cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
-            echo EOF
+            echo $delimiter
           } >> $GITHUB_ENV
 
       - run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}

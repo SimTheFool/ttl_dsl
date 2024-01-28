@@ -7,7 +7,7 @@ on:
 
 jobs:
   job1:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
       build: ${{ steps.step1.outputs.build }}
     steps:

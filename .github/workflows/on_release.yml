@@ -21,6 +21,9 @@ jobs:
           version: "1.5.9"
 
       - run: 'moon ci :build --base ${{ github.sha }}^'
+        env:
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
  
       - id: verify
         if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi.zip') != ''

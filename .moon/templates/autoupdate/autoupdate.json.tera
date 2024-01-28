@@ -1,0 +1,9 @@
+{
+  "version": "{{version}}",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "{{win_sig}}",
+      "url": "https://github.com/SimTheFool/ttl_dsl/releases/latest/download/docviewer_{{version}}_x64_en-US.msi"
+    }
+  }
+}

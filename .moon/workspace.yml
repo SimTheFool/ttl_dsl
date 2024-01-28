@@ -18,3 +18,7 @@ projects:
 
 vcs:
   defaultBranch: "origin/main"
+
+generator:
+  templates:
+    - './.moon/templates'

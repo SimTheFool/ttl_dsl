@@ -1,0 +1,14 @@
+$schema: 'https://moonrepo.dev/schemas/template.json'
+
+title: 'autoupdate'
+description: 'Manifest used by tauri to auto-update apps.'
+
+variables:
+  version:
+    type: 'string'
+    required: true
+    prompt: 'version number ?'
+  win_sig:
+    type: 'string'
+    required: true
+    prompt: 'windows x86/x64 signature ?'

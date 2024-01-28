@@ -21,6 +21,20 @@ jobs:
 
       - run: 'moon ci :build --base ${{ github.sha }}^'
 
+      - run: echo "aaaaa"
+      - run: "printenv"
+
+      #- if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+      #  run: echo "BUILD_WIN=OK" >> $GITHUB_VARS
+
+  release:
+    runs-on: ubuntu-latest
+    if: ${{ vars.BUILD_WIN == 'OK'}}
+    steps:
+      - run: echo "aaaaa"
+      - run: "printenv"
+      #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
+
       #- uses: actions/upload-artifact@v4
       #  with:
       #    path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
@@ -28,7 +42,7 @@ jobs:
       #    if-no-files-found: ignore
       #    retention-days: 15 days
 
-      - uses: softprops/action-gh-release@v1
-        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
-        with:
-          files: .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi
+      #- uses: softprops/action-gh-release@v1
+      #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+      #  with:
+      #    files: .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi

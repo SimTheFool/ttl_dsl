@@ -27,6 +27,8 @@ jobs:
         id: verify
         run: echo "build=OK" >> "$GITHUB_OUTPUT"
 
+      - run: "echo ${{ steps.verify.outputs.build }}"
+
   release:
     runs-on: ubuntu-latest
     needs: build_windows

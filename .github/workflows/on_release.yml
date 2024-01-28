@@ -26,24 +26,28 @@ jobs:
         if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
 
+      - uses: actions/upload-artifact@v4
+        with:
+          path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
+          name: 'docviewer'
+          if-no-files-found: ignore
+          retention-days: 15 days
+
   release:
     runs-on: ubuntu-latest
     needs: build_windows
     if: ${{ needs.build_windows.outputs.build == 'ok'}}
     steps:
-      - uses: actions/checkout@v4
-      - name: Install
-        uses: ./.github/actions/install
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
+          name: 'docviewer'
 
       - run: cd ./.cargo/.target/release/bundle/msi && ls
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
 
-      #- uses: actions/upload-artifact@v4
-      #  with:
-      #    path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
-      #    name: 'docviewer'
-      #    if-no-files-found: ignore
-      #    retention-days: 15 days
+      
 
       #- uses: softprops/action-gh-release@v1
       #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''

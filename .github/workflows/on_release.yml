@@ -31,9 +31,9 @@ jobs:
     needs: build_windows
     if: ${{ needs.build_windows.outputs.build == 'ok'}}
     steps:
-      #- uses: actions/checkout@v4
-      #- name: Install
-      #  uses: ./.github/actions/install
+      - uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/install
 
       - run: cd ./.cargo/.target/release/bundle/msi && ls
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd

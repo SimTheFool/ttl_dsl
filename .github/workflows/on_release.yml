@@ -20,6 +20,17 @@ jobs:
           crate: tauri-cli
           version: "1.5.9"
 
+      - run: |
+          cd docviewer
+          $env:VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
+          echo VERSION: $env:VERSION
+          echo "DOCVIEWER_VERSION=$env:VERSION"
+          echo "DOCVIEWER_VERSION=$env:VERSION" >> $env:GITHUB_ENV
+
+      - run: echo $env:DOCVIEWER_VERSION
+
+      - run: echo ${{ env.DOCVIEWER_VERSION }}
+
       - run: 'moon ci :build --base ${{ github.sha }}^'
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -31,16 +42,7 @@ jobs:
 
       
 
-      - run: |
-          cd docviewer
-          VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
-          echo VERSION: $VERSION
-          echo "DOCVIEWER_VERSION=$VERSION"
-          echo "DOCVIEWER_VERSION=$VERSION" >> $env:GITHUB_ENV
-
-      - run: echo $env:DOCVIEWER_VERSION
-
-      - run: echo ${{ env.DOCVIEWER_VERSION }}
+      
       
       - run: cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
         shell: bash

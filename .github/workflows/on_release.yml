@@ -37,18 +37,15 @@ jobs:
           version: "1.5.9"
 
       - run: 'moon ci :build --base ${{ github.sha }}^'
-
-      #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+ 
       - id: verify
+        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
-
-      #- env:
-      #    BUILD: ${{ steps.verify.outputs.build }}
-      #  run: echo "$BUILD aaa"
 
   release:
     runs-on: ubuntu-latest
     needs: build_windows
+    if: ${{ needs.build_windows.outputs.build == 'ok'}}
     steps:
 
       - env:

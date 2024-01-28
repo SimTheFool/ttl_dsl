@@ -20,25 +20,20 @@ jobs:
           crate: tauri-cli
           version: "1.5.9"
 
-      - shell: bash
-        run: |
-          cd docviewer
-          VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
-          echo VERSION: $VERSION
-          echo "DOCVIEWER_VERSION=$VERSION"
-          echo "DOCVIEWER_VERSION=$VERSION" >> $env:GITHUB_ENV
-
       - run: echo "AAAAA=aaaaaa" >> $env:GITHUB_ENV
 
-      - shell: bash
-        run: echo "BBBBB=bbbbbb" >> $env:GITHUB_ENV
+      - run: |
+          cd docviewer
+          VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
+          echo VERSION: $(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
+          echo "DOCVIEWER_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')"
+          echo "DOCVIEWER_VERSION=$VERSION" >> $env:GITHUB_ENV
 
-      - run: echo $env:DOCVIEWER_VERSION
+
+
       - run: echo $env:AAAAA
       - run: echo ${{ env.AAAAA }}
-      - run: echo $env:BBBBB
-      - run: echo ${{ env.BBBBB }}
-
+      - run: echo $env:DOCVIEWER_VERSION
       - run: echo ${{ env.DOCVIEWER_VERSION }}
 
       - run: 'moon ci :build --base ${{ github.sha }}^'

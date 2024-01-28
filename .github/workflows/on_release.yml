@@ -66,7 +66,7 @@ jobs:
       #- run: echo aaaa $DOCVIEWER_VERSION
 
 
-      - run: cat .cargo/.target/release/bundle/msi/docviewer_$DOCVIEWER_VERSION_x64_en-US.msi.zip
+      - run: cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
 
       - run: |
           SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)

@@ -20,22 +20,6 @@ jobs:
           crate: tauri-cli
           version: "1.5.9"
 
-      - run: echo "AAAAA=aaaaaa" >> $env:GITHUB_ENV
-
-      - run: |
-          cd docviewer
-          VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
-          echo VERSION: $(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
-          echo "DOCVIEWER_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')"
-          echo "DOCVIEWER_VERSION=$VERSION" >> $env:GITHUB_ENV
-
-
-
-      - run: echo $env:AAAAA
-      - run: echo ${{ env.AAAAA }}
-      - run: echo $env:DOCVIEWER_VERSION
-      - run: echo ${{ env.DOCVIEWER_VERSION }}
-
       - run: 'moon ci :build --base ${{ github.sha }}^'
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -44,22 +28,22 @@ jobs:
       - id: verify
         if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi.zip') != ''
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
-
       
-
-      
-      
-      - run: cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
+      - run: cat .cargo/.target/release/bundle/msi/docviewer_0.22.0_x64_en-US.msi.zip
         shell: bash
         
       - shell: bash
         run: |
-          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_0.22.0_x64_en-US.msi.zip)
+          echo $SIG
+
+      - run: |
+          $SIG = Get-Content -Raw .\.cargo\.target\release\bundle\msi\docviewer_0.22.0_x64_en-US.msi.zip
           echo $SIG
 
       - shell: bash
         run: |
-          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_0.22.0_x64_en-US.msi.zip)
           echo "DOCVIEWER_MSI_SIG=$SIG" >> $env:GITHUB_ENV
 
       - uses: actions/upload-artifact@v4

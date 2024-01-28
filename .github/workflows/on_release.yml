@@ -28,8 +28,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
-          name: 'docviewer'
+          path: '.cargo/.target/release/bundle/msi/**'
+          name: 'docviewer_msi'
           if-no-files-found: ignore
           retention-days: 15 days
 
@@ -41,10 +41,10 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
-          name: 'docviewer'
+          path: '.cargo/.target/release/bundle/msi'
+          name: 'docviewer_msi'
 
-      - run: cd ./.cargo/.target/release/bundle/msi && ls
+      - run: cd ./.cargo/.target/release/bundle/msi && ls -R
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
 
       

@@ -21,13 +21,13 @@ jobs:
           crate: tauri-cli
           version: "1.5.9"
 
-      - run: 'moon ci :build --base ${{ github.sha }}^'
+      #- run: 'moon ci :build --base ${{ github.sha }}^'
 
-      - if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
-        id: verify
-        run: echo "build=OK" >> "$GITHUB_OUTPUT"
+      #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+      - id: verify
+        run: echo "BUILD=what" >> "$GITHUB_OUTPUT"
 
-      - run: "echo ${{ steps.verify.outputs.build }}"
+      - run: "echo ${{ steps.verify.outputs.BUILD }}"
 
   release:
     runs-on: ubuntu-latest

@@ -55,6 +55,7 @@ jobs:
           echo "DOCVIEWER_VERSION=$VERSION" >> $GITHUB_ENV
 
       - run: echo "aaaa $DOCVIEWER_VERSION"
+      - run: echo "aaaa ${{ env.DOCVIEWER_VERSION }}"
 
       - run: cat .cargo/.target/release/bundle/msi/docviewer_$DOCVIEWER_VERSION_x64_en-US.msi.zip
 

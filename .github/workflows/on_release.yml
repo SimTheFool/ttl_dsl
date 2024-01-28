@@ -19,7 +19,7 @@ jobs:
           crate: tauri-cli
           version: "1.5.9"
 
-      - run: 'moon ci :build --base ${{ github.sha }}^ '
+      - run: 'moon ci :build --base ${{ github.sha }}^'
 
       #- uses: actions/upload-artifact@v4
       #  with:
@@ -29,5 +29,6 @@ jobs:
       #    retention-days: 15 days
 
       - uses: softprops/action-gh-release@v1
+        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
         with:
           files: .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi

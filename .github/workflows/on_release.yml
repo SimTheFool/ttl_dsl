@@ -63,6 +63,10 @@ jobs:
 
       - run: |
           SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
+          echo $SIG
+
+      - run: |
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
           echo "DOCVIEWER_MSI_SIG=$SIG" >> $GITHUB_ENV
 
       - run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}

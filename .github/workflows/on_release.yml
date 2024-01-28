@@ -27,6 +27,7 @@ jobs:
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
 
       - uses: actions/upload-artifact@v4
+        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi.zip') != ''
         with:
           path: '.cargo/.target/release/bundle/msi/**'
           name: 'docviewer_msi'

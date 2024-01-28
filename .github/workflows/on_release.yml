@@ -42,22 +42,29 @@ jobs:
     needs: build_windows
     if: ${{ needs.build_windows.outputs.build == 'ok'}}
     steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/install
 
       - uses: actions/download-artifact@v4
         with:
           path: '.cargo/.target/release/bundle/msi'
           name: 'docviewer_msi'
 
-      - run: 'ls ./.cargo/.target/release/bundle/msi'
+      #- run: 'ls ./.cargo/.target/release/bundle/msi'
 
       - run: |
+          cd docviewer
           VERSION=$(cargo metadata --format-version=1 --no-deps | jq '.packages[] | select(.name == "docviewer") | .version')
+          echo VERSION: $VERSION
           echo "DOCVIEWER_VERSION=$VERSION" >> $GITHUB_ENV
 
-      - run: echo "aaaa $DOCVIEWER_VERSION"
+      - run: echo aaaa $DOCVIEWER_VERSION
         env:
           DOCVIEWER_VERSION: ${{ env.DOCVIEWER_VERSION }}
-      #- run: echo "aaaa ${{ env.DOCVIEWER_VERSION }}"
+      - run: echo aaaa ${{ env.DOCVIEWER_VERSION }}
+      - run: echo aaaa $DOCVIEWER_VERSION
+
 
       - run: cat .cargo/.target/release/bundle/msi/docviewer_$DOCVIEWER_VERSION_x64_en-US.msi.zip
 

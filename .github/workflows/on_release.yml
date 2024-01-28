@@ -23,7 +23,7 @@ jobs:
       - run: 'moon ci :build --base ${{ github.sha }}^'
  
       - id: verify
-        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi.zip') != ''
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
 
       - uses: actions/upload-artifact@v4
@@ -44,7 +44,18 @@ jobs:
           path: '.cargo/.target/release/bundle/msi'
           name: 'docviewer_msi'
 
-      - run: cd ./.cargo/.target/release/bundle/msi && ls -R
+      - run: |
+          VERSION=$(cargo metadata --format-version=1 --no-deps | jq '.packages[] | select(.name == "docviewer") | .version')
+          echo "docviewer_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - run: echo "aaaa ${{ env.docviewer_version }}"
+
+      - run: |
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.docviewer_version }}_x64_en-US.msi.zip)
+          echo "docviewer_msi_sig=$VERSION" >> $GITHUB_OUTPUT
+
+      - run: echo "bbbb ${{ env.docviewer_msi_sig }}"
+
       #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
 
       

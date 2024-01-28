@@ -45,6 +45,8 @@ jobs:
           path: '.cargo/.target/release/bundle/msi'
           name: 'docviewer_msi'
 
+      - run: 'ls ./.cargo/.target/release/bundle/msi'
+
       - run: |
           VERSION=$(cargo metadata --format-version=1 --no-deps | jq '.packages[] | select(.name == "docviewer") | .version')
           echo "docviewer_version=$VERSION" >> $GITHUB_OUTPUT

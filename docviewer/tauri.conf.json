@@ -51,7 +51,15 @@
       }
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [
+        "https://github.com/SimTheFool/ttl_dsl/releases/latest/download/autoupdate.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ2NzdBNDc3RDcxQUMyMzAKUldRd3doclhkNlIzUmhjNFdoMUhMTVNYTFNoajZyOVJnU3M1cWZoVlNKUUltQ0RhdGdxTVpCODkK",
+      "dialog": true,
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

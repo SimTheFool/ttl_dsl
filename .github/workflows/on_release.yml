@@ -14,8 +14,6 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
 
-      #- run: echo ${{ toJson(github) }}
-
       - uses: baptiste0928/cargo-install@v2
         with:
           crate: tauri-cli
@@ -23,8 +21,13 @@ jobs:
 
       - run: 'moon ci :build --base ${{ github.sha }}^ '
 
-      - uses: actions/upload-artifact@v4
+      #- uses: actions/upload-artifact@v4
+      #  with:
+      #    path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
+      #    name: 'docviewer'
+      #    if-no-files-found: ignore
+      #    retention-days: 15 days
+
+      - uses: softprops/action-gh-release@v1
         with:
-          path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
-          name: 'docviewer'
-          retention-days: 15 days
+          files: .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi

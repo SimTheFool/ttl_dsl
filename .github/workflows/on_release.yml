@@ -49,14 +49,16 @@ jobs:
 
       - env:
           BUILD: ${{ steps.verify.outputs.build }}
-        run: "echo $BUILD"
+        run: echo "$BUILD aaa"
 
   release:
     runs-on: ubuntu-latest
     needs: build_windows
     steps:
 
-      - run: "echo ${{ needs.build_windows.outputs.build }}"
+      - env:
+          BUILD: ${{ needs.build_windows.outputs.build }}
+        run: echo "$BUILD aaa"
 
       - run: echo "aaaaa"
         if: ${{ needs.build_windows.outputs.build == 'OK'}}

@@ -6,67 +6,69 @@ on:
       - '**'
 
 jobs:
-  job1:
-    runs-on: windows-latest
-    outputs:
-      build: ${{ steps.step1.outputs.build }}
-    steps:
-      - id: step1
-        run: echo "build=ok" >> $env:GITHUB_OUTPUT
-  job2:
-    runs-on: ubuntu-latest
-    needs: job1
-    steps:
-      - env:
-          BUILD: ${{needs.job1.outputs.build}}
-        run: echo "$BUILD"
-  
-  #build_windows:
+  #job1:
   #  runs-on: windows-latest
-  #  if: ${{ startsWith(github.event.head_commit.message, 'release') }}
   #  outputs:
-  #    build: ${{ steps.verify.outputs.build }}
+  #    build: ${{ steps.step1.outputs.build }}
   #  steps:
-  #    - uses: actions/checkout@v4
-  #    - name: Install
-  #      uses: ./.github/actions/install
-#
-  #    - uses: baptiste0928/cargo-install@v2
-  #      with:
-  #        crate: tauri-cli
-  #        version: "1.5.9"
-#
-  #    - run: 'moon ci :build --base ${{ github.sha }}^'
-#
-  #    #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
-  #    - id: verify
-  #      run: echo "build=ok" >> "$GITHUB_OUTPUT"
-#
-  #    - env:
-  #        BUILD: ${{ steps.verify.outputs.build }}
-  #      run: echo "$BUILD aaa"
-
-  #release:
+  #    - id: step1
+  #      run: echo "build=ok" >> $env:GITHUB_OUTPUT
+  #job2:
   #  runs-on: ubuntu-latest
-  #  needs: build_windows
+  #  needs: job1
   #  steps:
-#
   #    - env:
-  #        BUILD: ${{ needs.build_windows.outputs.build }}
-  #      run: echo "$BUILD aaa"
-#
-  #    - run: echo "aaaaa"
-  #      if: ${{ needs.build_windows.outputs.build == 'OK'}}
-  #    #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
-#
-  #    #- uses: actions/upload-artifact@v4
-  #    #  with:
-  #    #    path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
-  #    #    name: 'docviewer'
-  #    #    if-no-files-found: ignore
-  #    #    retention-days: 15 days
-#
-  #    #- uses: softprops/action-gh-release@v1
-  #    #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
-  #    #  with:
-  #    #    files: .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi
+  #        BUILD: ${{needs.job1.outputs.build}}
+  #      run: echo "$BUILD"
+  
+  build_windows:
+    runs-on: windows-latest
+    if: ${{ startsWith(github.event.head_commit.message, 'release') }}
+    outputs:
+      build: ${{ steps.verify.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/install
+
+      - uses: baptiste0928/cargo-install@v2
+        with:
+          crate: tauri-cli
+          version: "1.5.9"
+
+      - run: 'moon ci :build --base ${{ github.sha }}^'
+
+      #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+      - id: verify
+        run: echo "build=ok" >> $env:GITHUB_OUTPUT
+
+      #- env:
+      #    BUILD: ${{ steps.verify.outputs.build }}
+      #  run: echo "$BUILD aaa"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build_windows
+    steps:
+
+      - env:
+          BUILD: ${{ needs.build_windows.outputs.build }}
+        run: echo "$BUILD aaa"
+
+      - run: echo "${{ needs.build_windows.outputs.build }} aaa"
+
+      - run: echo "aaaaa"
+        if: ${{ needs.build_windows.outputs.build == 'ok'}}
+      #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
+
+      #- uses: actions/upload-artifact@v4
+      #  with:
+      #    path: '.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi'
+      #    name: 'docviewer'
+      #    if-no-files-found: ignore
+      #    retention-days: 15 days
+
+      #- uses: softprops/action-gh-release@v1
+      #  if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi') != ''
+      #  with:
+      #    files: .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi

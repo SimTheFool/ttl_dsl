@@ -1,4 +1,4 @@
-- faire l'auto update
+- faire l'auto update aa
 - reset les versions
 - passer la release au tag
 - faire brigthorn

@@ -28,23 +28,6 @@ jobs:
       - id: verify
         if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi.zip') != ''
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
-      
-      #- run: cat .cargo/.target/release/bundle/msi/docviewer_0.22.0_x64_en-US.msi.zip
-      #  shell: bash
-        
-      #- shell: bash
-      #  run: |
-      #    SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_0.22.0_x64_en-US.msi.zip)
-      #    echo $SIG
-
-      #- run: |
-      #    $SIG = Get-Content -Raw .\.cargo\.target\release\bundle\msi\docviewer_0.22.0_x64_en-US.msi.zip
-      #    echo $SIG
-
-      #- shell: bash
-      #  run: |
-      #    SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_0.22.0_x64_en-US.msi.zip)
-      #    echo "DOCVIEWER_MSI_SIG=$SIG" >> $env:GITHUB_ENV
 
       - uses: actions/upload-artifact@v4
         if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi.zip') != ''
@@ -84,17 +67,20 @@ jobs:
       #    SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
       #    echo "DOCVIEWER_MSI_SIG=$SIG" >> $GITHUB_ENV
 
+      #- run: |
+      #    sed -e '$a\' .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
+      #    {
+      #      echo 'DOCVIEWER_MSI_SIG<<EOF'
+      #      cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
+      #      echo EOF
+      #    } >> $GITHUB_OUTPUT
+
+      #- run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}
+
       - run: |
-          sed -e '$a\' .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
-          {
-            echo 'DOCVIEWER_MSI_SIG<<EOF'
-            cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
-            echo EOF
-          } >> $GITHUB_OUTPUT
-
-      - run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}
-
-      #- run: moon generate autoupdate ./docviewer/ --defaults -- --version aaa --win_sig ddd
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
+          moon generate autoupdate ./docviewer/ --defaults -- --version ${{ env.DOCVIEWER_VERSION }} --win_sig $SIG
+          cat ./docviewer/autopdate.json
 
       
 

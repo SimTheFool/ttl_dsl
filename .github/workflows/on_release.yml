@@ -90,7 +90,7 @@ jobs:
             echo 'DOCVIEWER_MSI_SIG<<$delimiter'
             cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip
             echo $delimiter
-          } >> $GITHUB_ENV
+          } >> $GITHUB_OUTPUT
 
       - run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}
 

@@ -13,13 +13,13 @@ type SectionProps = {
 
 export const Section = ({ children, title }: SectionProps) => {
   return (
-    <RadSection py={"0"} mb={"3"}>
+    <Box py={"0"} mb={"3"}>
       {title && (
         <Box pt={"0"} pb={"1"}>
           {title}
         </Box>
       )}
       {children}
-    </RadSection>
+    </Box>
   );
 };

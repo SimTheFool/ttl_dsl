@@ -212,12 +212,13 @@ const StatBlock = ({ n, mod, stat, dice }: StatBlockProps) => {
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div
+    <Box
+      pr={"2"}
       style={{
         display: "inline-block",
       }}
     >
       {children}
-    </div>
+    </Box>
   );
 };

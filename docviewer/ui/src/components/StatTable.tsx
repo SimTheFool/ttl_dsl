@@ -21,41 +21,38 @@ export const StatTable = ({
   const nonNullRows = rows.filter((row) => row.some((cell) => cell !== null));
 
   return (
-    <Table.Root
-      size="1"
+    <table
       className={[
         styles.table,
         inline && styles.tableInline,
         compact && styles.tableCompact,
       ].join(" ")}
     >
-      <Table.Header>
-        <Table.Row>
+      <thead>
+        <tr>
           {headers.map((title, i) => (
-            <Table.ColumnHeaderCell
+            <th
               key={i}
               style={{
-                boxShadow: !!nonNullRows.length
-                  ? "var(--table-row-border-bottom)"
-                  : "none",
+                borderBottom: !!nonNullRows.length ? "1px solid black" : "none",
               }}
             >
               {title}
-            </Table.ColumnHeaderCell>
+            </th>
           ))}
-        </Table.Row>
-      </Table.Header>
+        </tr>
+      </thead>
       {!!nonNullRows.length && (
-        <Table.Body>
+        <tbody>
           {nonNullRows.map((row, i) => (
-            <Table.Row key={i}>
+            <tr key={i}>
               {row.map((cell, i) => (
-                <Table.Cell key={i}>{cell}</Table.Cell>
+                <td key={i}>{cell}</td>
               ))}
-            </Table.Row>
+            </tr>
           ))}
-        </Table.Body>
+        </tbody>
       )}
-    </Table.Root>
+    </table>
   );
 };

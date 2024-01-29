@@ -51,6 +51,8 @@ jobs:
           path: '.cargo/.target/release/bundle/msi'
           name: 'docviewer_msi'
 
+      - run: cd ./.cargo/.target/release/bundle/msi && ls
+
       - run: |
           cd docviewer
           VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "docviewer") | .version' | tr -d '"')
@@ -78,7 +80,7 @@ jobs:
       #- run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}
 
       - run: |
-          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip)
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.sig)
           moon generate autoupdate ./docviewer/ --defaults -- --version ${{ env.DOCVIEWER_VERSION }} --win_sig $SIG
           cat ./docviewer/autopdate.json
 

@@ -7,6 +7,8 @@ tasks:
       persistent: true
   build:
     command: "cargo tauri build"
+  build-debug:
+    command: "cargo tauri build --debug"
   bump-patch:
     command: "cargo release version patch --execute --quiet --no-confirm"
   bump-minor:

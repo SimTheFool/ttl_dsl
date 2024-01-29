@@ -57,8 +57,8 @@ export const Stats = ({ char }: StatsProps) => {
           />
         )}
       </Box>
-      <Container>
-        {stats.res && (
+      {stats.res && (
+        <Container>
           <StatTable
             inline
             items={[
@@ -66,20 +66,20 @@ export const Stats = ({ char }: StatsProps) => {
               [stats.ess, stats.res, stats.submersion],
             ]}
           />
-        )}
-      </Container>
-      <Container>
-        {stats.mag && (
+        </Container>
+      )}
+      {stats.mag && (
+        <Container>
           <StatTable
             items={[
               ["ESS", "MAG", "Init."],
               [stats.ess, stats.mag, stats.initiation],
             ]}
           />
-        )}
-      </Container>
-      <Container>
-        {stats.resist_drain && (
+        </Container>
+      )}
+      {stats.resist_drain && (
+        <Container>
           <StatTable
             items={[
               ["Res.Drain"],
@@ -91,8 +91,8 @@ export const Stats = ({ char }: StatsProps) => {
               ],
             ]}
           />
-        )}
-      </Container>
+        </Container>
+      )}
       <Container>
         <StatTable
           items={[
@@ -212,13 +212,12 @@ const StatBlock = ({ n, mod, stat, dice }: StatBlockProps) => {
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Box
-      pr={"2"}
+    <div
       style={{
         display: "inline-block",
       }}
     >
       {children}
-    </Box>
+    </div>
   );
 };

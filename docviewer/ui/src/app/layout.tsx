@@ -19,6 +19,7 @@ import { useLocalStorage } from "react-use";
 import "./globals.css";
 
 const getTemplates = async (): Promise<string[]> => {
+  //return [];
   return invoke("get_templates");
 };
 

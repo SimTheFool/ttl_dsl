@@ -41,7 +41,7 @@ const PdfBreak = () => {
   return (
     <div
       style={{
-        pageBreakAfter: "always",
+        //pageBreakAfter: "always",
       }}
     />
   );

@@ -26,13 +26,13 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
  
       - id: verify
-        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi**') != ''
+        if: hashFiles('.cargo/.target/debug/bundle/msi/docviewer_**_x64_en-US.msi**') != ''
         run: echo "build=ok" >> $env:GITHUB_OUTPUT
 
       - uses: actions/upload-artifact@v4
-        if: hashFiles('.cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi**') != ''
+        if: hashFiles('.cargo/.target/debug/bundle/msi/docviewer_**_x64_en-US.msi**') != ''
         with:
-          path: '.cargo/.target/release/bundle/msi/**'
+          path: '.cargo/.target/debug/bundle/msi/**'
           name: 'docviewer_msi'
           if-no-files-found: ignore
           retention-days: 15 days
@@ -48,7 +48,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: '.cargo/.target/release/bundle/msi'
+          path: '.cargo/.target/debug/bundle/msi'
           name: 'docviewer_msi'
 
       - run: |
@@ -58,12 +58,12 @@ jobs:
           echo "DOCVIEWER_VERSION=$VERSION" >> $GITHUB_ENV
 
       - run: |
-          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip.sig)
+          SIG=$(cat .cargo/.target/debug/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip.sig)
           moon generate autoupdate ./docviewer/ --defaults -- --version ${{ env.DOCVIEWER_VERSION }} --win_sig $SIG
           cat ./docviewer/autoupdate.json
 
       - uses: softprops/action-gh-release@v1
         with:
           files: |
-            .cargo/.target/release/bundle/msi/docviewer_**_x64_en-US.msi**
+            .cargo/.target/debug/bundle/msi/docviewer_**_x64_en-US.msi**
             ./docviewer/autoupdate.json

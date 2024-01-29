@@ -6,10 +6,11 @@ import "./PdfContainer.css";
 type A4FormatProps = {
   children: React.ReactNode;
   border?: boolean;
+  noBreak?: boolean;
   footer?: React.ReactNode;
 };
 
-export const PdfContainer = ({ children, border = false, footer }: A4FormatProps) => {
+export const PdfContainer = ({ children, footer, border = false, noBreak }: A4FormatProps) => {
   let sizes = getA4FormatFromWidth(787);
 
   return (
@@ -22,6 +23,7 @@ export const PdfContainer = ({ children, border = false, footer }: A4FormatProps
         border: border ? "2px solid var(--gray-10)" : "unset",
         boxSizing: "border-box",
         overflow: "hidden",
+        pageBreakAfter: noBreak ? "unset" : "always",
       }}
     >
       <Box
@@ -44,17 +46,6 @@ export const PdfContainer = ({ children, border = false, footer }: A4FormatProps
           </Box>
         )}
       </Box>
-      <PdfBreak />
     </Theme>
-  );
-};
-
-const PdfBreak = () => {
-  return (
-    <div
-      style={{
-        //pageBreakAfter: "always",
-      }}
-    />
   );
 };

@@ -19,8 +19,8 @@ fn main() {
                     .build()?;
 
             viewer_win.set_size(Size::Logical(LogicalSize {
-                height: 900.0,
-                width: 870.0,
+                height: 1080.0,
+                width: 1000.0,
             }))?;
             viewer_win.set_resizable(true)?;
             viewer_win.set_title(VIEWER_WINDOW)?;

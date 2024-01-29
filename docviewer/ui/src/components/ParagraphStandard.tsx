@@ -9,7 +9,7 @@ export const ParagraphStandard = ({ children }: ParagraphStandardProps) => {
         display: "block",
         lineHeight: 1,
         fontStyle: "italic",
-        fontSize: 13,
+        fontSize: 16,
       }}
     >
       {children}

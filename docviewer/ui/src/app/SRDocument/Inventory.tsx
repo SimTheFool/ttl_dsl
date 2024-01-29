@@ -35,17 +35,17 @@ export default function Inventory({ char }: Props) {
   if (smallWeight > 20 || bigWeight > 20)
     return (
       <>
-        <PdfContainer>
+        <PdfContainer footer={"INVENTAIRE"}>
           <BigObjects char={char} />
         </PdfContainer>
-        <PdfContainer>
+        <PdfContainer footer={"CONSOMMABLES ET OUTILS"}>
           <LittleObjects char={char} />
         </PdfContainer>
       </>
     );
 
   return (
-    <PdfContainer>
+    <PdfContainer footer={"INVENTAIRE"}>
       <AllInOne char={char} />
     </PdfContainer>
   );

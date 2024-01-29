@@ -20,10 +20,10 @@ export default function Powers({ char }: Props) {
   if (weight < 20)
     return (
       <>
-        <PdfContainer>
+        <PdfContainer footer={"POUVOIRS ET COMPAGNONS"}>
           <PowersAndCompanions char={char} />
         </PdfContainer>
-        <PdfContainer>
+        <PdfContainer footer={"ACTIONS COMMUNES"}>
           <CommonActionOnly char={char} />
         </PdfContainer>
       </>
@@ -31,13 +31,13 @@ export default function Powers({ char }: Props) {
 
   return (
     <>
-      <PdfContainer>
+      <PdfContainer footer={"POUVOIRS"}>
         <PowersOnly char={char} />
       </PdfContainer>
-      <PdfContainer>
+      <PdfContainer footer={"COMPAGNONS"}>
         <CompanionOnly char={char} />
       </PdfContainer>
-      <PdfContainer>
+      <PdfContainer footer={"ACTIONS COMMUNES"}>
         <CommonActionOnly char={char} />
       </PdfContainer>
     </>

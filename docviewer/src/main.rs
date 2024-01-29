@@ -10,7 +10,7 @@ use std::collections::HashMap;
 use std::fs::{self};
 use tauri::{LogicalSize, Manager, Size, State, Window};
 use tokio::task::spawn_blocking;
-//aabbccpp
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -19,8 +19,8 @@ fn main() {
                     .build()?;
 
             viewer_win.set_size(Size::Logical(LogicalSize {
-                height: 700.0,
-                width: 720.0,
+                height: 900.0,
+                width: 820.0,
             }))?;
             viewer_win.set_resizable(true)?;
             viewer_win.set_title(VIEWER_WINDOW)?;

@@ -9,7 +9,7 @@ type A4FormatProps = {
 };
 
 export const PdfContainer = ({ children, border = false }: A4FormatProps) => {
-  let sizes = getA4FormatFromWidth(690);
+  let sizes = getA4FormatFromWidth(800);
 
   return (
     <Theme
@@ -17,6 +17,7 @@ export const PdfContainer = ({ children, border = false }: A4FormatProps) => {
       style={{
         width: `${sizes.width}px`,
         height: `${sizes.height}px`,
+        padding: "10px",
         border: border ? "2px solid var(--gray-10)" : "unset",
         boxSizing: "border-box",
         overflow: "hidden",

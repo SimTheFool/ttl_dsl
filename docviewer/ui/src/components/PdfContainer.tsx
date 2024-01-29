@@ -10,7 +10,7 @@ type A4FormatProps = {
 };
 
 export const PdfContainer = ({ children, border = false, footer }: A4FormatProps) => {
-  let sizes = getA4FormatFromWidth(800);
+  let sizes = getA4FormatFromWidth(787);
 
   return (
     <Theme

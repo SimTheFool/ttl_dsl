@@ -20,7 +20,7 @@ fn main() {
 
             viewer_win.set_size(Size::Logical(LogicalSize {
                 height: 900.0,
-                width: 820.0,
+                width: 870.0,
             }))?;
             viewer_win.set_resizable(true)?;
             viewer_win.set_title(VIEWER_WINDOW)?;

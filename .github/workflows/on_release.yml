@@ -80,7 +80,7 @@ jobs:
       #- run: echo bbbb ${{ env.DOCVIEWER_MSI_SIG }}
 
       - run: |
-          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.sig)
+          SIG=$(cat .cargo/.target/release/bundle/msi/docviewer_${{ env.DOCVIEWER_VERSION }}_x64_en-US.msi.zip.sig)
           moon generate autoupdate ./docviewer/ --defaults -- --version ${{ env.DOCVIEWER_VERSION }} --win_sig $SIG
           cat ./docviewer/autopdate.json
 

@@ -2,7 +2,6 @@
 
 import { RenderData } from "@/utils/tauriAPI";
 import Inventory from "./Inventory";
-import Last from "./Last";
 import Powers from "./Powers";
 import Summary from "./Summary";
 import { parseCharacter } from "./character";

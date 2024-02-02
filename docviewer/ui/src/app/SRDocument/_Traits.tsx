@@ -13,7 +13,7 @@ type EffectsProps = {
 export const Traits = ({ char }: EffectsProps) => {
   return (
     <Section>
-      <MasonryGridNoSSR compact columns={4}>
+      <MasonryGridNoSSR compact columns={3}>
         <TitleSection>Effets</TitleSection>
         {Object.entries(char.traits || {}).map(([name, trait], i) => (
           <Box key={i} pr={"2"} pb={"2"}>

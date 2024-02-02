@@ -1,7 +1,7 @@
 import { ZodType, z } from "zod";
 
 export type SRCharacter = z.infer<typeof characterParser>;
-export type SRIdnetity = z.infer<typeof identityParser>;
+export type SRIdentity = z.infer<typeof identityParser>;
 export type SRTrait = z.infer<typeof traitParser>;
 export type SRAction = z.infer<typeof actionParser>;
 export type SRCompanion = z.infer<typeof companionParser>;
@@ -10,17 +10,20 @@ export type SRObject = z.infer<typeof objectParser>;
 const asLeaf = <T extends ZodType<any, any, any>>(v: T) =>
   z.object({
     value: v,
-    metas: z.array(z.string()).optional(),
+    metas: asCoercedNullish(z.array(z.string())),
   });
 
 const asPseudoArray = <T extends ZodType<any, any, any>>(v: T) =>
   z.record(z.string(), v);
 
+const asCoercedNullish = <T extends ZodType<any, any, any>>(v: T) =>
+  v.nullish().transform((v) => (v == null ? undefined : v));
+
 const identityParser = z.object({
-  name: z.string().optional(),
-  price: z.number().optional(),
-  nuyens: z.number().optional(),
-  quality: z.number().optional(),
+  name: z.string().nullish(),
+  price: z.number().nullish(),
+  nuyens: z.number().nullish(),
+  quality: z.number().nullish(),
   contacts: asPseudoArray(
     z.object({
       name: z.string(),
@@ -28,28 +31,28 @@ const identityParser = z.object({
       connection: z.number(),
       description: z.string(),
     })
-  ).optional(),
+  ).nullish(),
   lifestyle: z
     .object({
       name: z.string(),
-      description: z.string().optional(),
+      description: z.string().nullish(),
       price: z.number(),
     })
-    .optional(),
+    .nullish(),
   licences: asPseudoArray(
     z.object({
       name: z.string(),
-      description: z.string().optional(),
+      description: z.string().nullish(),
       price: z.number(),
       quality: z.number(),
     })
-  ).optional(),
+  ).nullish(),
 });
 
 const skillParser = z.object({
-  score: z.number().optional(),
-  specializations: asPseudoArray(z.string()).optional(),
-  masterizations: asPseudoArray(z.string()).optional(),
+  score: asCoercedNullish(z.number()),
+  specializations: asPseudoArray(z.string()).nullish(),
+  masterizations: asPseudoArray(z.string()).nullish(),
 });
 
 const traitParser = z.object({
@@ -57,17 +60,21 @@ const traitParser = z.object({
 });
 
 const actionParser = z.object({
-  test: z.string().optional(),
-  major: z.number().optional(),
-  minor: z.number().optional(),
-  duration: z.string().optional(),
-  maintained: z.boolean().optional(),
-  reaction: z.boolean().optional(),
-  description: z.string().nullable().optional(),
-  damage: z.number().optional(),
-  ammo: z.number().optional(),
-  gauge: z.number().optional(),
-  ammo_gauge: z.number().optional(),
+  test: z.string().nullish(),
+  major: z.number().nullish(),
+  minor: z.number().nullish(),
+  duration: z.string().nullish(),
+  threshold: z.number().nullish(),
+  maintained: z.boolean().nullish(),
+  reaction: z.boolean().nullish(),
+  range: z.enum(["perso", "contact", "LDV"]).nullish(),
+  nature: z.enum(["physique", "mana", "duale"]).nullish(),
+  zone: z.boolean().nullish(),
+  description: z.string().nullable().nullish(),
+  damage: z.number().nullish(),
+  ammo: z.number().nullish(),
+  gauge: z.number().nullish(),
+  ammo_gauge: z.number().nullish(),
   ranges: z
     .object({
       contact: z.number(),
@@ -76,73 +83,73 @@ const actionParser = z.object({
       mid: z.number(),
       far: z.number(),
     })
-    .optional(),
+    .nullish(),
 });
 
 const companionParser = z.object({
-  name: z.string(),
+  name: z.string().nullish(),
+  dynamic: z.number().nullish(),
   stats_primary: z
     .object({
       major: z.number(),
       minor: z.number(),
-      hit: z.number().optional(),
-      hit_formula: z.string().optional(),
+      hit: z.number(),
     })
-    .optional(),
-  stats_secondary: z.record(z.string(), z.number()).optional(),
-  skills: asPseudoArray(z.string()).optional(),
-  traits: asPseudoArray(traitParser).optional(),
-  actions: z.record(z.string(), actionParser).optional(),
+    .nullish(),
+  stats_secondary: z.record(z.string(), z.number()).nullish(),
+  skills: asPseudoArray(z.string()).nullish(),
+  traits: asPseudoArray(traitParser).nullish(),
+  actions: z.record(z.string(), actionParser).nullish(),
 });
 
 const slotParser = z.object({
-  name: z.string().optional(),
+  name: z.string().nullish(),
   size: z.enum(["S", "M", "L", "XL"]),
-  concealment: z.number().optional(),
+  concealment: asCoercedNullish(z.number()),
 });
 
 const objectParser = z.object({
   name: z.string(),
-  manufacturer: z.string().nullable().optional(),
+  manufacturer: z.string().nullable().nullish(),
   price: z.number(),
   price_unit: z.number(),
-  quantity: z.number().optional(),
-  quality: z.number().optional(),
-  description: z.string().optional(),
+  quantity: z.number().nullish(),
+  quality: z.number().nullish(),
+  description: z.string().nullish(),
   status: z.enum(["free", "licenced", "illegal"]),
-  concealment: z.number().optional(),
+  concealment: asCoercedNullish(z.number()),
   stats_primary: z
     .object({
-      hit: z.number().optional(),
+      hit: z.number().nullish(),
     })
-    .optional(),
-  stats_secondary: z.record(z.string(), z.number()).optional(),
+    .nullish(),
+  stats_secondary: z.record(z.string(), z.number()).nullish(),
   ranges: z
     .object({
       contact: z.object({
-        label: z.number().optional(),
+        label: asCoercedNullish(z.number()),
         base: z.number(),
       }),
       near: z.object({
-        label: z.number().optional(),
+        label: asCoercedNullish(z.number()),
         base: z.number(),
       }),
       short: z.object({
-        label: z.number().optional(),
+        label: asCoercedNullish(z.number()),
         base: z.number(),
       }),
       mid: z.object({
-        label: z.number().optional(),
+        label: asCoercedNullish(z.number()),
         base: z.number(),
       }),
       far: z.object({
-        label: z.number().optional(),
+        label: asCoercedNullish(z.number()),
         base: z.number(),
       }),
     })
-    .optional(),
-  actions: z.record(z.string(), actionParser).optional(),
-  slots: asPseudoArray(slotParser).optional(),
+    .nullish(),
+  actions: z.record(z.string(), actionParser).nullish(),
+  slots: asPseudoArray(slotParser).nullish(),
 });
 
 const statsParser = z.object({
@@ -179,15 +186,15 @@ const statsParser = z.object({
 
   resist_drain: asLeaf(z.number()),
 
-  mag: z.number().optional(),
-  initiation: z.number().optional(),
+  mag: z.number().nullish(),
+  initiation: z.number().nullish(),
 
-  res: z.number().optional(),
-  submersion: z.number().optional(),
-  firewall: z.number().optional(),
-  traitement: z.number().optional(),
-  corruption: z.number().optional(),
-  attaque: z.number().optional(),
+  res: z.number().nullish(),
+  submersion: z.number().nullish(),
+  firewall: z.number().nullish(),
+  traitement: z.number().nullish(),
+  corruption: z.number().nullish(),
+  attaque: z.number().nullish(),
 });
 
 const characterParser = z.object({
@@ -198,11 +205,12 @@ const characterParser = z.object({
   stats: statsParser,
   skills: z.record(z.string(), skillParser),
   traits: z.record(z.string(), traitParser),
-  powers: z.record(z.string(), actionParser).optional(),
-  actions_common: z.record(z.string(), actionParser).optional(),
-  companions: z.record(z.string(), companionParser).optional(),
-  small_inventory: z.record(z.string(), objectParser).optional(),
-  big_inventory: z.record(z.string(), objectParser).optional(),
+  powers: z.record(z.string(), actionParser).nullish(),
+  actions_common: z.record(z.string(), actionParser).nullish(),
+  actions_magic: z.record(z.string(), actionParser).nullish(),
+  companions: z.record(z.string(), companionParser).nullish(),
+  small_inventory: z.record(z.string(), objectParser).nullish(),
+  big_inventory: z.record(z.string(), objectParser).nullish(),
 });
 
 export const parseCharacter: (data: unknown) => SRCharacter =

@@ -77,7 +77,7 @@ export const Item = ({
           key={name}
           name={name}
           action={action}
-          baseRanges={ranges}
+          baseRanges={ranges || undefined}
         ></SimpleAction>
       );
     });

@@ -66,7 +66,7 @@ export const InlineMinorAction = ({ size }: ActionProps) => {
     <Box
       style={{
         display: "inline-block",
-        verticalAlign: "text-top",
+        verticalAlign: "sub",
       }}
     >
       <BaseIcon size={size || 18}>

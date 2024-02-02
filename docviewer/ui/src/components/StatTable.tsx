@@ -35,6 +35,7 @@ export const StatTable = ({
               key={i}
               style={{
                 borderBottom: !!nonNullRows.length ? "1px solid black" : "none",
+                fontSize: "13px",
               }}
             >
               {title}

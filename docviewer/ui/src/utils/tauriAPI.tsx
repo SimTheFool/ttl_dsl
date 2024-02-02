@@ -1,9 +1,11 @@
 "use client";
 
 import { useRenderingContext } from "@/components/controls/RenderingContext";
+import { Box } from "@radix-ui/themes";
 import { invoke } from "@tauri-apps/api/tauri";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { useEffect, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const getData = async <T,>(
   dataFile: string,
@@ -13,6 +15,9 @@ const getData = async <T,>(
   const [json, images] = (await invoke("get_template_data", {
     dataFile: dataFile,
     resolutionDir: resolutionDir,
+  }).catch((e: any) => {
+    console.error(`Invoke error: ${e}`);
+    throw new Error(`Invoke error: ${e}`);
   })) as [json: unknown, images: Record<string, string>];
 
   const imagesWithAssetLinks = Object.fromEntries(
@@ -27,9 +32,6 @@ const getData = async <T,>(
     throw new Error(`Parse data error: ${e}`);
   }
 
-  /* const parsedData = JSON.parse(fake);
-  const imagesWithAssetLinks = {}; */
-
   return [parsedData, imagesWithAssetLinks] as const;
 };
 
@@ -41,20 +43,53 @@ export const RenderData = <T,>({ Child, parser }: RenderDataProps<T>) => {
   const { dataFile, resolutionDir } = useRenderingContext();
   const [json, setJson] = useState<T>();
   const [images, setImages] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  console.log("error !!", error);
 
   useEffect(() => {
     if (!dataFile || !resolutionDir) {
       return;
     }
+    setIsLoading(true);
+    setError(undefined);
     getData(dataFile, resolutionDir, parser)
       .then(([json, images]) => {
         setJson(json);
         setImages(images);
       })
       .catch((e) => {
+        setError(e.message);
         console.error(e);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, [dataFile, resolutionDir]);
+  }, [dataFile, resolutionDir, setIsLoading]);
+
+  if (isLoading || error) {
+    return (
+      <Box
+        style={{
+          width: "100%",
+          height: "100vh",
+          position: "relative",
+        }}
+      >
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <ClipLoader loading={isLoading} size={150} />
+          {error && <pre>{error}</pre>}
+        </Box>
+      </Box>
+    );
+  }
 
   if (!json) {
     return null;

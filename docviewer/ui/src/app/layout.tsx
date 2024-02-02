@@ -17,9 +17,9 @@ import { ImInsertTemplate } from "react-icons/im";
 import { LuSheet } from "react-icons/lu";
 import { useLocalStorage } from "react-use";
 import "./globals.css";
+import { LuRefreshCcw } from "react-icons/lu";
 
 const getTemplates = async (): Promise<string[]> => {
-  //return [];
   return invoke("get_templates");
 };
 
@@ -124,6 +124,23 @@ export default function RootLayout({
                     }}
                   >
                     <FaEye />
+                  </button>
+                </OnHydration>
+
+                <OnHydration>
+                  <button
+                    type="button"
+                    disabled={!isRendering}
+                    style={{
+                      marginRight: "8px",
+                      maxHeight: "25px",
+                      cursor: isRendering ? "pointer" : "default",
+                    }}
+                    onClick={(e) => {
+                      template && router.refresh();
+                    }}
+                  >
+                    <LuRefreshCcw />
                   </button>
                 </OnHydration>
 

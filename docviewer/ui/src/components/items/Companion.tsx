@@ -4,6 +4,8 @@ import { InlineMajorAction, InlineMinorAction } from "../Icons/Actions";
 import { Monitor } from "../Monitor";
 import { SRCompanion } from "@/app/SRDocument/character";
 import { Box } from "@radix-ui/themes";
+import { Slot } from "./Slot";
+import { Space } from "../Space";
 
 type OtherCompanionProps = {
   name: string;
@@ -16,16 +18,46 @@ export const Companion = ({
   name,
   companion: otherCompanion,
   ergo = false,
-  slot = true,
 }: OtherCompanionProps) => {
   const primary = otherCompanion.stats_primary;
+  const secondary = otherCompanion.stats_secondary || {};
+  const dynamic = otherCompanion.dynamic;
   const Container = ergo ? ErgoCompanionBox : CompanionBox;
 
+  const aside = dynamic ? (
+    <Slot size="L" note={"pui. serv. vie"} />
+  ) : (
+    primary && <Monitor columns={primary.hit} hit={primary.hit} alwaysCurable />
+  );
+
+  const stats = Object.entries(secondary).map(([name, value]) => (
+    <Box
+      pr={"1"}
+      style={{
+        display: "inline",
+      }}
+    >
+      <StatTable
+        items={[
+          [name],
+          [
+            dynamic
+              ? `X${value < 0 ? value : value == 0 ? "" : `+${value}`}`
+              : value,
+          ],
+        ]}
+        inline
+      />
+    </Box>
+  ));
+
   return (
-    <Container companion={otherCompanion} name={name} noSlot={!slot}>
+    <Container companion={otherCompanion} name={name} aside={aside}>
       {primary && (
         <>
+          <Space />
           <StatTable
+            inline
             compact
             items={[
               [
@@ -42,12 +74,23 @@ export const Companion = ({
                   ))}
                 </>,
               ],
-              [!!primary.hit_formula ? `${primary.hit_formula}` : null],
+              [
+                dynamic ? (
+                  `${primary.hit}+X/${dynamic}`
+                ) : (
+                  <Box
+                    style={{
+                      visibility: "hidden",
+                    }}
+                  >
+                    {primary.hit}
+                  </Box>
+                ),
+              ],
             ]}
           />
-          {primary.hit && (
-            <Monitor columns={primary.hit} hit={primary.hit} alwaysCurable />
-          )}
+          <Space inline />
+          {stats}
         </>
       )}
     </Container>

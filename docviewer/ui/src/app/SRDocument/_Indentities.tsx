@@ -7,7 +7,7 @@ import { TitleMin } from "@/components/TitleMin";
 import { TitleSection } from "@/components/TitleSection";
 import { Box, Flex, Heading } from "@radix-ui/themes";
 import { Fragment } from "react";
-import { SRCharacter, SRIdnetity as SRIdentity } from "./character";
+import { SRCharacter, SRIdentity as SRIdentity } from "./character";
 
 type IdentitiesProps = {
   char: SRCharacter;
@@ -96,7 +96,13 @@ const Identity = ({
                 <TitleMin
                   title={c.name}
                   inline
-                  subtitle={`L${c.loyalty}-R${c.connection}`}
+                  subtitle={
+                    <Box
+                      style={{
+                        display: "inline-block",
+                      }}
+                    >{`L${c.loyalty}-R${c.connection}`}</Box>
+                  }
                 />
                 <Space />
                 <ParagraphStandard>{c.description}</ParagraphStandard>

@@ -16,6 +16,10 @@ import { Space } from "../Space";
 import { TextReplaced } from "../Text";
 import { TitleMin } from "../TitleMin";
 import { Duration } from "../Icons/Duration";
+import { SpellNature } from "../Icons/SpellNature";
+import { SpellDistance } from "../Icons/SpellDistance";
+import { SpellZone } from "../Icons/SpellZone";
+import { Threshold } from "../Icons/Threshold";
 
 type BaseActionProps = {
   name: string;
@@ -35,12 +39,16 @@ export const SimpleAction = ({
     major,
     minor,
     duration,
+    threshold,
     description,
     gauge,
     ammo,
     damage,
     ranges,
     reaction,
+    range,
+    nature,
+    zone,
     maintained,
     ammo_gauge,
   },
@@ -55,7 +63,12 @@ export const SimpleAction = ({
     validRanges.map((r) => (baseRanges[r] as any).label as string);
   const rulerGradScore = ranges && validRanges.map((r) => ranges[r]);
 
-  const infoIcons = [reaction && <GiLibertyWing />].filter((x) => x);
+  const infoIcons = [
+    reaction && <GiLibertyWing />,
+    nature && <SpellNature nature={nature} />,
+    range && <SpellDistance range={range} />,
+    zone && <SpellZone zone={zone} />,
+  ].filter((x) => x);
 
   const damageSubtitle = (
     <>
@@ -85,9 +98,11 @@ export const SimpleAction = ({
   );
 
   const infosSubtitle = interleave(infoIcons, <Space inline />);
+  const isDamaging = ammo || damage;
 
-  const firstSubtitle = !!ammo ? damageSubtitle : infosSubtitle;
-  const secondSubtitle = !!ammo && !!infoIcons.length ? infosSubtitle : null;
+  const firstSubtitle = isDamaging ? damageSubtitle : infosSubtitle;
+  const secondSubtitle =
+    isDamaging && !!infoIcons.length ? infosSubtitle : null;
 
   return (
     <Card title={test}>
@@ -125,6 +140,7 @@ export const SimpleAction = ({
 
         <Box pl={"1"}>
           {duration && <Duration n={duration} />}
+          {threshold && <Threshold n={threshold} />}
           {maintained && <Maintained />}
           {!!major &&
             Array.from({ length: major }).map((_, i) => (

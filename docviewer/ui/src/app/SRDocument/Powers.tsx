@@ -5,7 +5,7 @@ import { TitleSection } from "@/components/TitleSection";
 import { SimpleAction } from "@/components/actions/SimpleAction";
 import { Box, Flex } from "@radix-ui/themes";
 import { ReactNode, useMemo } from "react";
-import { SRCharacter } from "./character";
+import { SRAction, SRCharacter } from "./character";
 import { Companion } from "@/components/items/Companion";
 
 type Props = {
@@ -13,9 +13,18 @@ type Props = {
 };
 
 export default function Powers({ char }: Props) {
-  const weight =
-    Object.keys(char.powers || {}).length +
-    Object.keys(char.companions || {}).length;
+  const weightPowers = Object.keys(char.powers || {}).length;
+
+  const weightCompanions = Object.entries(char.companions || {}).reduce(
+    (acc, [_, companion]) => {
+      const wSkills = Object.keys(companion.skills || {}).length;
+      const wTrais = Object.keys(companion.traits || {}).length;
+      return acc + wSkills + wTrais + 1;
+    },
+    0
+  );
+
+  const weight = weightPowers + weightCompanions;
 
   if (weight < 20)
     return (
@@ -26,19 +35,25 @@ export default function Powers({ char }: Props) {
         <PdfContainer footer={"ACTIONS COMMUNES"}>
           <CommonActionOnly char={char} />
         </PdfContainer>
+        <PdfContainer footer={"ACTIONS MAGIQUES"}>
+          <MagicActionOnly char={char} />
+        </PdfContainer>
       </>
     );
 
   return (
     <>
-      <PdfContainer footer={"POUVOIRS"}>
-        <PowersOnly char={char} />
-      </PdfContainer>
       <PdfContainer footer={"COMPAGNONS"}>
         <CompanionOnly char={char} />
       </PdfContainer>
+      <PdfContainer footer={"POUVOIRS"}>
+        <PowersOnly char={char} />
+      </PdfContainer>
       <PdfContainer footer={"ACTIONS COMMUNES"}>
         <CommonActionOnly char={char} />
+      </PdfContainer>
+      <PdfContainer footer={"ACTIONS MAGIQUES"}>
+        <MagicActionOnly char={char} />
       </PdfContainer>
     </>
   );
@@ -72,38 +87,16 @@ const CommonActionOnly = ({ char }: { char: SRCharacter }) => {
     });
   }, [char.actions_common]);
 
-  return (
-    <Flex
-      style={{
-        flexWrap: "wrap",
-        flexDirection: "column",
-        maxHeight: "100%",
-      }}
-    >
-      <Box
-        style={{
-          maxWidth: "33%",
-        }}
-      >
-        <TitleSection>Actions Communes</TitleSection>
-        <Space />
-      </Box>
+  return <ActionsList actions={actions} title="Actions Communes" columns={3} />;
+};
 
-      {actions.map(([name, action]) => {
-        return (
-          <Box
-            style={{
-              maxWidth: "33%",
-            }}
-            key={name}
-          >
-            <Container key={name}>
-              <SimpleAction name={name} action={action} />
-            </Container>
-          </Box>
-        );
-      })}
-    </Flex>
+const MagicActionOnly = ({ char }: { char: SRCharacter }) => {
+  return (
+    <ActionsList
+      actions={Object.entries(char.actions_magic || {})}
+      title="Actions Magiques"
+      columns={2}
+    />
   );
 };
 
@@ -159,5 +152,49 @@ const Container = ({ children }: { children: ReactNode }) => {
     <Box pb={"2"} pr={"2"}>
       {children}
     </Box>
+  );
+};
+
+const ActionsList = ({
+  actions,
+  title,
+  columns = 3,
+}: {
+  actions: [string, SRAction][];
+  title: string;
+  columns?: number;
+}) => {
+  return (
+    <Flex
+      style={{
+        flexWrap: "wrap",
+        flexDirection: "column",
+        maxHeight: "100%",
+      }}
+    >
+      <Box
+        style={{
+          maxWidth: `${100 / columns}%`,
+        }}
+      >
+        <TitleSection>{title}</TitleSection>
+        <Space />
+      </Box>
+
+      {actions.map(([name, action]) => {
+        return (
+          <Box
+            style={{
+              maxWidth: `${100 / columns}%`,
+            }}
+            key={name}
+          >
+            <Container key={name}>
+              <SimpleAction name={name} action={action} />
+            </Container>
+          </Box>
+        );
+      })}
+    </Flex>
   );
 };

@@ -11,20 +11,21 @@ import { TitleMin } from "../TitleMin";
 import { SimpleAction } from "../actions/SimpleAction";
 import { Trait } from "../actions/Trait";
 import styles from "./ItemCard.module.css";
-import { Slot } from "./Slot";
 
 type CompanionBoxProps = {
   name: string;
   companion: SRCompanion;
   children?: ReactNode;
-  noSlot?: boolean;
+  aside?: ReactNode;
+  sub?: ReactNode;
 };
 
 export const CompanionBox = ({
   name,
   companion,
   children,
-  noSlot = false,
+  aside,
+  sub,
 }: CompanionBoxProps) => {
   const actions = Object.entries(companion.actions || {}).map(
     ([name, action]) => (
@@ -45,23 +46,24 @@ export const CompanionBox = ({
     </Card>
   );
 
-  const invokSlot = noSlot ? undefined : (
-    <Slot size="M" note={"puissance - services - vie"}></Slot>
+  const bottomChildren = [skills, ...traits, ...actions, aside].filter(
+    (x) => x
   );
-
-  const bottomChildren = [skills, ...traits, ...actions, invokSlot];
 
   return (
     <Box>
       <Flex className={bottomChildren.length > 0 ? styles.noBorderBottom : ""}>
         <Card>
           <TitleMin title={<TextReplaced>{capitalize(name)}</TextReplaced>} />
+          <Space />
           <ParagraphStandard>
             {children}
             <Space />
           </ParagraphStandard>
         </Card>
+        {sub}
       </Flex>
+
       <MasonryGridNoSSR compact columns={1}>
         {bottomChildren.map((child, i) => (
           <Box key={i} className={i == 0 ? "" : styles.bottom}>
@@ -78,7 +80,7 @@ export const ErgoCompanionBox = ({
   name,
   companion,
   children,
-  noSlot = false,
+  aside,
 }: CompanionBoxProps) => {
   const actions = Object.entries(companion.actions || {}).map(
     ([name, action]) => <SimpleAction name={name} action={action} key={name} />
@@ -97,31 +99,18 @@ export const ErgoCompanionBox = ({
     </Card>
   );
 
-  const invokSlot = noSlot ? undefined : (
-    <Slot size="INF" note={"pui. serv. vie"}></Slot>
-  );
-
   const bottomChildren = [skills, ...effects, ...actions];
 
   return (
     <MasonryGridNoSSR compact columns={3}>
-      <Flex p={"1"}>
+      <Box>
         <Card>
           <TitleMin title={<TextReplaced>{capitalize(name)}</TextReplaced>} />
-          <ParagraphStandard>
-            {children}
-            <Space />
-          </ParagraphStandard>
+          <Space />
+          <ParagraphStandard>{children}</ParagraphStandard>
         </Card>
-        <Box
-          grow={"1"}
-          style={{
-            width: "30%",
-          }}
-        >
-          {invokSlot}
-        </Box>
-      </Flex>
+        {aside}
+      </Box>
       {bottomChildren.map((child, i) => (
         <Box key={i} p={"1"}>
           {child}
@@ -130,3 +119,5 @@ export const ErgoCompanionBox = ({
     </MasonryGridNoSSR>
   );
 };
+
+const HeadCard = ({ name, children }: any) => {};

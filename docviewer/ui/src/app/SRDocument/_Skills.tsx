@@ -42,7 +42,7 @@ export const Skills = ({ char }: SkillsProps) => {
           <Card>
             <SkillText name={capitalize("connaissances")} />
             {Object.values(char.knowledges || {}).map((name) => (
-              <MasterText label={name} key={name} />
+              <MasterText label={`- ${name}`} key={name} />
             ))}
           </Card>
         </Container>

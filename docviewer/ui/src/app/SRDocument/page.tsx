@@ -4,6 +4,7 @@ import { RenderData } from "@/utils/tauriAPI";
 import Inventory from "./Inventory";
 import Powers from "./Powers";
 import Summary from "./Summary";
+import Last from "./Last";
 import { parseCharacter } from "./character";
 
 export default function Page() {
@@ -15,6 +16,7 @@ export default function Page() {
             <Summary char={data} images={images} />
             <Inventory char={data} />
             <Powers char={data} />
+            <Last char={data} />
           </>
         )}
         parser={parseCharacter}

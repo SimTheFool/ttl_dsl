@@ -24,6 +24,8 @@ export default function Powers({ char }: Props) {
     0
   );
 
+  const hasMagic = char.stats.mag;
+
   const weight = weightPowers + weightCompanions;
 
   if (weight < 20)
@@ -35,9 +37,9 @@ export default function Powers({ char }: Props) {
         <PdfContainer footer={"ACTIONS COMMUNES"}>
           <CommonActionOnly char={char} />
         </PdfContainer>
-        <PdfContainer footer={"ACTIONS MAGIQUES"}>
+        {hasMagic && <PdfContainer footer={"ACTIONS MAGIQUES"}>
           <MagicActionOnly char={char} />
-        </PdfContainer>
+        </PdfContainer>}
       </>
     );
 
@@ -52,9 +54,9 @@ export default function Powers({ char }: Props) {
       <PdfContainer footer={"ACTIONS COMMUNES"}>
         <CommonActionOnly char={char} />
       </PdfContainer>
-      <PdfContainer footer={"ACTIONS MAGIQUES"}>
-        <MagicActionOnly char={char} />
-      </PdfContainer>
+      {hasMagic && <PdfContainer footer={"ACTIONS MAGIQUES"}>
+          <MagicActionOnly char={char} />
+        </PdfContainer>}
     </>
   );
 }

@@ -16,7 +16,7 @@ export default function Page() {
             <Summary char={data} images={images} />
             <Inventory char={data} />
             <Powers char={data} />
-            <Last char={data} />
+            <Last images={images} />
           </>
         )}
         parser={parseCharacter}
